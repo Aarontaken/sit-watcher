@@ -51,19 +51,19 @@ SitWatcher/
 ### Task 1: Project Scaffolding
 
 **Files:**
+
 - Create: `project.yml`
 - Create: `SitWatcher/Info.plist`
 - Create: `SitWatcher/SitWatcher.entitlements`
 - Create: `SitWatcher/SitWatcherApp.swift`
 - Create: `SitWatcher/Resources/Assets.xcassets/Contents.json`
 - Create: `SitWatcher/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json`
-
-- [ ] **Step 1: Install xcodegen if needed**
+- **Step 1: Install xcodegen if needed**
 
 Run: `brew list xcodegen || brew install xcodegen`
 Expected: xcodegen available at command line.
 
-- [ ] **Step 2: Create project.yml**
+- **Step 2: Create project.yml**
 
 ```yaml
 # project.yml
@@ -107,7 +107,7 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SitWatcher.app/Contents/MacOS/SitWatcher"
 ```
 
-- [ ] **Step 3: Create Info.plist**
+- **Step 3: Create Info.plist**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -138,7 +138,7 @@ targets:
 
 `LSUIElement = true` hides the app from the Dock.
 
-- [ ] **Step 4: Create entitlements file**
+- **Step 4: Create entitlements file**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -153,9 +153,10 @@ targets:
 
 Sandbox disabled because we need `CGEventSource` access for idle detection and `NSWindow` level control for L3 overlay.
 
-- [ ] **Step 5: Create Assets.xcassets structure**
+- **Step 5: Create Assets.xcassets structure**
 
 `SitWatcher/Resources/Assets.xcassets/Contents.json`:
+
 ```json
 {
   "info": { "version": 1, "author": "xcode" }
@@ -163,6 +164,7 @@ Sandbox disabled because we need `CGEventSource` access for idle detection and `
 ```
 
 `SitWatcher/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json`:
+
 ```json
 {
   "images": [
@@ -177,7 +179,7 @@ Sandbox disabled because we need `CGEventSource` access for idle detection and `
 }
 ```
 
-- [ ] **Step 6: Create minimal SitWatcherApp.swift**
+- **Step 6: Create minimal SitWatcherApp.swift**
 
 ```swift
 import SwiftUI
@@ -194,17 +196,19 @@ struct SitWatcherApp: App {
 }
 ```
 
-- [ ] **Step 7: Generate Xcode project and build**
+- **Step 7: Generate Xcode project and build**
 
 Run:
+
 ```bash
 cd /Users/wangzg/cursor-workspace/sit-watcher
 xcodegen generate
 xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build
 ```
+
 Expected: Build succeeds. A menu bar icon appears when the app runs.
 
-- [ ] **Step 8: Commit**
+- **Step 8: Commit**
 
 ```bash
 git add -A
@@ -216,10 +220,10 @@ git commit -m "chore: scaffold SitWatcher macOS menu bar app"
 ### Task 2: Settings Model
 
 **Files:**
+
 - Create: `SitWatcher/Settings.swift`
 - Create: `SitWatcherTests/SettingsTests.swift`
-
-- [ ] **Step 1: Write the failing test**
+- **Step 1: Write the failing test**
 
 ```swift
 // SitWatcherTests/SettingsTests.swift
@@ -262,12 +266,12 @@ final class SettingsTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- **Step 2: Run test to verify it fails**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: Compile error — `Settings` not defined.
 
-- [ ] **Step 3: Implement Settings**
+- **Step 3: Implement Settings**
 
 ```swift
 // SitWatcher/Settings.swift
@@ -350,12 +354,12 @@ final class Settings {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: All tests PASS.
 
-- [ ] **Step 5: Commit**
+- **Step 5: Commit**
 
 ```bash
 git add -A
@@ -367,9 +371,9 @@ git commit -m "feat: add Settings model with UserDefaults persistence"
 ### Task 3: AppState
 
 **Files:**
-- Create: `SitWatcher/AppState.swift`
 
-- [ ] **Step 1: Create AppState**
+- Create: `SitWatcher/AppState.swift`
+- **Step 1: Create AppState**
 
 ```swift
 // SitWatcher/AppState.swift
@@ -438,12 +442,12 @@ final class AppState {
 }
 ```
 
-- [ ] **Step 2: Build to verify it compiles**
+- **Step 2: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 3: Commit**
+- **Step 3: Commit**
 
 ```bash
 git add -A
@@ -455,10 +459,10 @@ git commit -m "feat: add AppState observable model"
 ### Task 4: IdleDetector
 
 **Files:**
+
 - Create: `SitWatcher/Services/IdleDetector.swift`
 - Create: `SitWatcherTests/IdleDetectorTests.swift`
-
-- [ ] **Step 1: Write the failing test**
+- **Step 1: Write the failing test**
 
 ```swift
 // SitWatcherTests/IdleDetectorTests.swift
@@ -497,12 +501,12 @@ final class IdleDetectorTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: Compile error — `IdleDetector` not defined.
 
-- [ ] **Step 3: Implement IdleDetector**
+- **Step 3: Implement IdleDetector**
 
 ```swift
 // SitWatcher/Services/IdleDetector.swift
@@ -577,12 +581,12 @@ final class IdleDetector {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: All tests PASS.
 
-- [ ] **Step 5: Commit**
+- **Step 5: Commit**
 
 ```bash
 git add -A
@@ -594,10 +598,10 @@ git commit -m "feat: add IdleDetector with mouse-threshold filtering"
 ### Task 5: TimerEngine
 
 **Files:**
+
 - Create: `SitWatcher/Services/TimerEngine.swift`
 - Create: `SitWatcherTests/TimerEngineTests.swift`
-
-- [ ] **Step 1: Write the failing test**
+- **Step 1: Write the failing test**
 
 ```swift
 // SitWatcherTests/TimerEngineTests.swift
@@ -673,12 +677,12 @@ final class TimerEngineTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: Compile error — `TimerEngine` not defined.
 
-- [ ] **Step 3: Implement TimerEngine**
+- **Step 3: Implement TimerEngine**
 
 ```swift
 // SitWatcher/Services/TimerEngine.swift
@@ -778,12 +782,12 @@ final class TimerEngine {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- **Step 4: Run tests to verify they pass**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: All tests PASS.
 
-- [ ] **Step 5: Commit**
+- **Step 5: Commit**
 
 ```bash
 git add -A
@@ -795,11 +799,11 @@ git commit -m "feat: add TimerEngine with pause/resume/reset/skip/snooze"
 ### Task 6: ReminderEscalator
 
 **Files:**
+
 - Create: `SitWatcher/Services/ReminderEscalator.swift`
 - Create: `SitWatcher/Services/NotificationManager.swift`
 - Create: `SitWatcherTests/ReminderEscalatorTests.swift`
-
-- [ ] **Step 1: Write the failing test**
+- **Step 1: Write the failing test**
 
 ```swift
 // SitWatcherTests/ReminderEscalatorTests.swift
@@ -861,12 +865,12 @@ final class ReminderEscalatorTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- **Step 2: Run tests to verify they fail**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: Compile error — `ReminderEscalator` not defined.
 
-- [ ] **Step 3: Implement NotificationManager**
+- **Step 3: Implement NotificationManager**
 
 ```swift
 // SitWatcher/Services/NotificationManager.swift
@@ -900,7 +904,7 @@ final class NotificationManager {
 }
 ```
 
-- [ ] **Step 4: Implement ReminderEscalator**
+- **Step 4: Implement ReminderEscalator**
 
 ```swift
 // SitWatcher/Services/ReminderEscalator.swift
@@ -970,12 +974,12 @@ final class ReminderEscalator {
 }
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- **Step 5: Run tests to verify they pass**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: All tests PASS.
 
-- [ ] **Step 6: Commit**
+- **Step 6: Commit**
 
 ```bash
 git add -A
@@ -987,9 +991,9 @@ git commit -m "feat: add ReminderEscalator and NotificationManager"
 ### Task 7: TimerRingView
 
 **Files:**
-- Create: `SitWatcher/Views/TimerRingView.swift`
 
-- [ ] **Step 1: Create TimerRingView**
+- Create: `SitWatcher/Views/TimerRingView.swift`
+- **Step 1: Create TimerRingView**
 
 ```swift
 // SitWatcher/Views/TimerRingView.swift
@@ -1040,12 +1044,12 @@ struct TimerRingView: View {
 }
 ```
 
-- [ ] **Step 2: Build to verify it compiles**
+- **Step 2: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 3: Commit**
+- **Step 3: Commit**
 
 ```bash
 git add -A
@@ -1057,11 +1061,11 @@ git commit -m "feat: add TimerRingView circular progress component"
 ### Task 8: Menu Bar Panel
 
 **Files:**
+
 - Create: `SitWatcher/Views/ControlButtonsView.swift`
 - Create: `SitWatcher/Views/StatsView.swift`
 - Create: `SitWatcher/Views/MenuBarPanel.swift`
-
-- [ ] **Step 1: Create ControlButtonsView**
+- **Step 1: Create ControlButtonsView**
 
 ```swift
 // SitWatcher/Views/ControlButtonsView.swift
@@ -1103,7 +1107,7 @@ struct ControlButtonsView: View {
 }
 ```
 
-- [ ] **Step 2: Create StatsView**
+- **Step 2: Create StatsView**
 
 ```swift
 // SitWatcher/Views/StatsView.swift
@@ -1154,7 +1158,7 @@ struct StatsView: View {
 }
 ```
 
-- [ ] **Step 3: Create MenuBarPanel**
+- **Step 3: Create MenuBarPanel**
 
 ```swift
 // SitWatcher/Views/MenuBarPanel.swift
@@ -1264,12 +1268,12 @@ struct MenuBarPanel: View {
 }
 ```
 
-- [ ] **Step 4: Build to verify it compiles**
+- **Step 4: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 5: Commit**
+- **Step 5: Commit**
 
 ```bash
 git add -A
@@ -1281,10 +1285,10 @@ git commit -m "feat: add MenuBarPanel with timer ring, controls, and stats"
 ### Task 9: L2 Floating Window
 
 **Files:**
+
 - Create: `SitWatcher/Views/FloatingReminderView.swift`
 - Create: `SitWatcher/Windows/FloatingWindowController.swift`
-
-- [ ] **Step 1: Create FloatingReminderView**
+- **Step 1: Create FloatingReminderView**
 
 ```swift
 // SitWatcher/Views/FloatingReminderView.swift
@@ -1366,7 +1370,7 @@ struct FloatingReminderView: View {
 }
 ```
 
-- [ ] **Step 2: Create FloatingWindowController**
+- **Step 2: Create FloatingWindowController**
 
 ```swift
 // SitWatcher/Windows/FloatingWindowController.swift
@@ -1434,12 +1438,12 @@ final class FloatingWindowController {
 }
 ```
 
-- [ ] **Step 3: Build to verify it compiles**
+- **Step 3: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 4: Commit**
+- **Step 4: Commit**
 
 ```bash
 git add -A
@@ -1451,10 +1455,10 @@ git commit -m "feat: add L2 floating reminder window"
 ### Task 10: L3 Fullscreen Overlay
 
 **Files:**
+
 - Create: `SitWatcher/Views/FullScreenOverlayView.swift`
 - Create: `SitWatcher/Windows/OverlayWindowController.swift`
-
-- [ ] **Step 1: Create FullScreenOverlayView**
+- **Step 1: Create FullScreenOverlayView**
 
 ```swift
 // SitWatcher/Views/FullScreenOverlayView.swift
@@ -1516,7 +1520,7 @@ struct FullScreenOverlayView: View {
 }
 ```
 
-- [ ] **Step 2: Create OverlayWindowController**
+- **Step 2: Create OverlayWindowController**
 
 ```swift
 // SitWatcher/Windows/OverlayWindowController.swift
@@ -1577,12 +1581,12 @@ final class OverlayWindowController {
 }
 ```
 
-- [ ] **Step 3: Build to verify it compiles**
+- **Step 3: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 4: Commit**
+- **Step 4: Commit**
 
 ```bash
 git add -A
@@ -1594,9 +1598,9 @@ git commit -m "feat: add L3 fullscreen overlay window"
 ### Task 11: Settings View
 
 **Files:**
-- Create: `SitWatcher/Views/SettingsView.swift`
 
-- [ ] **Step 1: Create SettingsView**
+- Create: `SitWatcher/Views/SettingsView.swift`
+- **Step 1: Create SettingsView**
 
 ```swift
 // SitWatcher/Views/SettingsView.swift
@@ -1690,12 +1694,12 @@ struct SettingsView: View {
 }
 ```
 
-- [ ] **Step 2: Build to verify it compiles**
+- **Step 2: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 3: Commit**
+- **Step 3: Commit**
 
 ```bash
 git add -A
@@ -1707,9 +1711,9 @@ git commit -m "feat: add SettingsView with all configurable options"
 ### Task 12: Integration — Wire Everything Together
 
 **Files:**
-- Modify: `SitWatcher/SitWatcherApp.swift`
 
-- [ ] **Step 1: Rewrite SitWatcherApp with full integration**
+- Modify: `SitWatcher/SitWatcherApp.swift`
+- **Step 1: Rewrite SitWatcherApp with full integration**
 
 Replace `SitWatcher/SitWatcherApp.swift` with:
 
@@ -1868,17 +1872,17 @@ struct SitWatcherApp: App {
 }
 ```
 
-- [ ] **Step 2: Build to verify it compiles**
+- **Step 2: Build to verify it compiles**
 
 Run: `xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build 2>&1 | tail -5`
 Expected: BUILD SUCCEEDED.
 
-- [ ] **Step 3: Run all tests**
+- **Step 3: Run all tests**
 
 Run: `xcodebuild test -project SitWatcher.xcodeproj -scheme SitWatcherTests -destination 'platform=macOS' 2>&1 | tail -20`
 Expected: All tests PASS.
 
-- [ ] **Step 4: Commit**
+- **Step 4: Commit**
 
 ```bash
 git add -A
@@ -1889,17 +1893,19 @@ git commit -m "feat: integrate all components in SitWatcherApp"
 
 ### Task 13: Manual Smoke Test & Polish
 
-- [ ] **Step 1: Build and run the app**
+- **Step 1: Build and run the app**
 
 Run:
+
 ```bash
 xcodebuild -project SitWatcher.xcodeproj -scheme SitWatcher -configuration Debug build
 open /Users/wangzg/cursor-workspace/sit-watcher/build/Build/Products/Debug/SitWatcher.app
 ```
 
-- [ ] **Step 2: Verify checklist**
+- **Step 2: Verify checklist**
 
 Manually verify each behavior:
+
 1. Menu bar icon appears (figure.stand icon)
 2. Click icon → panel shows with timer counting down
 3. Pause/Resume/Skip/Reset buttons work
@@ -1911,11 +1917,11 @@ Manually verify each behavior:
 9. Settings panel opens and values persist
 10. Idle detection works (leave mouse still for 5+ min)
 
-- [ ] **Step 3: Fix any issues found during smoke test**
+- **Step 3: Fix any issues found during smoke test**
 
 Address any compilation or runtime issues discovered.
 
-- [ ] **Step 4: Final commit**
+- **Step 4: Final commit**
 
 ```bash
 git add -A
@@ -1929,6 +1935,7 @@ git commit -m "chore: polish and fix issues from smoke testing"
 **MenuBarExtra + NSWindow coexistence:** SwiftUI's `MenuBarExtra` handles the menu bar icon and popover panel. L2 and L3 windows are plain `NSWindow` instances managed by their own controllers. This hybrid approach gives us SwiftUI's declarative UI for the panel while retaining full control over window levels for the overlay.
 
 **Window levels:**
+
 - L2 floating window: `NSWindow.Level.floating` — above normal windows but below alerts
 - L3 overlay: `NSWindow.Level.screenSaver` — above everything including the menu bar
 
