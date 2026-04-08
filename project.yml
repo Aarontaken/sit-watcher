@@ -1,0 +1,38 @@
+name: SitWatcher
+options:
+  bundleIdPrefix: com.sitwatcher
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+  minimumXcodeGenVersion: "2.35.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+targets:
+  SitWatcher:
+    type: application
+    platform: macOS
+    sources:
+      - SitWatcher
+    settings:
+      base:
+        INFOPLIST_FILE: SitWatcher/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SitWatcher/SitWatcher.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.sitwatcher.app
+        GENERATE_INFOPLIST_FILE: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  SitWatcherTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - SitWatcherTests
+    dependencies:
+      - target: SitWatcher
+    settings:
+      base:
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SitWatcher.app/Contents/MacOS/SitWatcher"
