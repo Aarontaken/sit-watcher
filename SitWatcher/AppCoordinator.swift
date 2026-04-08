@@ -1,43 +1,34 @@
 import AppKit
-import Observation
 
-@Observable
 final class AppCoordinator {
     let appState = AppState()
     let settings = Settings.shared
-    private(set) var timerEngine: TimerEngine!
-    private(set) var idleDetector: IdleDetector!
-    private(set) var escalator: ReminderEscalator!
+    let timerEngine: TimerEngine
+    let idleDetector: IdleDetector
+    let escalator: ReminderEscalator
     let floatingWindow = FloatingWindowController()
     let overlayWindow = OverlayWindowController()
-    var showSettings = false
-    var started = false
 
-    func startIfNeeded() {
-        guard !started else { return }
-        started = true
+    init() {
+        timerEngine = TimerEngine(state: appState, settings: settings)
+        idleDetector = IdleDetector(mouseThreshold: settings.mouseMovementThreshold)
+        escalator = ReminderEscalator(state: appState, settings: settings)
+    }
 
-        let engine = TimerEngine(state: appState, settings: settings)
-        let detector = IdleDetector(mouseThreshold: settings.mouseMovementThreshold)
-        let esc = ReminderEscalator(state: appState, settings: settings)
-
-        self.timerEngine = engine
-        self.idleDetector = detector
-        self.escalator = esc
-
+    func start() {
         NotificationManager.shared.requestPermission()
 
-        engine.onTimerComplete = { [weak esc, weak self] in
-            guard let esc, let self else { return }
+        timerEngine.onTimerComplete = { [weak self] in
+            guard let self else { return }
             let minutes = Int(self.settings.reminderInterval / 60)
             NotificationManager.shared.sendReminder(minutes: minutes)
             if self.settings.soundEnabled {
                 NSSound(named: .init("Blow"))?.play()
             }
-            esc.start()
+            self.escalator.start()
         }
 
-        esc.onLevelChanged = { [weak self] level in
+        escalator.onLevelChanged = { [weak self] level in
             guard let self else { return }
             DispatchQueue.main.async {
                 let minutes = Int(self.settings.reminderInterval / 60)
@@ -64,7 +55,7 @@ final class AppCoordinator {
             }
         }
 
-        detector.onIdleStateChanged = { [weak self] isIdle in
+        idleDetector.onIdleStateChanged = { [weak self] isIdle in
             guard let self else { return }
             DispatchQueue.main.async {
                 if isIdle {
@@ -78,8 +69,8 @@ final class AppCoordinator {
             }
         }
 
-        engine.start()
-        detector.start(idleThreshold: settings.idleThreshold)
+        timerEngine.start()
+        idleDetector.start(idleThreshold: settings.idleThreshold)
     }
 
     func confirmRest() {

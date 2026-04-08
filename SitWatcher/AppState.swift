@@ -29,6 +29,7 @@ final class AppState {
     var restCount: Int = 0
     var interruptCount: Int = 0
     var focusSeconds: TimeInterval = 0
+    var showSettings: Bool = false
 
     private var lastResetDate: Date = .now
 
