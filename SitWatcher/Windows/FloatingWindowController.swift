@@ -1,13 +1,18 @@
 import AppKit
 import SwiftUI
 
-private class InteractivePanel: NSPanel {
+private class KeyableWindow: NSWindow {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
+
+    override func resignKey() {
+        super.resignKey()
+        self.level = .floating
+    }
 }
 
 final class FloatingWindowController {
-    private var panel: NSPanel?
+    private var window: NSWindow?
 
     func show(
         sittingMinutes: Int,
@@ -33,31 +38,38 @@ final class FloatingWindowController {
         let hostingView = NSHostingView(rootView: view)
         hostingView.setFrameSize(hostingView.fittingSize)
 
-        let panel = InteractivePanel(
+        let window = KeyableWindow(
             contentRect: NSRect(origin: .zero, size: hostingView.fittingSize),
-            styleMask: [.borderless, .nonactivatingPanel],
+            styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
-        panel.contentView = hostingView
-        panel.isOpaque = false
-        panel.backgroundColor = .clear
-        panel.level = .floating
-        panel.hasShadow = true
-        panel.isFloatingPanel = true
-        panel.becomesKeyOnlyIfNeeded = false
-        panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        panel.isMovableByWindowBackground = false
+        window.contentView = hostingView
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.standardWindowButton(.closeButton)?.isHidden = true
+        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        window.standardWindowButton(.zoomButton)?.isHidden = true
+        window.level = .floating
+        window.hasShadow = true
+        window.isMovableByWindowBackground = false
+        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
 
-        positionTopRight(panel)
-        NSApplication.shared.activate(ignoringOtherApps: true)
-        panel.makeKeyAndOrderFront(nil)
-        self.panel = panel
+        positionTopRight(window)
+
+        NSApp.setActivationPolicy(.accessory)
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+
+        self.window = window
     }
 
     func close() {
-        panel?.close()
-        panel = nil
+        window?.orderOut(nil)
+        window?.close()
+        window = nil
     }
 
     private func positionTopRight(_ window: NSWindow) {

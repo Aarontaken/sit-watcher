@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-private class InteractiveWindow: NSWindow {
+private class KeyableWindow: NSWindow {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
 }
@@ -16,15 +16,19 @@ final class OverlayWindowController {
             let window = createOverlayWindow(for: screen, sittingMinutes: sittingMinutes) {
                 onDismiss()
             }
-            window.makeKeyAndOrderFront(nil)
             windows.append(window)
         }
 
-        NSApplication.shared.activate(ignoringOtherApps: true)
+        NSApp.setActivationPolicy(.accessory)
+        NSApp.activate(ignoringOtherApps: true)
+        windows.first?.makeKeyAndOrderFront(nil)
     }
 
     func close() {
-        windows.forEach { $0.close() }
+        windows.forEach {
+            $0.orderOut(nil)
+            $0.close()
+        }
         windows.removeAll()
     }
 
@@ -41,7 +45,7 @@ final class OverlayWindowController {
             }
         )
 
-        let window = InteractiveWindow(
+        let window = KeyableWindow(
             contentRect: screen.frame,
             styleMask: [.borderless],
             backing: .buffered,
@@ -54,6 +58,7 @@ final class OverlayWindowController {
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
         window.setFrame(screen.frame, display: true)
         window.isMovableByWindowBackground = false
+        window.orderFront(nil)
 
         return window
     }
