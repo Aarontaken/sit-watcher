@@ -3,20 +3,19 @@ import Observation
 
 @Observable
 final class AppCoordinator {
-    let appState: AppState
-    let settings: Settings
-    let timerEngine: TimerEngine
-    let idleDetector: IdleDetector
-    let escalator: ReminderEscalator
+    let appState = AppState()
+    let settings = Settings.shared
+    private(set) var timerEngine: TimerEngine!
+    private(set) var idleDetector: IdleDetector!
+    private(set) var escalator: ReminderEscalator!
     let floatingWindow = FloatingWindowController()
     let overlayWindow = OverlayWindowController()
     var showSettings = false
+    var started = false
 
-    init() {
-        let appState = AppState()
-        let settings = Settings.shared
-        self.appState = appState
-        self.settings = settings
+    func startIfNeeded() {
+        guard !started else { return }
+        started = true
 
         let engine = TimerEngine(state: appState, settings: settings)
         let detector = IdleDetector(mouseThreshold: settings.mouseMovementThreshold)

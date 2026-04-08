@@ -1,7 +1,16 @@
 import SwiftUI
 
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var coordinator: AppCoordinator?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        coordinator?.startIfNeeded()
+    }
+}
+
 @main
 struct SitWatcherApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var coordinator = AppCoordinator()
 
     var body: some Scene {
@@ -23,6 +32,9 @@ struct SitWatcherApp: App {
                 .symbolEffect(.pulse, options: .repeating, isActive: coordinator.appState.reminderLevel == .l1)
         }
         .menuBarExtraStyle(.window)
+        .onChange(of: coordinator.started) {
+            // triggers SwiftUI refresh when coordinator starts
+        }
     }
 
     private var menuBarIcon: String {
@@ -33,6 +45,14 @@ struct SitWatcherApp: App {
         case (_, .l1): return "figure.walk"
         case (_, .l2): return "figure.walk"
         case (_, .l3): return "figure.run"
+        }
+    }
+
+    init() {
+        let coordinator = AppCoordinator()
+        _coordinator = State(initialValue: coordinator)
+        DispatchQueue.main.async {
+            coordinator.startIfNeeded()
         }
     }
 }
