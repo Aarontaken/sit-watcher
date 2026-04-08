@@ -66,6 +66,7 @@ struct SettingsView: View {
         }
         .padding(20)
         .frame(width: 320)
+        .preferredColorScheme(.dark)
     }
 
     private func settingRow<Content: View>(

@@ -28,8 +28,9 @@ struct ControlButtonsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .background(Color.white.opacity(0.06))
+            .background(Color.white.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .contentShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.plain)
     }

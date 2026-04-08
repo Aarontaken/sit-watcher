@@ -23,11 +23,17 @@ struct StatsView: View {
                 .tracking(1)
 
             HStack {
-                statItem(value: "\(restCount)", label: "已休息", color: .green)
+                statItem(
+                    value: "\(restCount)", label: "已休息",
+                    color: Color(red: 0.20, green: 0.78, blue: 0.45)
+                )
                 Spacer()
-                statItem(value: "\(interruptCount)", label: "被打断", color: .orange)
+                statItem(
+                    value: "\(interruptCount)", label: "被打断",
+                    color: Color(red: 0.98, green: 0.55, blue: 0.20)
+                )
                 Spacer()
-                statItem(value: focusDisplay, label: "专注时长", color: .white)
+                statItem(value: focusDisplay, label: "专注时长", color: .primary)
             }
         }
     }

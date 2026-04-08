@@ -13,12 +13,14 @@ struct MenuBarPanel: View {
             header
             timerSection
             controlsSection
-            Divider().padding(.horizontal, 20)
+            Divider()
+                .overlay(Color.white.opacity(0.06))
+                .padding(.horizontal, 20)
             statsSection
             footer
         }
         .frame(width: 280)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .preferredColorScheme(.dark)
     }
 
     private var header: some View {
