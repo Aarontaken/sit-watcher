@@ -1,6 +1,11 @@
 import AppKit
 import SwiftUI
 
+private class InteractiveWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 final class OverlayWindowController {
     private var windows: [NSWindow] = []
 
@@ -36,7 +41,7 @@ final class OverlayWindowController {
             }
         )
 
-        let window = NSWindow(
+        let window = InteractiveWindow(
             contentRect: screen.frame,
             styleMask: [.borderless],
             backing: .buffered,
@@ -48,7 +53,7 @@ final class OverlayWindowController {
         window.level = .screenSaver
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
         window.setFrame(screen.frame, display: true)
-        window.ignoresMouseEvents = false
+        window.isMovableByWindowBackground = false
 
         return window
     }

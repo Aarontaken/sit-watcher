@@ -1,8 +1,13 @@
 import AppKit
 import SwiftUI
 
+private class InteractivePanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 final class FloatingWindowController {
-    private var window: NSWindow?
+    private var panel: NSPanel?
 
     func show(
         sittingMinutes: Int,
@@ -28,28 +33,31 @@ final class FloatingWindowController {
         let hostingView = NSHostingView(rootView: view)
         hostingView.setFrameSize(hostingView.fittingSize)
 
-        let window = NSWindow(
+        let panel = InteractivePanel(
             contentRect: NSRect(origin: .zero, size: hostingView.fittingSize),
-            styleMask: [.borderless],
+            styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        window.contentView = hostingView
-        window.isOpaque = false
-        window.backgroundColor = .clear
-        window.level = .floating
-        window.hasShadow = true
-        window.isMovableByWindowBackground = true
-        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.contentView = hostingView
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.level = .floating
+        panel.hasShadow = true
+        panel.isFloatingPanel = true
+        panel.becomesKeyOnlyIfNeeded = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.isMovableByWindowBackground = false
 
-        positionTopRight(window)
-        window.makeKeyAndOrderFront(nil)
-        self.window = window
+        positionTopRight(panel)
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        panel.makeKeyAndOrderFront(nil)
+        self.panel = panel
     }
 
     func close() {
-        window?.close()
-        window = nil
+        panel?.close()
+        panel = nil
     }
 
     private func positionTopRight(_ window: NSWindow) {
