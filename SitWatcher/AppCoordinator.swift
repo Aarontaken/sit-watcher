@@ -1,6 +1,8 @@
 import AppKit
 
 final class AppCoordinator {
+    static let shared = AppCoordinator()
+
     let appState = AppState()
     let settings = Settings.shared
     let timerEngine: TimerEngine
@@ -9,22 +11,25 @@ final class AppCoordinator {
     let floatingWindow = FloatingWindowController()
     let overlayWindow = OverlayWindowController()
 
-    init() {
+    private init() {
         timerEngine = TimerEngine(state: appState, settings: settings)
         idleDetector = IdleDetector(mouseThreshold: settings.mouseMovementThreshold)
         escalator = ReminderEscalator(state: appState, settings: settings)
+
+        setupCallbacks()
+
+        DispatchQueue.main.async { [self] in
+            print("[SitWatcher] reminderInterval = \(self.settings.reminderInterval)s (\(Int(self.settings.reminderInterval / 60)) min)")
+            print("[SitWatcher] l2Delay = \(self.settings.l2Delay)s, l3Delay = \(self.settings.l3Delay)s")
+            NotificationManager.shared.requestPermission()
+            self.timerEngine.start()
+            self.idleDetector.start(idleThreshold: self.settings.idleThreshold)
+        }
     }
 
-    func start() {
-        NotificationManager.shared.requestPermission()
-
+    private func setupCallbacks() {
         timerEngine.onTimerComplete = { [weak self] in
             guard let self else { return }
-            let minutes = Int(self.settings.reminderInterval / 60)
-            NotificationManager.shared.sendReminder(minutes: minutes)
-            if self.settings.soundEnabled {
-                NSSound(named: .init("Blow"))?.play()
-            }
             self.escalator.start()
         }
 
@@ -33,12 +38,9 @@ final class AppCoordinator {
             DispatchQueue.main.async {
                 let minutes = Int(self.settings.reminderInterval / 60)
                 switch level {
-                case .none:
+                case .none, .l1:
                     self.floatingWindow.close()
                     self.overlayWindow.close()
-                    NotificationManager.shared.clearAll()
-                case .l1:
-                    break
                 case .l2:
                     self.floatingWindow.show(
                         sittingMinutes: minutes,
@@ -68,9 +70,6 @@ final class AppCoordinator {
                 }
             }
         }
-
-        timerEngine.start()
-        idleDetector.start(idleThreshold: settings.idleThreshold)
     }
 
     func confirmRest() {
@@ -98,6 +97,11 @@ final class AppCoordinator {
 
     func skip() {
         timerEngine.skip()
+    }
+
+    func testReminder() {
+        timerEngine.stop()
+        escalator.start()
     }
 
     func reset() {

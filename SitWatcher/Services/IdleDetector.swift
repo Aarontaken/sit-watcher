@@ -2,10 +2,9 @@ import Foundation
 import CoreGraphics
 import AppKit
 
-@Observable
 final class IdleDetector {
-    var isUserIdle: Bool = false
-    var lastMouseLocation: CGPoint = .zero
+    private(set) var isUserIdle: Bool = false
+    private var lastMouseLocation: CGPoint = .zero
 
     private let mouseThreshold: Double
     private var idleAccumulator: TimeInterval = 0
@@ -34,7 +33,7 @@ final class IdleDetector {
         pollTimer = nil
     }
 
-    func isRealMouseMovement(to newLocation: CGPoint) -> Bool {
+    private func isRealMouseMovement(to newLocation: CGPoint) -> Bool {
         let dx = newLocation.x - lastMouseLocation.x
         let dy = newLocation.y - lastMouseLocation.y
         let distance = sqrt(dx * dx + dy * dy)

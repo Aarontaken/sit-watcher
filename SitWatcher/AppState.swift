@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 
 enum TimerPhase {
     case running
@@ -18,18 +18,17 @@ enum ReminderLevel: Int, Comparable {
     }
 }
 
-@Observable
-final class AppState {
-    var timerPhase: TimerPhase = .running
-    var remainingSeconds: TimeInterval = 0
-    var totalSeconds: TimeInterval = 0
-    var reminderLevel: ReminderLevel = .none
-    var snoozedThisCycle: Bool = false
+final class AppState: ObservableObject {
+    @Published var timerPhase: TimerPhase = .running
+    @Published var remainingSeconds: TimeInterval = 0
+    @Published var totalSeconds: TimeInterval = 0
+    @Published var reminderLevel: ReminderLevel = .none
+    @Published var snoozedThisCycle: Bool = false
 
-    var restCount: Int = 0
-    var interruptCount: Int = 0
-    var focusSeconds: TimeInterval = 0
-    var showSettings: Bool = false
+    @Published var restCount: Int = 0
+    @Published var interruptCount: Int = 0
+    @Published var focusSeconds: TimeInterval = 0
+    @Published var showSettings: Bool = false
 
     private var lastResetDate: Date = .now
 

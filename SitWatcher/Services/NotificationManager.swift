@@ -8,11 +8,11 @@ final class NotificationManager {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
-    func sendReminder(minutes: Int) {
+    func sendReminder(minutes: Int, playSound: Bool = true) {
         let content = UNMutableNotificationContent()
         content.title = "SitWatcher"
-        content.body = "已经坐了 \(minutes) 分钟了，起来活动一下吧 💪"
-        content.sound = .default
+        content.body = "已经坐了 \(minutes) 分钟了，起来活动一下吧"
+        content.sound = playSound ? .default : nil
 
         let request = UNNotificationRequest(
             identifier: "sit-reminder-\(Date.now.timeIntervalSince1970)",

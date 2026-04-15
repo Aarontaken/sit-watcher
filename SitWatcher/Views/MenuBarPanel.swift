@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct MenuBarPanel: View {
-    let state: AppState
+    @ObservedObject var state: AppState
     var onPauseToggle: () -> Void
     var onSkip: () -> Void
     var onReset: () -> Void
+    var onTestReminder: () -> Void
     var onOpenSettings: () -> Void
     var onQuit: () -> Void
 
@@ -77,6 +78,13 @@ struct MenuBarPanel: View {
     private var footer: some View {
         HStack {
             Button("⚙️ 设置", action: onOpenSettings)
+                .buttonStyle(.plain)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Button("🔔 测试", action: onTestReminder)
                 .buttonStyle(.plain)
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)

@@ -1,6 +1,5 @@
 import Foundation
 
-@Observable
 final class TimerEngine {
     private let state: AppState
     private let settings: Settings
@@ -88,6 +87,7 @@ final class TimerEngine {
         state.resetDailyStatsIfNeeded()
 
         if state.remainingSeconds <= 0 && state.reminderLevel == .none {
+            stop()
             onTimerComplete?()
         }
     }

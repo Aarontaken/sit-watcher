@@ -1,42 +1,36 @@
 import AppKit
 import SwiftUI
 
-private class KeyableWindow: NSWindow {
+private class ClickablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
 }
 
 final class OverlayWindowController {
-    private var windows: [NSWindow] = []
+    private var panels: [NSPanel] = []
 
     func show(sittingMinutes: Int, onDismiss: @escaping () -> Void) {
         close()
 
         for screen in NSScreen.screens {
-            let window = createOverlayWindow(for: screen, sittingMinutes: sittingMinutes) {
+            let panel = createOverlayPanel(for: screen, sittingMinutes: sittingMinutes) {
                 onDismiss()
             }
-            windows.append(window)
+            panels.append(panel)
         }
 
-        NSApp.setActivationPolicy(.accessory)
-        NSApp.activate(ignoringOtherApps: true)
-        windows.first?.makeKeyAndOrderFront(nil)
+        panels.first?.makeKeyAndOrderFront(nil)
     }
 
     func close() {
-        windows.forEach {
-            $0.orderOut(nil)
-            $0.close()
-        }
-        windows.removeAll()
+        panels.forEach { $0.orderOut(nil) }
+        panels.removeAll()
     }
 
-    private func createOverlayWindow(
+    private func createOverlayPanel(
         for screen: NSScreen,
         sittingMinutes: Int,
         onDismiss: @escaping () -> Void
-    ) -> NSWindow {
+    ) -> NSPanel {
         let view = FullScreenOverlayView(
             sittingMinutes: sittingMinutes,
             onDismiss: { [weak self] in
@@ -45,21 +39,25 @@ final class OverlayWindowController {
             }
         )
 
-        let window = KeyableWindow(
+        let panel = ClickablePanel(
             contentRect: screen.frame,
-            styleMask: [.borderless],
+            styleMask: [.nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        window.contentView = NSHostingView(rootView: view)
-        window.isOpaque = false
-        window.backgroundColor = .clear
-        window.level = .screenSaver
-        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        window.setFrame(screen.frame, display: true)
-        window.isMovableByWindowBackground = false
-        window.orderFront(nil)
+        panel.contentView = NSHostingView(rootView: view)
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.isFloatingPanel = true
+        panel.becomesKeyOnlyIfNeeded = false
+        panel.hidesOnDeactivate = false
+        panel.level = .screenSaver
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.isMovableByWindowBackground = false
+        panel.acceptsMouseMovedEvents = true
+        panel.setFrame(screen.frame, display: true)
+        panel.orderFrontRegardless()
 
-        return window
+        return panel
     }
 }

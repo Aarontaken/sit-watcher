@@ -1,6 +1,5 @@
 import Foundation
 
-@Observable
 final class ReminderEscalator {
     private let state: AppState
     private let settings: Settings
@@ -15,7 +14,7 @@ final class ReminderEscalator {
 
     func start() {
         escalationTimer?.invalidate()
-        setLevel(.l1)
+        setLevel(.l2)
         scheduleNextEscalation()
     }
 
@@ -35,30 +34,11 @@ final class ReminderEscalator {
     }
 
     private func scheduleNextEscalation() {
-        let delay: TimeInterval
-        switch state.reminderLevel {
-        case .none: return
-        case .l1: delay = settings.l2Delay
-        case .l2: delay = settings.l3Delay
-        case .l3: return
-        }
+        guard state.reminderLevel == .l2 else { return }
 
-        escalationTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            self?.escalate()
-        }
-    }
-
-    private func escalate() {
-        switch state.reminderLevel {
-        case .none: break
-        case .l1:
-            setLevel(.l2)
-            scheduleNextEscalation()
-        case .l2:
-            setLevel(.l3)
-            state.interruptCount += 1
-        case .l3:
-            break
+        escalationTimer = Timer.scheduledTimer(withTimeInterval: settings.l3Delay, repeats: false) { [weak self] _ in
+            self?.setLevel(.l3)
+            self?.state.interruptCount += 1
         }
     }
 }

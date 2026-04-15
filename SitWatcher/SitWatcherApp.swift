@@ -2,37 +2,36 @@ import SwiftUI
 
 @main
 struct SitWatcherApp: App {
-    let coordinator = AppCoordinator()
-
     var body: some Scene {
         MenuBarExtra {
-            ContentPanel(coordinator: coordinator)
+            ContentPanel()
         } label: {
-            MenuBarLabel(appState: coordinator.appState)
+            MenuBarLabel()
         }
         .menuBarExtraStyle(.window)
-    }
-
-    init() {
-        DispatchQueue.main.async { [coordinator] in
-            coordinator.start()
-        }
     }
 }
 
 struct ContentPanel: View {
-    let coordinator: AppCoordinator
+    @ObservedObject private var appState = AppCoordinator.shared.appState
+    @ObservedObject private var settings = AppCoordinator.shared.settings
+
+    private var coordinator: AppCoordinator { AppCoordinator.shared }
 
     var body: some View {
-        if coordinator.appState.showSettings {
-            SettingsView(settings: coordinator.settings)
+        if appState.showSettings {
+            SettingsView(
+                settings: settings,
+                onBack: { appState.showSettings = false }
+            )
         } else {
             MenuBarPanel(
-                state: coordinator.appState,
-                onPauseToggle: coordinator.togglePause,
-                onSkip: coordinator.skip,
-                onReset: coordinator.reset,
-                onOpenSettings: { coordinator.appState.showSettings = true },
+                state: appState,
+                onPauseToggle: { coordinator.togglePause() },
+                onSkip: { coordinator.skip() },
+                onReset: { coordinator.reset() },
+                onTestReminder: { coordinator.testReminder() },
+                onOpenSettings: { appState.showSettings = true },
                 onQuit: { NSApplication.shared.terminate(nil) }
             )
         }
@@ -40,7 +39,7 @@ struct ContentPanel: View {
 }
 
 struct MenuBarLabel: View {
-    let appState: AppState
+    @ObservedObject private var appState = AppCoordinator.shared.appState
 
     var body: some View {
         Image(systemName: iconName)

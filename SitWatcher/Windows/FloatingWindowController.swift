@@ -1,18 +1,12 @@
 import AppKit
 import SwiftUI
 
-private class KeyableWindow: NSWindow {
+private class ClickablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
-
-    override func resignKey() {
-        super.resignKey()
-        self.level = .floating
-    }
 }
 
 final class FloatingWindowController {
-    private var window: NSWindow?
+    private var panel: NSPanel?
 
     func show(
         sittingMinutes: Int,
@@ -38,45 +32,40 @@ final class FloatingWindowController {
         let hostingView = NSHostingView(rootView: view)
         hostingView.setFrameSize(hostingView.fittingSize)
 
-        let window = KeyableWindow(
+        let panel = ClickablePanel(
             contentRect: NSRect(origin: .zero, size: hostingView.fittingSize),
-            styleMask: [.titled, .fullSizeContentView],
+            styleMask: [.nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        window.contentView = hostingView
-        window.isOpaque = false
-        window.backgroundColor = .clear
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.standardWindowButton(.closeButton)?.isHidden = true
-        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        window.standardWindowButton(.zoomButton)?.isHidden = true
-        window.level = .floating
-        window.hasShadow = true
-        window.isMovableByWindowBackground = false
-        window.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.contentView = hostingView
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.isFloatingPanel = true
+        panel.becomesKeyOnlyIfNeeded = false
+        panel.hidesOnDeactivate = false
+        panel.level = .floating
+        panel.hasShadow = false
+        panel.isMovableByWindowBackground = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
+        panel.acceptsMouseMovedEvents = true
 
-        positionTopRight(window)
+        positionTopRight(panel)
+        panel.orderFrontRegardless()
 
-        NSApp.setActivationPolicy(.accessory)
-        NSApp.activate(ignoringOtherApps: true)
-        window.makeKeyAndOrderFront(nil)
-
-        self.window = window
+        self.panel = panel
     }
 
     func close() {
-        window?.orderOut(nil)
-        window?.close()
-        window = nil
+        panel?.orderOut(nil)
+        panel = nil
     }
 
-    private func positionTopRight(_ window: NSWindow) {
+    private func positionTopRight(_ panel: NSPanel) {
         guard let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
-        let x = screenFrame.maxX - window.frame.width - 20
-        let y = screenFrame.maxY - window.frame.height - 20
-        window.setFrameOrigin(NSPoint(x: x, y: y))
+        let x = screenFrame.maxX - panel.frame.width - 20
+        let y = screenFrame.maxY - panel.frame.height - 20
+        panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 }
