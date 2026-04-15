@@ -1,2 +1,8 @@
 .superpowers/
+docs/
 SitWatcher.xcodeproj
+build/
+DerivedData/
+*.xcuserdata
+*.xcworkspace
+.DS_Store
