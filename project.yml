@@ -10,6 +10,10 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
+  configs:
+    Release:
+      CODE_SIGN_STYLE: Manual
+      CODE_SIGN_IDENTITY: "-"
 
 targets:
   SitWatcher:
@@ -24,6 +28,10 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.sitwatcher.app
         GENERATE_INFOPLIST_FILE: false
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: "-"
 
   SitWatcherTests:
     type: bundle.unit-test
