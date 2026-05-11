@@ -47,12 +47,14 @@ jobs:
           chmod +x bin/generate_appcast
 
       - name: Generate appcast
+        env:
+          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           VERSION_NUM="${VERSION#v}"
           mkdir -p appcast
           cp build/SitWatcher.dmg "appcast/SitWatcher-${VERSION_NUM}.dmg"
-          echo "${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}" > /tmp/ed25519_private_key
+          printf '%s' "$SPARKLE_ED25519_PRIVATE_KEY" > /tmp/ed25519_private_key
           ./bin/generate_appcast --ed-key-file /tmp/ed25519_private_key appcast/
           rm /tmp/ed25519_private_key
 
