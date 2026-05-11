@@ -52,8 +52,13 @@ cp -R "$APP_PATH" "$DMG_DIR/"
 # Copy and prepare Install.command
 cp "$PROJECT_DIR/scripts/Install.command" "$DMG_DIR/Install.command"
 chmod +x "$DMG_DIR/Install.command"
-# Remove quarantine from the installer script itself so it launches with one click
-xattr -d com.apple.quarantine "$DMG_DIR/Install.command" 2>/dev/null || true
+
+# Compile AppleScript installer into a proper .app bundle
+echo "==> Building Install.app..."
+osacompile -o "$BUILD_DIR/Install.app" "$PROJECT_DIR/scripts/Install.applescript"
+# Adhoc-sign the installer app so it shows "unidentified developer" (right-click → Open works)
+codesign --force --sign - "$BUILD_DIR/Install.app"
+cp -R "$BUILD_DIR/Install.app" "$DMG_DIR/Install.app"
 
 ln -s /Applications "$DMG_DIR/Applications" 2>/dev/null || true
 
