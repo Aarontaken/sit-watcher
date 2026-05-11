@@ -30,13 +30,39 @@ jobs:
             echo "VERSION=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install xcodegen
-        run: brew install xcodegen
+      - name: Install dependencies
+        run: brew install xcodegen create-dmg
 
       - name: Build and package
         run: |
           chmod +x scripts/build.sh
           VERSION="${{ steps.version.outputs.version }}" ./scripts/build.sh
+
+      - name: Download Sparkle tools
+        run: |
+          SPARKLE_VERSION="2.6.0"
+          curl -sL -o sparkle.tar.xz \
+            "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
+          tar xf sparkle.tar.xz
+          chmod +x bin/generate_appcast
+
+      - name: Generate appcast
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          VERSION_NUM="${VERSION#v}"
+          mkdir -p appcast
+          cp build/SitWatcher.dmg "appcast/SitWatcher-${VERSION_NUM}.dmg"
+          echo "${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}" > /tmp/ed25519_private_key
+          ./bin/generate_appcast --ed-key-file /tmp/ed25519_private_key appcast/
+          rm /tmp/ed25519_private_key
+
+      - name: Deploy appcast to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./appcast
+          keep_files: true
+          publish_branch: gh-pages
 
       - name: Upload DMG to release
         uses: softprops/action-gh-release@v2

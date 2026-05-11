@@ -1,10 +1,21 @@
 import SwiftUI
+import Sparkle
 
 @main
 struct SitWatcherApp: App {
+    private let updaterController: SPUStandardUpdaterController
+
+    init() {
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
+    }
+
     var body: some Scene {
         MenuBarExtra {
-            ContentPanel()
+            ContentPanel(updater: updaterController)
         } label: {
             MenuBarLabel()
         }
@@ -13,6 +24,8 @@ struct SitWatcherApp: App {
 }
 
 struct ContentPanel: View {
+    let updater: SPUStandardUpdaterController
+
     @ObservedObject private var appState = AppCoordinator.shared.appState
     @ObservedObject private var settings = AppCoordinator.shared.settings
 
@@ -32,6 +45,7 @@ struct ContentPanel: View {
                 onReset: { coordinator.reset() },
                 onTestReminder: { coordinator.testReminder() },
                 onOpenSettings: { appState.showSettings = true },
+                onCheckForUpdates: { updater.checkForUpdates(nil) },
                 onQuit: { NSApplication.shared.terminate(nil) }
             )
         }

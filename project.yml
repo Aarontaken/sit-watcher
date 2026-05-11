@@ -6,6 +6,11 @@ options:
   xcodeVersion: "15.0"
   minimumXcodeGenVersion: "2.35.0"
 
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    minVersion: "2.6.0"
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -21,6 +26,8 @@ targets:
     platform: macOS
     sources:
       - SitWatcher
+    dependencies:
+      - package: Sparkle
     settings:
       base:
         INFOPLIST_FILE: SitWatcher/Info.plist

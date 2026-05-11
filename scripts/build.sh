@@ -60,15 +60,20 @@ osacompile -o "$BUILD_DIR/Install.app" "$PROJECT_DIR/scripts/Install.applescript
 codesign --force --sign - "$BUILD_DIR/Install.app"
 cp -R "$BUILD_DIR/Install.app" "$DMG_DIR/Install.app"
 
-ln -s /Applications "$DMG_DIR/Applications" 2>/dev/null || true
-
 DMG_PATH="$BUILD_DIR/$DMG_NAME.dmg"
 rm -f "$DMG_PATH"
 
-hdiutil create -volname "$APP_NAME" \
-  -srcfolder "$DMG_DIR" \
-  -ov -format UDZO \
-  "$DMG_PATH"
+create-dmg \
+  --volname "$APP_NAME" \
+  --window-pos 200 120 \
+  --window-size 600 400 \
+  --icon-size 100 \
+  --icon "Install.app" 150 200 \
+  --icon "SitWatcher.app" 300 200 \
+  --app-drop-link 450 200 \
+  --hide-extension "Install.app" \
+  "$DMG_PATH" \
+  "$DMG_DIR"
 
 echo "==> DMG created at: $DMG_PATH"
 echo "==> Done!"

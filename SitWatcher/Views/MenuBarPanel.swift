@@ -7,6 +7,7 @@ struct MenuBarPanel: View {
     var onReset: () -> Void
     var onTestReminder: () -> Void
     var onOpenSettings: () -> Void
+    var onCheckForUpdates: () -> Void
     var onQuit: () -> Void
 
     var body: some View {
@@ -85,6 +86,13 @@ struct MenuBarPanel: View {
             Spacer()
 
             Button("🔔 测试", action: onTestReminder)
+                .buttonStyle(.plain)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Button("更新", action: onCheckForUpdates)
                 .buttonStyle(.plain)
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
