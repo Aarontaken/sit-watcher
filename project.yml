@@ -9,7 +9,7 @@ options:
 packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
-    minVersion: "2.6.0"
+    from: "2.6.0"
 
 settings:
   base:
