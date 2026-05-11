@@ -46,16 +46,24 @@ jobs:
           tar xf sparkle.tar.xz
           chmod +x bin/generate_appcast
 
-      - name: Generate appcast
-        env:
-          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}
+      - name: Prepare appcast archive
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           VERSION_NUM="${VERSION#v}"
           mkdir -p appcast
-          cp build/SitWatcher.dmg "appcast/SitWatcher-${VERSION_NUM}.dmg"
+          # Sparkle needs a single .app in the archive, so zip just the app
+          APP_PATH="build/SitWatcher.xcarchive/Products/Applications/SitWatcher.app"
+          ditto -c -k --keepParent "$APP_PATH" "appcast/SitWatcher-${VERSION_NUM}.zip"
+
+      - name: Generate appcast
+        env:
+          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}
+        run: |
           printf '%s' "$SPARKLE_ED25519_PRIVATE_KEY" > /tmp/ed25519_private_key
-          ./bin/generate_appcast --ed-key-file /tmp/ed25519_private_key appcast/
+          ./bin/generate_appcast \
+            --ed-key-file /tmp/ed25519_private_key \
+            --download-url-prefix "https://Aarontaken.github.io/sit-watcher/" \
+            appcast/
           rm /tmp/ed25519_private_key
 
       - name: Deploy appcast to gh-pages
