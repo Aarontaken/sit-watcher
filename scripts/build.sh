@@ -49,6 +49,12 @@ rm -rf "$DMG_DIR"
 mkdir -p "$DMG_DIR"
 cp -R "$APP_PATH" "$DMG_DIR/"
 
+# Copy and prepare Install.command
+cp "$PROJECT_DIR/scripts/Install.command" "$DMG_DIR/Install.command"
+chmod +x "$DMG_DIR/Install.command"
+# Remove quarantine from the installer script itself so it launches with one click
+xattr -d com.apple.quarantine "$DMG_DIR/Install.command" 2>/dev/null || true
+
 ln -s /Applications "$DMG_DIR/Applications" 2>/dev/null || true
 
 DMG_PATH="$BUILD_DIR/$DMG_NAME.dmg"
