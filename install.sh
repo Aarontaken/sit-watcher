@@ -14,7 +14,7 @@ if [ "$VERSION" = "latest" ]; then
 fi
 echo "   version: $VERSION"
 
-# gh-pages ZIP uses semver without leading v (e.g. SitWatcher-1.0.4.zip)
+# ZIP on gh-pages is named SitWatcher-{semver}.zip (Git tag may include a leading v).
 VERSION_NUM="${VERSION#v}"
 
 # --- step 2: download ---
