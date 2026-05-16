@@ -1,11 +1,44 @@
 {
   "images": [
-    { "size": "128x128", "idiom": "mac", "scale": "1x" },
-    { "size": "128x128", "idiom": "mac", "scale": "2x" },
-    { "size": "256x256", "idiom": "mac", "scale": "1x" },
-    { "size": "256x256", "idiom": "mac", "scale": "2x" },
-    { "size": "512x512", "idiom": "mac", "scale": "1x" },
-    { "size": "512x512", "idiom": "mac", "scale": "2x" }
+    {
+      "filename": "appicon_128.png",
+      "idiom": "mac",
+      "scale": "1x",
+      "size": "128x128"
+    },
+    {
+      "filename": "appicon_128@2x.png",
+      "idiom": "mac",
+      "scale": "2x",
+      "size": "128x128"
+    },
+    {
+      "filename": "appicon_256.png",
+      "idiom": "mac",
+      "scale": "1x",
+      "size": "256x256"
+    },
+    {
+      "filename": "appicon_256@2x.png",
+      "idiom": "mac",
+      "scale": "2x",
+      "size": "256x256"
+    },
+    {
+      "filename": "appicon_512.png",
+      "idiom": "mac",
+      "scale": "1x",
+      "size": "512x512"
+    },
+    {
+      "filename": "appicon_512@2x.png",
+      "idiom": "mac",
+      "scale": "2x",
+      "size": "512x512"
+    }
   ],
-  "info": { "version": 1, "author": "xcode" }
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
 }
