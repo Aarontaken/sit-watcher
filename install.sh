@@ -27,11 +27,9 @@ curl -fsSL --progress-bar -o "$DMG_PATH" "$DMG_URL"
 
 # Mount DMG
 echo "Mounting..."
-VOLUME=$(hdiutil attach -nobrowse "$DMG_PATH" | grep /Volumes/ | awk '{print $NF}')
-if [ -z "$VOLUME" ]; then
-    echo "Error: failed to mount DMG"
-    exit 1
-fi
+MOUNT_POINT="$TMP_DIR/mount"
+mkdir -p "$MOUNT_POINT"
+hdiutil attach -nobrowse -mountpoint "$MOUNT_POINT" "$DMG_PATH" > /dev/null
 
 # Remove old version
 if [ -d "/Applications/$APP_NAME.app" ]; then
@@ -41,11 +39,11 @@ fi
 
 # Copy to /Applications
 echo "Installing to /Applications..."
-sudo cp -R "$VOLUME/$APP_NAME.app" "/Applications/"
+sudo cp -R "$MOUNT_POINT/$APP_NAME.app" "/Applications/"
 sudo chown -R "$(whoami):staff" "/Applications/$APP_NAME.app"
 
 # Unmount
-hdiutil detach "$VOLUME" -quiet
+hdiutil detach "$MOUNT_POINT" -quiet
 rm -rf "$TMP_DIR"
 
 # Launch
