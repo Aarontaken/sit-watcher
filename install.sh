@@ -14,6 +14,9 @@ if [ "$VERSION" = "latest" ]; then
 fi
 echo "   version: $VERSION"
 
+# gh-pages ZIP uses semver without leading v (e.g. SitWatcher-1.0.4.zip)
+VERSION_NUM="${VERSION#v}"
+
 # --- step 2: download ---
 ZIP_URL="https://raw.githubusercontent.com/$REPO/gh-pages/$APP_NAME-${VERSION_NUM}.zip"
 TMP_DIR=$(mktemp -d)
