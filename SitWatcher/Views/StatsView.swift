@@ -5,6 +5,10 @@ struct StatsView: View {
     let interruptCount: Int
     let focusSeconds: TimeInterval
 
+    private let mint = Color(red: 0.22, green: 0.98, blue: 0.62)
+    private let peach = Color(red: 1.0, green: 0.55, blue: 0.45)
+    private let violet = Color(red: 0.68, green: 0.55, blue: 1.0)
+
     private var focusDisplay: String {
         let hours = Int(focusSeconds) / 3600
         let mins = (Int(focusSeconds) % 3600) / 60
@@ -15,37 +19,82 @@ struct StatsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("今日统计")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-                .tracking(1)
+        VStack(alignment: .leading, spacing: 11) {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [mint, violet],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                Text("今日一览")
+                    .font(.system(size: 12, weight: .heavy, design: .rounded))
+                    .foregroundStyle(Color.white.opacity(0.88))
+                Spacer(minLength: 0)
+            }
 
-            HStack {
-                statItem(
-                    value: "\(restCount)", label: "已休息",
-                    color: Color(red: 0.20, green: 0.78, blue: 0.45)
+            HStack(spacing: 8) {
+                statCard(
+                    value: "\(restCount)",
+                    label: "已休息",
+                    icon: "cup.and.saucer.fill",
+                    accent: mint
                 )
-                Spacer()
-                statItem(
-                    value: "\(interruptCount)", label: "被打断",
-                    color: Color(red: 0.98, green: 0.55, blue: 0.20)
+                statCard(
+                    value: "\(interruptCount)",
+                    label: "被打断",
+                    icon: "bolt.slash.fill",
+                    accent: peach
                 )
-                Spacer()
-                statItem(value: focusDisplay, label: "专注时长", color: .primary)
+                statCard(
+                    value: focusDisplay,
+                    label: "专注时长",
+                    icon: "timer",
+                    accent: violet
+                )
             }
         }
     }
 
-    private func statItem(value: String, label: String, color: Color) -> some View {
-        VStack(spacing: 2) {
+    private func statCard(value: String, label: String, icon: String, accent: Color) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 11))
+                .foregroundStyle(accent.opacity(0.9))
             Text(value)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(color)
+                .font(.system(size: 18, weight: .heavy, design: .rounded))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.white, accent.opacity(0.9)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
             Text(label)
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.48))
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.07))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [accent.opacity(0.42), Color.white.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+        )
     }
 }
