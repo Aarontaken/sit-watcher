@@ -15,7 +15,7 @@ fi
 echo "   version: $VERSION"
 
 # --- step 2: download ---
-ZIP_URL="https://github.com/$REPO/releases/download/$VERSION/$APP_NAME-${VERSION_NUM}.zip"
+ZIP_URL="https://aarontaken.github.io/sit-watcher/$APP_NAME-${VERSION_NUM}.zip"
 TMP_DIR=$(mktemp -d)
 ZIP_PATH="$TMP_DIR/$APP_NAME.zip"
 
