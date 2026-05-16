@@ -1,0 +1,349 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "controls.pause" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pause" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂停" } }
+      }
+    },
+    "controls.resume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Resume" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "继续" } }
+      }
+    },
+    "controls.reset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reset" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重置" } }
+      }
+    },
+    "controls.skip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Skip" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跳过" } }
+      }
+    },
+    "floating.body_fmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You've been sitting for %lld minutes" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你已经连续坐了 %lld 分钟" } }
+      }
+    },
+    "floating.snooze_fixed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Snooze 5 min" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "稍后 5 分钟" } }
+      }
+    },
+    "floating.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Time to stand" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "该站起来了！" } }
+      }
+    },
+    "floating.confirm_move" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Got it" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好的，我去活动" } }
+      }
+    },
+    "footer.quit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quit" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "退出" } }
+      }
+    },
+    "footer.settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "设置" } }
+      }
+    },
+    "footer.test" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Test" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "测试" } }
+      }
+    },
+    "footer.updates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Updates" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "更新" } }
+      }
+    },
+    "fullscreen.body_fmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You've been sitting for %lld minutes — give your body a quick break" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已经坐了 %lld 分钟，给身体一点活动的时间" } }
+      }
+    },
+    "fullscreen.dismiss_button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "I'm up now" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "我已经站起来了" } }
+      }
+    },
+    "fullscreen.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Take a short walk" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "起来走走吧" } }
+      }
+    },
+    "menu.tagline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Breathe away from sitting ✨" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "久坐也要透口气 ✨" } }
+      }
+    },
+    "notification.body_fmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You've been sitting for %lld minutes — time to stretch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已经坐了 %lld 分钟了，起来活动一下吧" } }
+      }
+    },
+    "settings.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "返回" } }
+      }
+    },
+    "settings.done" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "完成" } }
+      }
+    },
+    "settings.fmt.minutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld min" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld 分钟" } }
+      }
+    },
+    "settings.fmt.pixels" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld px" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld px" } }
+      }
+    },
+    "settings.language.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Overrides macOS language only for SitWatcher UI" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仅在 SitWatcher 界面使用所选语言（不影响系统或其他应用）" } }
+      }
+    },
+    "settings.language.system" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Follow system" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跟随系统" } }
+      }
+    },
+    "settings.language.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "界面语言" } }
+      }
+    },
+    "settings.idle.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "After this idle time, we assume you've stepped away" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "多久没操作视为你已离开座位" } }
+      }
+    },
+    "settings.idle.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Away detection" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "离开检测时间" } }
+      }
+    },
+    "settings.launch_at_login.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start SitWatcher in the menu bar after login" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "登录后自动在菜单栏启动" } }
+      }
+    },
+    "settings.launch_at_login.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Launch at login" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开机自启动" } }
+      }
+    },
+    "settings.mouse.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mouse moves smaller than this are ignored as idle jitter" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "低于此距离的鼠标移动会被忽略" } }
+      }
+    },
+    "settings.mouse.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mouse sensitivity (px)" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "鼠标灵敏度" } }
+      }
+    },
+    "settings.reminder_interval.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "How often we nudge you to stand" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "每隔多久提醒你站起来" } }
+      }
+    },
+    "settings.reminder_interval.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reminder interval" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "久坐提醒间隔" } }
+      }
+    },
+    "settings.fullscreen_delay.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "If the banner is ignored, escalate to fullscreen after this delay" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "忽略浮窗多久后升级为全屏覆盖" } }
+      }
+    },
+    "settings.fullscreen_delay.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Fullscreen escalation delay" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全屏提醒延迟" } }
+      }
+    },
+    "settings.sound.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Play a brief sound at deadline (respects system volume)" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "到点时播放简短提示（跟系统音量）" } }
+      }
+    },
+    "settings.sound.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sound cue" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提示音" } }
+      }
+    },
+    "settings.window.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "设置" } }
+      }
+    },
+    "settings.window.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tune reminders to your rhythm" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "按你的节奏改提醒" } }
+      }
+    },
+    "stats.focus" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Focus time" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "专注时长" } }
+      }
+    },
+    "stats.focus_hours_fmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld.%lldh" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld.%lldh" } }
+      }
+    },
+    "stats.focus_minutes_fmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld min" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld min" } }
+      }
+    },
+    "stats.interrupt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Interrupted" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "被打断" } }
+      }
+    },
+    "stats.rest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Breaks" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已休息" } }
+      }
+    },
+    "stats.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Today" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "今日一览" } }
+      }
+    },
+    "status.away" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Away" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已离开" } }
+      }
+    },
+    "status.focusing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Focused" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "专注中" } }
+      }
+    },
+    "status.paused" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Paused" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已暂停" } }
+      }
+    },
+    "status.reminding" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reminding" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提醒中" } }
+      }
+    },
+    "timer.remaining" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remaining" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "剩余时间" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

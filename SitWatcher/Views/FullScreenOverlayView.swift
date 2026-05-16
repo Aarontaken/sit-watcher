@@ -7,11 +7,14 @@ struct FullScreenOverlayView: View {
     @StateObject private var figureTicker = StretchFigureTicker()
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
 
+    @ObservedObject private var localizationSettings = Settings.shared
+
     private let accentMint = Color(red: 0.22, green: 0.98, blue: 0.62)
     private let accentCyan = Color(red: 0.12, green: 0.78, blue: 1.0)
     private let accentPeach = Color(red: 1.0, green: 0.55, blue: 0.45)
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         ZStack {
             Color.black.opacity(0.88)
 
@@ -36,7 +39,7 @@ struct FullScreenOverlayView: View {
             VStack(spacing: 24) {
                 StretchReminderHeroFigure(ticker: figureTicker, size: 112)
 
-                Text("起来走走吧")
+                Text(L10n.text("fullscreen.title"))
                     .font(.system(size: 30, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -46,14 +49,14 @@ struct FullScreenOverlayView: View {
                         )
                     )
 
-                Text("已经坐了 \(sittingMinutes) 分钟，给身体一点活动的时间")
+                Text(L10n.fmt("fullscreen.body_fmt", sittingMinutes))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.72))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
 
                 Button(action: onDismiss) {
-                    Text("我已经站起来了")
+                    Text(L10n.text("fullscreen.dismiss_button"))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.black.opacity(0.88))
                         .padding(.horizontal, 34)

@@ -7,4 +7,5 @@ DerivedData/
 *.xcworkspace
 .DS_Store
 screenshots/*.mov
+*.profraw
 

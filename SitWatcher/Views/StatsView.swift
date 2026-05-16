@@ -5,6 +5,8 @@ struct StatsView: View {
     let interruptCount: Int
     let focusSeconds: TimeInterval
 
+    @ObservedObject private var localizationSettings = Settings.shared
+
     private let mint = Color(red: 0.22, green: 0.98, blue: 0.62)
     private let peach = Color(red: 1.0, green: 0.55, blue: 0.45)
     private let violet = Color(red: 0.68, green: 0.55, blue: 1.0)
@@ -13,12 +15,13 @@ struct StatsView: View {
         let hours = Int(focusSeconds) / 3600
         let mins = (Int(focusSeconds) % 3600) / 60
         if hours > 0 {
-            return "\(hours).\(mins / 6)h"
+            return L10n.fmt("stats.focus_hours_fmt", hours, mins / 6)
         }
-        return "\(mins)min"
+        return L10n.fmt("stats.focus_minutes_fmt", mins)
     }
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 6) {
                 Image(systemName: "sparkles")
@@ -30,7 +33,7 @@ struct StatsView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                Text("今日一览")
+                Text(L10n.text("stats.today"))
                     .font(.system(size: 12, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.white.opacity(0.88))
                 Spacer(minLength: 0)
@@ -39,19 +42,19 @@ struct StatsView: View {
             HStack(spacing: 8) {
                 statCard(
                     value: "\(restCount)",
-                    label: "已休息",
+                    label: L10n.text("stats.rest"),
                     icon: "cup.and.saucer.fill",
                     accent: mint
                 )
                 statCard(
                     value: "\(interruptCount)",
-                    label: "被打断",
+                    label: L10n.text("stats.interrupt"),
                     icon: "bolt.slash.fill",
                     accent: peach
                 )
                 statCard(
                     value: focusDisplay,
-                    label: "专注时长",
+                    label: L10n.text("stats.focus"),
                     icon: "timer",
                     accent: violet
                 )

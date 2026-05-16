@@ -23,9 +23,9 @@ final class ReminderEscalatorTests: XCTestCase {
         super.tearDown()
     }
 
-    func testStartBeginsAtL1() {
+    func testStartBeginsAtL2Floating() {
         escalator.start()
-        XCTAssertEqual(state.reminderLevel, .l1)
+        XCTAssertEqual(state.reminderLevel, .l2)
     }
 
     func testEscalatesToL2() {

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ControlButtonsView: View {
     let isPaused: Bool
+    @ObservedObject private var localizationSettings = Settings.shared
+
     var onPauseToggle: () -> Void
     var onSkip: () -> Void
     var onReset: () -> Void
@@ -11,22 +13,23 @@ struct ControlButtonsView: View {
     private let peach = Color(red: 1.0, green: 0.55, blue: 0.45)
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         HStack(spacing: 8) {
             controlButton(
                 icon: isPaused ? "play.fill" : "pause.fill",
-                label: isPaused ? "继续" : "暂停",
+                label: isPaused ? L10n.text("controls.resume") : L10n.text("controls.pause"),
                 style: .accent,
                 action: onPauseToggle
             )
             controlButton(
                 icon: "forward.end.fill",
-                label: "跳过",
+                label: L10n.text("controls.skip"),
                 style: .softCyan,
                 action: onSkip
             )
             controlButton(
                 icon: "arrow.counterclockwise",
-                label: "重置",
+                label: L10n.text("controls.reset"),
                 style: .softPeach,
                 action: onReset
             )

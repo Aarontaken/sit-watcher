@@ -11,7 +11,7 @@ final class NotificationManager {
     func sendReminder(minutes: Int, playSound: Bool = true) {
         let content = UNMutableNotificationContent()
         content.title = "SitWatcher"
-        content.body = "已经坐了 \(minutes) 分钟了，起来活动一下吧"
+        content.body = L10n.fmt("notification.body_fmt", minutes)
         content.sound = playSound ? .default : nil
 
         let request = UNNotificationRequest(

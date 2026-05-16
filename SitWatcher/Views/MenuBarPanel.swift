@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarPanel: View {
     @ObservedObject var state: AppState
+    @ObservedObject private var localizationSettings = Settings.shared
     var onPauseToggle: () -> Void
     var onSkip: () -> Void
     var onReset: () -> Void
@@ -11,6 +12,7 @@ struct MenuBarPanel: View {
     var onQuit: () -> Void
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         VStack(spacing: 0) {
             header
             timerSection
@@ -32,7 +34,7 @@ struct MenuBarPanel: View {
                 Text("SitWatcher")
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(SitWatcherPanelChrome.titleGradient)
-                Text("久坐也要透口气 ✨")
+                Text(L10n.text("menu.tagline"))
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.52))
             }
@@ -106,10 +108,10 @@ struct MenuBarPanel: View {
 
     private var footer: some View {
         HStack(spacing: 6) {
-            footerItem(title: "设置", systemImage: "gearshape", action: onOpenSettings)
-            footerItem(title: "测试", systemImage: "waveform.path.ecg", action: onTestReminder)
-            footerItem(title: "更新", systemImage: "arrow.triangle.2.circlepath", action: onCheckForUpdates)
-            footerItem(title: "退出", systemImage: "rectangle.portrait.and.arrow.right", action: onQuit)
+            footerItem(title: L10n.text("footer.settings"), systemImage: "gearshape", action: onOpenSettings)
+            footerItem(title: L10n.text("footer.test"), systemImage: "waveform.path.ecg", action: onTestReminder)
+            footerItem(title: L10n.text("footer.updates"), systemImage: "arrow.triangle.2.circlepath", action: onCheckForUpdates)
+            footerItem(title: L10n.text("footer.quit"), systemImage: "rectangle.portrait.and.arrow.right", action: onQuit)
         }
         .font(.system(size: 10.5, weight: .medium))
         .padding(.horizontal, 10)

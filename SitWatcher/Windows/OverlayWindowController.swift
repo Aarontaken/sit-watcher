@@ -38,6 +38,8 @@ final class OverlayWindowController {
                 onDismiss()
             }
         )
+        .environment(\.locale, Settings.shared.localizationLocale)
+        .id(Settings.shared.uiLanguage.rawValue)
 
         let panel = ClickablePanel(
             contentRect: screen.frame,

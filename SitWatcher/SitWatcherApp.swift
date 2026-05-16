@@ -33,23 +33,27 @@ struct ContentPanel: View {
     private var coordinator: AppCoordinator { AppCoordinator.shared }
 
     var body: some View {
-        if appState.showSettings {
-            SettingsView(
-                settings: settings,
-                onBack: { appState.showSettings = false }
-            )
-        } else {
-            MenuBarPanel(
-                state: appState,
-                onPauseToggle: { coordinator.togglePause() },
-                onSkip: { coordinator.skip() },
-                onReset: { coordinator.reset() },
-                onTestReminder: { coordinator.testReminder() },
-                onOpenSettings: { appState.showSettings = true },
-                onCheckForUpdates: { updater.checkForUpdates(nil) },
-                onQuit: { NSApplication.shared.terminate(nil) }
-            )
+        Group {
+            if appState.showSettings {
+                SettingsView(
+                    settings: settings,
+                    onBack: { appState.showSettings = false }
+                )
+            } else {
+                MenuBarPanel(
+                    state: appState,
+                    onPauseToggle: { coordinator.togglePause() },
+                    onSkip: { coordinator.skip() },
+                    onReset: { coordinator.reset() },
+                    onTestReminder: { coordinator.testReminder() },
+                    onOpenSettings: { appState.showSettings = true },
+                    onCheckForUpdates: { updater.checkForUpdates(nil) },
+                    onQuit: { NSApplication.shared.terminate(nil) }
+                )
+            }
         }
+        .environment(\.locale, settings.localizationLocale)
+        .id(settings.uiLanguage.rawValue)
     }
 }
 

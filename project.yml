@@ -1,6 +1,10 @@
 name: SitWatcher
 options:
   bundleIdPrefix: com.sitwatcher
+  developmentLanguage: en
+  knownRegions:
+    - en
+    - zh-Hans
   deploymentTarget:
     macOS: "14.0"
   xcodeVersion: "15.0"
@@ -51,3 +55,5 @@ targets:
       base:
         BUNDLE_LOADER: "$(TEST_HOST)"
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SitWatcher.app/Contents/MacOS/SitWatcher"
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.sitwatcher.app.tests

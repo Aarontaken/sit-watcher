@@ -3,15 +3,19 @@ import XCTest
 
 final class SettingsTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        let defaults = UserDefaults(suiteName: "test-settings")!
-        defaults.removePersistentDomain(forName: "test-settings")
-        Settings.shared = Settings(defaults: defaults)
+    private let suiteDefaultsName = "test-settings-default-values"
+
+    override func tearDown() {
+        UserDefaults(suiteName: suiteDefaultsName)?.removePersistentDomain(forName: suiteDefaultsName)
+        super.tearDown()
     }
 
     func testDefaultValues() {
-        let s = Settings.shared
+        let defaults = UserDefaults(suiteName: suiteDefaultsName)!
+        defaults.removePersistentDomain(forName: suiteDefaultsName)
+
+        let s = Settings(defaults: defaults)
+
         XCTAssertEqual(s.reminderInterval, 30 * 60)
         XCTAssertEqual(s.l2Delay, 2 * 60)
         XCTAssertEqual(s.l3Delay, 2 * 60)
@@ -19,19 +23,23 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(s.mouseMovementThreshold, 10.0)
         XCTAssertTrue(s.soundEnabled)
         XCTAssertFalse(s.launchAtLogin)
+        XCTAssertEqual(s.uiLanguage, .system)
     }
 
     func testPersistence() {
-        let defaults = UserDefaults(suiteName: "test-persistence")!
-        defaults.removePersistentDomain(forName: "test-persistence")
+        let persistenceName = "test-persistence"
+        let defaults = UserDefaults(suiteName: persistenceName)!
+        defaults.removePersistentDomain(forName: persistenceName)
+        defer { defaults.removePersistentDomain(forName: persistenceName) }
+
         let s = Settings(defaults: defaults)
         s.reminderInterval = 45 * 60
         s.soundEnabled = false
+        s.uiLanguage = .english
 
         let s2 = Settings(defaults: defaults)
         XCTAssertEqual(s2.reminderInterval, 45 * 60)
         XCTAssertFalse(s2.soundEnabled)
-
-        defaults.removePersistentDomain(forName: "test-persistence")
+        XCTAssertEqual(s2.uiLanguage, .english)
     }
 }

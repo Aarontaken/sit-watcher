@@ -16,17 +16,20 @@ struct FloatingReminderView: View {
     @StateObject private var figureTicker = StretchFigureTicker()
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
 
+    @ObservedObject private var localizationSettings = Settings.shared
+
     private let accentMint = Color(red: 0.22, green: 0.98, blue: 0.62)
     private let accentCyan = Color(red: 0.12, green: 0.78, blue: 1.0)
     private let accentPeach = Color(red: 1.0, green: 0.55, blue: 0.45)
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         VStack(spacing: 20) {
             StretchReminderHeroFigure(ticker: figureTicker, size: 76)
                 .padding(.top, 4)
 
             VStack(spacing: 8) {
-                Text("该站起来了！")
+                Text(L10n.text("floating.title"))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(
                         LinearGradient(
@@ -36,7 +39,7 @@ struct FloatingReminderView: View {
                         )
                     )
 
-                Text("你已经连续坐了 \(sittingMinutes) 分钟")
+                Text(L10n.fmt("floating.body_fmt", sittingMinutes))
                     .font(.system(size: 13))
                     .foregroundStyle(Color.white.opacity(0.68))
                     .multilineTextAlignment(.center)
@@ -44,9 +47,11 @@ struct FloatingReminderView: View {
 
             HStack(spacing: 10) {
                 Button(action: onConfirm) {
-                    Text("好的，我去活动")
+                    Text(L10n.text("floating.confirm_move"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.black.opacity(0.88))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                         .background(
@@ -63,9 +68,11 @@ struct FloatingReminderView: View {
 
                 if canSnooze {
                     Button(action: onSnooze) {
-                        Text("稍后 5 分钟")
+                        Text(L10n.text("floating.snooze_fixed"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(Color.white.opacity(0.82))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
                             .background(

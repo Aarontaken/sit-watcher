@@ -13,9 +13,9 @@ struct SettingsView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 settingCard(
-                    title: "久坐提醒间隔",
-                    subtitle: "每隔多久提醒你站起来",
-                    value: "\(Int(settings.reminderInterval / 60)) 分钟"
+                    title: L10n.text("settings.reminder_interval.title"),
+                    subtitle: L10n.text("settings.reminder_interval.subtitle"),
+                    value: L10n.fmt("settings.fmt.minutes", Int(settings.reminderInterval / 60))
                 ) {
                     Slider(
                         value: Binding(
@@ -29,9 +29,9 @@ struct SettingsView: View {
                 }
 
                 settingCard(
-                    title: "全屏提醒延迟",
-                    subtitle: "忽略浮窗多久后升级为全屏覆盖",
-                    value: "\(Int(settings.l3Delay / 60)) 分钟"
+                    title: L10n.text("settings.fullscreen_delay.title"),
+                    subtitle: L10n.text("settings.fullscreen_delay.subtitle"),
+                    value: L10n.fmt("settings.fmt.minutes", Int(settings.l3Delay / 60))
                 ) {
                     Slider(
                         value: Binding(
@@ -45,9 +45,9 @@ struct SettingsView: View {
                 }
 
                 settingCard(
-                    title: "离开检测时间",
-                    subtitle: "多久没操作视为你已离开座位",
-                    value: "\(Int(settings.idleThreshold / 60)) 分钟"
+                    title: L10n.text("settings.idle.title"),
+                    subtitle: L10n.text("settings.idle.subtitle"),
+                    value: L10n.fmt("settings.fmt.minutes", Int(settings.idleThreshold / 60))
                 ) {
                     Slider(
                         value: Binding(
@@ -61,9 +61,9 @@ struct SettingsView: View {
                 }
 
                 settingCard(
-                    title: "鼠标灵敏度",
-                    subtitle: "低于此距离的鼠标移动会被忽略",
-                    value: "\(Int(settings.mouseMovementThreshold)) px"
+                    title: L10n.text("settings.mouse.title"),
+                    subtitle: L10n.text("settings.mouse.subtitle"),
+                    value: L10n.fmt("settings.fmt.pixels", Int(settings.mouseMovementThreshold))
                 ) {
                     Slider(
                         value: Binding(
@@ -80,8 +80,10 @@ struct SettingsView: View {
 
                 switchesCard
 
+                languageCard
+
                 Button(action: onBack) {
-                    Text("完成")
+                    Text(L10n.text("settings.done"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Color.black.opacity(0.88))
                         .frame(maxWidth: .infinity)
@@ -114,8 +116,8 @@ struct SettingsView: View {
     private var switchesCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             switchRow(
-                title: "提示音",
-                subtitle: "到点时播放简短提示（跟系统音量）",
+                title: L10n.text("settings.sound.title"),
+                subtitle: L10n.text("settings.sound.subtitle"),
                 isOn: Binding(
                     get: { settings.soundEnabled },
                     set: { settings.soundEnabled = $0 }
@@ -129,8 +131,8 @@ struct SettingsView: View {
                 .padding(.trailing, 4)
 
             switchRow(
-                title: "开机自启动",
-                subtitle: "登录后自动在菜单栏启动",
+                title: L10n.text("settings.launch_at_login.title"),
+                subtitle: L10n.text("settings.launch_at_login.subtitle"),
                 isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { settings.launchAtLogin = $0 }
@@ -159,6 +161,66 @@ struct SettingsView: View {
         }
     }
 
+    private var languageCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(L10n.text("settings.language.title"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.92))
+                Text(L10n.text("settings.language.subtitle"))
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.white.opacity(0.48))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 4) {
+                ForEach(UIAppLanguage.allCases) { lang in
+                    languageSegmentButton(lang: lang, isSelected: settings.uiLanguage == lang) {
+                        settings.uiLanguage = lang
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background {
+            SitWatcherPanelChrome.embossedCard(cornerRadius: 12)
+        }
+    }
+
+    private func languageSegmentButton(
+        lang: UIAppLanguage,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(lang.pickerCaption)
+                .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+                .foregroundStyle(Color.white.opacity(isSelected ? 0.98 : 0.78))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 4)
+                .background {
+                    Group {
+                        if isSelected {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(Color.white.opacity(0.16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .strokeBorder(mint.opacity(0.45), lineWidth: 1)
+                                )
+                        }
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+        .accessibilityLabel(lang.pickerCaption)
+    }
+
     private func switchRow(title: String, subtitle: String, isOn: Binding<Bool>) -> some View {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
@@ -184,7 +246,7 @@ struct SettingsView: View {
     private var header: some View {
         HStack(alignment: .center, spacing: 12) {
             Button(action: onBack) {
-                Label("返回", systemImage: "chevron.backward")
+                Label(L10n.text("settings.back"), systemImage: "chevron.backward")
                     .font(.system(size: 12, weight: .semibold))
                     .labelStyle(.titleAndIcon)
                     .foregroundStyle(Color.white.opacity(0.78))
@@ -195,10 +257,10 @@ struct SettingsView: View {
             .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("设置")
+                Text(L10n.text("settings.window.title"))
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(SitWatcherPanelChrome.titleGradient)
-                Text("按你的节奏改提醒")
+                Text(L10n.text("settings.window.subtitle"))
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.52))
             }

@@ -5,6 +5,8 @@ struct TimerRingView: View {
     let formattedTime: String
     let ringSize: CGFloat
 
+    @ObservedObject private var localizationSettings = Settings.shared
+
     private let lineWidth: CGFloat = 8
 
     private let accentMint = Color(red: 0.22, green: 0.98, blue: 0.62)
@@ -12,6 +14,7 @@ struct TimerRingView: View {
     private let accentPeach = Color(red: 1.0, green: 0.55, blue: 0.45)
 
     var body: some View {
+        let _ = localizationSettings.uiLanguage
         ZStack {
             Circle()
                 .stroke(Color.white.opacity(0.1), lineWidth: lineWidth)
@@ -54,7 +57,7 @@ struct TimerRingView: View {
                     )
                     .monospacedDigit()
 
-                Text("剩余时间")
+                Text(L10n.text("timer.remaining"))
                     .font(.system(size: ringSize * 0.08, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.45))
             }

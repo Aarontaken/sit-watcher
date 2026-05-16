@@ -45,6 +45,24 @@ final class Settings: ObservableObject {
         }
     }
 
+    @Published var uiLanguage: UIAppLanguage {
+        didSet {
+            defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
+        }
+    }
+
+    /// Used for SwiftUI `\\.locale` + `String(localized:bundle:locale:)` — always concrete (never `nil`).
+    var localizationLocale: Locale {
+        switch uiLanguage {
+        case .system:
+            Locale.autoupdatingCurrent
+        case .english:
+            Locale(identifier: "en")
+        case .simplifiedChinese:
+            Locale(identifier: "zh-Hans")
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -56,6 +74,7 @@ final class Settings: ObservableObject {
             "mouseMovementThreshold": 10.0,
             "soundEnabled": true,
             "launchAtLogin": false,
+            "uiLanguage": UIAppLanguage.system.rawValue,
         ])
 
         let interval = defaults.double(forKey: "reminderInterval")
@@ -76,12 +95,16 @@ final class Settings: ObservableObject {
         self.soundEnabled = defaults.bool(forKey: "soundEnabled")
         self.launchAtLogin = defaults.bool(forKey: "launchAtLogin")
 
+        let langRaw = defaults.string(forKey: "uiLanguage") ?? UIAppLanguage.system.rawValue
+        self.uiLanguage = UIAppLanguage(rawValue: langRaw) ?? .system
+
         defaults.set(reminderInterval, forKey: "reminderInterval")
         defaults.set(l2Delay, forKey: "l2Delay")
         defaults.set(l3Delay, forKey: "l3Delay")
         defaults.set(idleThreshold, forKey: "idleThreshold")
         defaults.set(mouseMovementThreshold, forKey: "mouseMovementThreshold")
         defaults.set(soundEnabled, forKey: "soundEnabled")
+        defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
     }
 
     private func updateLaunchAtLogin() {

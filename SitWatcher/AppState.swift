@@ -45,9 +45,12 @@ final class AppState: ObservableObject {
 
     var statusLabel: String {
         switch timerPhase {
-        case .running: return reminderLevel == .none ? "专注中" : "提醒中"
-        case .paused: return "已暂停"
-        case .idle: return "已离开"
+        case .running:
+            return reminderLevel == .none ? L10n.text("status.focusing") : L10n.text("status.reminding")
+        case .paused:
+            return L10n.text("status.paused")
+        case .idle:
+            return L10n.text("status.away")
         }
     }
 

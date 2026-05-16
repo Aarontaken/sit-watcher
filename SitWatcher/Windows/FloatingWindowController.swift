@@ -28,6 +28,8 @@ final class FloatingWindowController {
                 onSnooze()
             }
         )
+        .environment(\.locale, Settings.shared.localizationLocale)
+        .id(Settings.shared.uiLanguage.rawValue)
 
         let hostingView = NSHostingView(rootView: view)
         let panelSize = NSSize(
