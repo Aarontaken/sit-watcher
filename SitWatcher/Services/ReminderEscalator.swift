@@ -37,8 +37,11 @@ final class ReminderEscalator {
         guard state.reminderLevel == .l2 else { return }
 
         escalationTimer = Timer.scheduledTimer(withTimeInterval: settings.l3Delay, repeats: false) { [weak self] _ in
-            self?.setLevel(.l3)
-            self?.state.interruptCount += 1
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.setLevel(.l3)
+                self.state.interruptCount += 1
+            }
         }
     }
 }

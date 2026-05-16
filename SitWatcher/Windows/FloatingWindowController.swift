@@ -30,15 +30,21 @@ final class FloatingWindowController {
         )
 
         let hostingView = NSHostingView(rootView: view)
-        hostingView.setFrameSize(hostingView.fittingSize)
+        let panelSize = NSSize(
+            width: FloatingReminderPanelMetrics.width,
+            height: FloatingReminderPanelMetrics.height
+        )
+        hostingView.setFrameSize(panelSize)
 
         let panel = ClickablePanel(
-            contentRect: NSRect(origin: .zero, size: hostingView.fittingSize),
+            contentRect: NSRect(origin: .zero, size: panelSize),
             styleMask: [.nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
         panel.contentView = hostingView
+        panel.contentMinSize = panelSize
+        panel.contentMaxSize = panelSize
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.isFloatingPanel = true

@@ -63,17 +63,37 @@ cp -R "$BUILD_DIR/Install.app" "$DMG_DIR/Install.app"
 DMG_PATH="$BUILD_DIR/$DMG_NAME.dmg"
 rm -f "$DMG_PATH"
 
-create-dmg \
-  --volname "$APP_NAME" \
-  --window-pos 200 120 \
-  --window-size 600 400 \
-  --icon-size 100 \
-  --icon "Install.app" 150 200 \
-  --icon "SitWatcher.app" 300 200 \
-  --app-drop-link 450 200 \
-  --hide-extension "Install.app" \
-  "$DMG_PATH" \
-  "$DMG_DIR"
+# create-dmg 有时会碰到 hdiutil "资源 busy" 卸载失败；稍等并重试仍可得到 DMG。
+sync
+sleep 2
 
-echo "==> DMG created at: $DMG_PATH"
+dmg_created=0
+for attempt in 1 2 3 4 5; do
+  rm -f "$DMG_PATH"
+  echo "==> create-dmg (attempt $attempt/5)..."
+  if create-dmg \
+    --volname "$APP_NAME" \
+    --window-pos 200 120 \
+    --window-size 600 400 \
+    --icon-size 100 \
+    --icon "Install.app" 150 200 \
+    --icon "SitWatcher.app" 300 200 \
+    --app-drop-link 450 200 \
+    --hide-extension "Install.app" \
+    "$DMG_PATH" \
+    "$DMG_DIR"
+  then
+    dmg_created=1
+    break
+  fi
+  echo "[WARN] create-dmg failed, waiting before retry..."
+  sleep 15
+done
+
+if [[ "$dmg_created" -eq 1 ]]; then
+  echo "==> DMG created at: $DMG_PATH"
+else
+  echo "[WARN] DMG was not created after retries (Release .app below is fine)."
+fi
+echo "==> Release app: $APP_PATH"
 echo "==> Done!"

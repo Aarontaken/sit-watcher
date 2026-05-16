@@ -53,22 +53,70 @@ struct ContentPanel: View {
     }
 }
 
+private struct StretchReminderGlyph: View {
+    let tint: Color
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @StateObject private var ticker = StretchFigureTicker()
+
+    var body: some View {
+        Group {
+            if reduceMotion {
+                Image(systemName: "figure.flexibility")
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(tint)
+            } else {
+                Image(systemName: ticker.useFlexibility ? "figure.flexibility" : "figure.cooldown")
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(tint)
+            }
+        }
+        .onAppear {
+            if reduceMotion == false {
+                ticker.start()
+            }
+        }
+        .onDisappear {
+            ticker.stop()
+        }
+    }
+}
+
 struct MenuBarLabel: View {
     @ObservedObject private var appState = AppCoordinator.shared.appState
 
     var body: some View {
-        Image(systemName: iconName)
-            .symbolEffect(.pulse, options: .repeating, isActive: appState.reminderLevel == .l1)
+        Group {
+            if shouldAnimateStretch {
+                StretchReminderGlyph(tint: menuBarTint)
+            } else {
+                Image(systemName: "figure.seated.side.right")
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(menuBarTint)
+            }
+        }
+        .frame(width: 18, height: 18)
+        .fixedSize()
+        .accessibilityLabel("SitWatcher")
     }
 
-    private var iconName: String {
-        switch (appState.timerPhase, appState.reminderLevel) {
-        case (.paused, _): return "figure.stand"
-        case (.idle, _): return "figure.stand"
-        case (_, .none): return "figure.stand"
-        case (_, .l1): return "figure.walk"
-        case (_, .l2): return "figure.walk"
-        case (_, .l3): return "figure.run"
+    private var shouldAnimateStretch: Bool {
+        appState.reminderLevel != .none
+    }
+
+    /// Menu-bar extras stay template/monochrome; escalate urgency with tint only.
+    private var menuBarTint: Color {
+        if appState.timerPhase == .paused || appState.timerPhase == .idle {
+            return Color.secondary
+        }
+        switch appState.reminderLevel {
+        case .none:
+            return Color.primary
+        case .l1:
+            return Color.primary
+        case .l2:
+            return Color.orange
+        case .l3:
+            return Color.red
         }
     }
 }

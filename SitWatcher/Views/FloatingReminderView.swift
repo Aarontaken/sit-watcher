@@ -1,35 +1,62 @@
 import SwiftUI
 
+/// Locks `FloatingWindowController` frame (must cover hero slot + possible wrapped subtitle).
+enum FloatingReminderPanelMetrics {
+    static let width: CGFloat = 328
+    /// Tight to content + small slack for wrapped subtitle; avoids large bottom gap without pushing buttons down.
+    static let height: CGFloat = 348
+}
+
 struct FloatingReminderView: View {
     let sittingMinutes: Int
     let canSnooze: Bool
     var onConfirm: () -> Void
     var onSnooze: () -> Void
 
+    @StateObject private var figureTicker = StretchFigureTicker()
+    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+
+    private let accentMint = Color(red: 0.22, green: 0.98, blue: 0.62)
+    private let accentCyan = Color(red: 0.12, green: 0.78, blue: 1.0)
+    private let accentPeach = Color(red: 1.0, green: 0.55, blue: 0.45)
+
     var body: some View {
         VStack(spacing: 20) {
-            Text("🧍‍♂️")
-                .font(.system(size: 48))
+            StretchReminderHeroFigure(ticker: figureTicker, size: 76)
                 .padding(.top, 4)
 
             VStack(spacing: 8) {
                 Text("该站起来了！")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white, accentMint.opacity(0.95)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
 
                 Text("你已经连续坐了 \(sittingMinutes) 分钟")
                     .font(.system(size: 13))
-                    .foregroundColor(Color.white.opacity(0.6))
+                    .foregroundStyle(Color.white.opacity(0.68))
+                    .multilineTextAlignment(.center)
             }
 
             HStack(spacing: 10) {
                 Button(action: onConfirm) {
                     Text("好的，我去活动")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.black.opacity(0.88))
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
-                        .background(Color.green)
+                        .background(
+                            LinearGradient(
+                                colors: [accentMint, accentCyan.opacity(0.92)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .shadow(color: accentMint.opacity(0.42), radius: 8, y: 3)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
@@ -37,20 +64,93 @@ struct FloatingReminderView: View {
                 if canSnooze {
                     Button(action: onSnooze) {
                         Text("稍后 5 分钟")
-                            .font(.system(size: 13))
-                            .foregroundColor(Color.white.opacity(0.7))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color.white.opacity(0.82))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.white.opacity(0.12))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(
+                                                LinearGradient(
+                                                    colors: [
+                                                        accentCyan.opacity(0.45),
+                                                        accentPeach.opacity(0.35)
+                                                    ],
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                ),
+                                                lineWidth: 1
+                                            )
+                                    )
+                            )
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
         .padding(24)
-        .frame(width: 320)
-        .background(Color(nsColor: NSColor(red: 0.12, green: 0.12, blue: 0.14, alpha: 1)))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .frame(
+            width: FloatingReminderPanelMetrics.width,
+            height: FloatingReminderPanelMetrics.height,
+            alignment: .top
+        )
+        .background {
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.07, green: 0.05, blue: 0.20),
+                        Color(red: 0.04, green: 0.09, blue: 0.16)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                RadialGradient(
+                    colors: [
+                        accentMint.opacity(0.24),
+                        accentCyan.opacity(0.10),
+                        accentPeach.opacity(0.04),
+                        Color.clear
+                    ],
+                    center: .topLeading,
+                    startRadius: 8,
+                    endRadius: 240
+                )
+
+                RadialGradient(
+                    colors: [accentPeach.opacity(0.08), Color.clear],
+                    center: .bottomTrailing,
+                    startRadius: 4,
+                    endRadius: 160
+                )
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                accentMint.opacity(0.75),
+                                accentCyan.opacity(0.5),
+                                accentPeach.opacity(0.65)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
+            )
+        }
+        .onAppear {
+            if accessibilityReduceMotion == false {
+                figureTicker.start()
+            }
+        }
+        .onDisappear {
+            figureTicker.stop()
+        }
     }
 }

@@ -101,7 +101,9 @@ final class AppCoordinator {
 
     func testReminder() {
         timerEngine.stop()
-        escalator.start()
+        DispatchQueue.main.async { [weak self] in
+            self?.escalator.start()
+        }
     }
 
     func reset() {
