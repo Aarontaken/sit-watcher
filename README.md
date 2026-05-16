@@ -16,13 +16,15 @@
 <table>
   <tr>
     <td align="center"><img src="screenshots/panel.png" width="220" /><br />菜单栏面板 · 久坐统计</td>
-    <td align="center"><img src="screenshots/floating-reminder.png" width="280" /><br />浮窗久坐提醒</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo.gif" width="360" alt="浮窗久坐提醒动图演示" /><br />浮窗久坐提醒 · 动图演示</td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/fullscreen-overlay.png" width="400" /><br />全屏久坐提醒</td>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo.gif" width="400" alt="全屏久坐提醒动图演示" /><br />全屏久坐提醒 · 动图演示</td>
     <td align="center"><img src="screenshots/settings.png" width="220" /><br />设置 · 间隔与延迟</td>
   </tr>
 </table>
+
+<sub>浮窗动图见 <code>floating-reminder-demo.gif</code>（前约 1 秒）；静帧仍可用 <code>floating-reminder.png</code>。全屏动图见 <code>fullscreen-overlay-demo.gif</code>（前约 2 秒）；静帧见 <code>fullscreen-overlay.png</code>。源录像 <code>screenshots/*.mov</code> 仅本地使用，已 <code>.gitignore</code>。更新录像后可执行 <code>bash scripts/regenerate_floating_demo_gif.sh</code> 与 <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>（需安装 ffmpeg）。</sub>
 
 ## 功能概要
 
