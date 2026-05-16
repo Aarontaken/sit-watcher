@@ -6,6 +6,20 @@
 
 SitWatcher is a small open‑source utility that runs in the **macOS menu bar** to combat **sedentary / sitting too long**. When the countdown ends it shows an **ambient floating reminder** first (snooze or confirm). If you ignore it for too long, it can escalate to a **full‑screen takeover** until you confirm you actually got up—which helps reset long stretches at the desk.
 
+### Risks of sitting too long
+
+Staying seated for extended periods commonly contributes to neck and lower‑back ache, poorer circulation in the legs, stiff shoulders, eye strain, sluggish metabolism, and low energy—all of which, over years, chip away at both health and how you feel at work.
+
+### Why get up about every 30 minutes?
+
+Standing up regularly to walk and stretch improves circulation, relaxes tight muscles, rests your eyes, brings focus back quickly, eases stress, helps you steer clear of burnout and creeping “sub‑health” malaise, and makes steadier routines easier—without heroic effort once the habit sticks.
+
+### A note from the project
+
+SitWatcher exists to nudge busy people toward balance: care for your body, keep work effective, live a healthier day.
+
+<sub>General wellness guidance only—not a substitute for professional medical advice.</sub>
+
 ## How it works
 
 1. **Countdown**: intervals are configurable for how often you’d like “time to move” cues.  
