@@ -74,8 +74,8 @@
     "footer.test" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Test" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "测试" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preview" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "预览" } }
       }
     },
     "footer.updates" : {

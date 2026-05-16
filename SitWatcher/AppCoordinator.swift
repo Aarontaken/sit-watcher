@@ -42,6 +42,7 @@ final class AppCoordinator {
                     self.floatingWindow.close()
                     self.overlayWindow.close()
                 case .l2:
+                    ReminderAudio.playDeadlineCueIfEnabled(settings: self.settings)
                     self.floatingWindow.show(
                         sittingMinutes: minutes,
                         canSnooze: !self.appState.snoozedThisCycle,
@@ -50,6 +51,7 @@ final class AppCoordinator {
                     )
                 case .l3:
                     self.floatingWindow.close()
+                    ReminderAudio.playDeadlineCueIfEnabled(settings: self.settings)
                     self.overlayWindow.show(sittingMinutes: minutes) {
                         self.confirmRest()
                     }
