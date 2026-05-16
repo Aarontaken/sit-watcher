@@ -4,53 +4,45 @@ set -e
 REPO="Aarontaken/sit-watcher"
 APP_NAME="SitWatcher"
 
-# Determine version (latest by default, or specify e.g. curl ... install.sh | bash -s v1.0.4)
+# --- step 1: version ---
 VERSION="${1:-latest}"
 if [ "$VERSION" = "latest" ]; then
-    echo "Fetching latest version..."
-    VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    if [ -z "$VERSION" ]; then
-        echo "Error: could not determine latest version"
-        exit 1
-    fi
+    echo "==> Fetching latest version..."
+    VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
+        | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    [ -n "$VERSION" ] || { echo "Error: could not determine latest version"; exit 1; }
 fi
-VERSION_NUM="${VERSION#v}"
-echo "Version: $VERSION"
+echo "   version: $VERSION"
 
-# Download DMG
-DMG_URL="https://github.com/$REPO/releases/download/$VERSION/$APP_NAME.dmg"
+# --- step 2: download ---
+ZIP_URL="https://github.com/$REPO/releases/download/$VERSION/$APP_NAME-${VERSION_NUM}.zip"
 TMP_DIR=$(mktemp -d)
-DMG_PATH="$TMP_DIR/$APP_NAME.dmg"
+ZIP_PATH="$TMP_DIR/$APP_NAME.zip"
 
-echo "Downloading ${DMG_URL}..."
-curl -fsSL --progress-bar -o "$DMG_PATH" "$DMG_URL"
+echo "==> Downloading..."
+curl -fsSL --progress-bar -o "$ZIP_PATH" "$ZIP_URL"
 
-# Mount DMG
-echo "Mounting..."
-MOUNT_POINT="$TMP_DIR/mount"
-mkdir -p "$MOUNT_POINT"
-hdiutil attach -nobrowse -mountpoint "$MOUNT_POINT" "$DMG_PATH" > /dev/null
+# --- step 3: unzip ---
+echo "==> Extracting..."
+unzip -oq "$ZIP_PATH" -d "$TMP_DIR"
 
-# Remove old version
+# --- step 4: install ---
 if [ -d "/Applications/$APP_NAME.app" ]; then
-    echo "Removing old version..."
+    echo "==> Removing old version..."
     sudo rm -rf "/Applications/$APP_NAME.app"
 fi
 
-# Copy to /Applications
-echo "Installing to /Applications..."
-sudo cp -R "$MOUNT_POINT/$APP_NAME.app" "/Applications/"
+echo "==> Installing to /Applications..."
+sudo cp -R "$TMP_DIR/$APP_NAME.app" "/Applications/"
 sudo chown -R "$(whoami):staff" "/Applications/$APP_NAME.app"
 
-# Unmount
-hdiutil detach "$MOUNT_POINT" -quiet
-rm -rf "$TMP_DIR"
-
-# Launch
-echo "Launching..."
+# --- step 5: launch ---
+echo "==> Launching..."
 open "/Applications/$APP_NAME.app"
 
+# --- cleanup ---
+rm -rf "$TMP_DIR"
+
 echo ""
-echo "  SitWatcher $VERSION installed and running!"
-echo "  It lives in your menu bar (no Dock icon)."
+echo "  ✓ SitWatcher $VERSION installed and running"
 echo ""

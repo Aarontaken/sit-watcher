@@ -74,11 +74,20 @@ jobs:
           keep_files: true
           publish_branch: gh-pages
 
-      - name: Upload DMG to release
+      - name: Create zip for install script
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          VERSION_NUM="${VERSION#v}"
+          APP_PATH="build/SitWatcher.xcarchive/Products/Applications/SitWatcher.app"
+          ditto -c -k --keepParent "$APP_PATH" "build/SitWatcher-${VERSION_NUM}.zip"
+
+      - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          files: build/SitWatcher.dmg
+          files: |
+            build/SitWatcher.dmg
+            build/SitWatcher-*.zip
           fail_on_unmatched: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
