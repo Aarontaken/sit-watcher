@@ -1,5 +1,7 @@
 # SitWatcher · macOS 久坐提醒
 
+[**English README**](README.en.md)
+
 **SitWatcher** 是一款运行在 **Mac 菜单栏** 上的开源 **久坐提醒 / 久坐提示 / 起身提醒 / 站立提醒** 小工具：久坐倒计时结束后先弹出浮窗，可延后；若长时间不理会会升级为全屏遮罩，直到你确认「已经站起来」，帮你打断连续久坐。
 
 如果你在用 GitHub 搜索 **「久坐提醒」「久坐提示」「久坐」「起身提醒」「站立提醒」「菜单栏提醒」**，本项目就是这些关键词所指的一类工具——专治「一坐一下午忘了动」。
@@ -11,7 +13,7 @@
 3. **全屏**：若持续忽略浮窗，会在「全屏提醒延迟」到期后铺满屏幕强化提醒（仍为同一套久坐逻辑）。  
 4. **离开检测**：鼠标键盘长时间无操作时视为暂时离开，计时自动暂停，回来再继续。
 
-## 预览
+## 预览 · 中文界面
 
 <table>
   <tr>
@@ -24,7 +26,20 @@
   </tr>
 </table>
 
-<sub>浮窗动图见 <code>floating-reminder-demo.gif</code>（前约 1 秒）；静帧仍可用 <code>floating-reminder.png</code>。全屏动图见 <code>fullscreen-overlay-demo.gif</code>（前约 2 秒）；静帧见 <code>fullscreen-overlay.png</code>。源录像 <code>screenshots/*.mov</code> 仅本地使用，已 <code>.gitignore</code>。更新录像后可执行 <code>bash scripts/regenerate_floating_demo_gif.sh</code> 与 <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>（需安装 ffmpeg）。</sub>
+## Preview · English UI
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-en.png" width="220" /><br />Menu bar panel · stats</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-en.gif" width="360" alt="Floating reminder demo" /><br />Floating reminder</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-en.gif" width="400" alt="Full-screen reminder demo" /><br />Full-screen reminder</td>
+    <td align="center"><img src="screenshots/settings-en.png" width="220" /><br />Settings · intervals</td>
+  </tr>
+</table>
+
+<sub>中文演示动图：<code>floating-reminder-demo.gif</code>（≈1s，源 <code>弹窗视频.mov</code>）、<code>fullscreen-overlay-demo.gif</code>（≈2s，源 <code>全屏打断视频.mov</code>），执行 <code>bash scripts/regenerate_floating_demo_gif.sh</code> / <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>。<strong>英文</strong>资源均以 <code>-en</code> 结尾：动图 <code>floating-reminder-demo-en.gif</code> / <code>fullscreen-overlay-demo-en.gif</code>（各截取前 ≈1s，源 <code>弹窗录屏.mov</code> / <code>打断录屏.mov</code>），静帧 <code>panel-en.png</code> / <code>settings-en.png</code>；动图脚本 <code>bash scripts/regenerate_floating_demo_gif_en.sh</code> / <code>bash scripts/regenerate_fullscreen_demo_gif_en.sh</code>。<code>screenshots/*.mov</code> 仅本地留存，已由 <code>.gitignore</code> 忽略。需安装 ffmpeg。</sub>
 
 ## 功能概要
 
