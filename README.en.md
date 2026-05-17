@@ -31,6 +31,21 @@ For search / discovery (“menu bar posture timer”, “stand up reminder”) t
 
 ## Preview · English UI
 
+### Light appearance
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light-en.png" width="220" /><br />Menu bar panel · light</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light-en.gif" width="360" alt="Floating reminder · light demo" /><br />Floating reminder · ≈1s</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light-en.gif" width="400" alt="Full-screen reminder · light demo" /><br />Full-screen reminder · ≈1s</td>
+    <td align="center"><img src="screenshots/settings-light-en.png" width="220" /><br />Settings · light</td>
+  </tr>
+</table>
+
+### Dark appearance
+
 <table>
   <tr>
     <td align="center"><img src="screenshots/panel-en.png" width="220" /><br />Menu bar panel · stats</td>
@@ -47,6 +62,21 @@ For search / discovery (“menu bar posture timer”, “stand up reminder”) t
 <details>
 <summary><strong>Show Chinese UI previews</strong> (GIFs tuned for Zh strings)</summary>
 
+**Light**
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light.png" width="220" /><br />菜单栏面板 · 浅色</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light.gif" width="360" alt="Floating reminder Zh light" /><br />浮窗提醒 · 浅色</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light.gif" width="400" alt="Full-screen Zh light" /><br />全屏提醒 · 浅色</td>
+    <td align="center"><img src="screenshots/settings-light.png" width="220" /><br />设置 · 浅色</td>
+  </tr>
+</table>
+
+**Dark**
+
 <table>
   <tr>
     <td align="center"><img src="screenshots/panel.png" width="220" /><br />Menu bar panel</td>
@@ -60,7 +90,7 @@ For search / discovery (“menu bar posture timer”, “stand up reminder”) t
 
 </details>
 
-<sub>In‑repo English assets share the same <code>-en</code> naming for PNG / GIF demos. Scripts: <code>bash scripts/regenerate_floating_demo_gif_en.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif_en.sh</code> (<code>.mov</code> stays local/gitignored—need ffmpeg). Chinese demo GIF regeneration: <code>bash scripts/regenerate_floating_demo_gif.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>.</sub>
+<sub>Light-appearance GIFs: first ≈1s from <code>录屏*-浅色模式*.mov</code> — run <code>bash scripts/regenerate_light_mode_demo_gifs.sh</code>. Dark English / Chinese demos: <code>bash scripts/regenerate_floating_demo_gif_en.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif_en.sh</code> and Zh <code>bash scripts/regenerate_floating_demo_gif.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>. Source <code>.mov</code> stays local/gitignored — install ffmpeg.</sub>
 
 ## Features
 

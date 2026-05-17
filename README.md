@@ -27,7 +27,22 @@
 3. **全屏**：若持续忽略浮窗，会在「全屏提醒延迟」到期后铺满屏幕强化提醒（仍为同一套久坐逻辑）。  
 4. **离开检测**：鼠标键盘长时间无操作时视为暂时离开，计时自动暂停，回来再继续。
 
-## 预览 · 中文界面
+## 预览
+
+### 浅色界面（应用内设为浅色或与系统浅色一致）
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light.png" width="220" /><br />菜单栏面板 · 久坐统计 · 浅色</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light.gif" width="360" alt="浅色 · 浮窗久坐提醒动图演示" /><br />浮窗久坐提醒 · 浅色 · ≈1s</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light.gif" width="400" alt="浅色 · 全屏久坐提醒动图演示" /><br />全屏久坐提醒 · 浅色 · ≈1s</td>
+    <td align="center"><img src="screenshots/settings-light.png" width="220" /><br />设置 · 浅色</td>
+  </tr>
+</table>
+
+### 深色界面
 
 <table>
   <tr>
@@ -42,6 +57,21 @@
 
 ## Preview · English UI
 
+### Light appearance
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light-en.png" width="220" /><br />Menu bar panel · light</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light-en.gif" width="360" alt="Floating reminder · light demo" /><br />Floating reminder · ≈1s</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light-en.gif" width="400" alt="Full-screen reminder · light demo" /><br />Full-screen reminder · ≈1s</td>
+    <td align="center"><img src="screenshots/settings-light-en.png" width="220" /><br />Settings · light</td>
+  </tr>
+</table>
+
+### Dark appearance
+
 <table>
   <tr>
     <td align="center"><img src="screenshots/panel-en.png" width="220" /><br />Menu bar panel · stats</td>
@@ -53,7 +83,7 @@
   </tr>
 </table>
 
-<sub>中文演示动图：<code>floating-reminder-demo.gif</code>（≈1s，源 <code>弹窗视频.mov</code>）、<code>fullscreen-overlay-demo.gif</code>（≈2s，源 <code>全屏打断视频.mov</code>），执行 <code>bash scripts/regenerate_floating_demo_gif.sh</code> / <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>。<strong>英文</strong>资源均以 <code>-en</code> 结尾：动图 <code>floating-reminder-demo-en.gif</code> / <code>fullscreen-overlay-demo-en.gif</code>（各截取前 ≈1s，源 <code>弹窗录屏.mov</code> / <code>打断录屏.mov</code>），静帧 <code>panel-en.png</code> / <code>settings-en.png</code>；动图脚本 <code>bash scripts/regenerate_floating_demo_gif_en.sh</code> / <code>bash scripts/regenerate_fullscreen_demo_gif_en.sh</code>。<code>screenshots/*.mov</code> 仅本地留存，已由 <code>.gitignore</code> 忽略。需安装 ffmpeg。</sub>
+<sub><strong>浅色动图：</strong><code>-light</code>/<code>-light-en</code> 截取前 ≈1s，源录像 <code>录屏弹窗-浅色模式.mov</code>、<code>录屏全屏-浅色模式.mov</code>（英文 UI 后缀 <code>-en</code>），执行 <code>bash scripts/regenerate_light_mode_demo_gifs.sh</code>。<strong>深色：</strong><code>floating-reminder-demo.gif</code>（≈1s，源 <code>弹窗视频.mov</code>）、<code>fullscreen-overlay-demo.gif</code>（≈2s，源 <code>全屏打断视频.mov</code>），对应 <code>bash scripts/regenerate_floating_demo_gif.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>；英文深色动图：<code>regenerate_*_gif_en.sh</code>。<code>screenshots/*.mov</code> 仅本地留存，由 <code>.gitignore</code> 忽略。需安装 ffmpeg。</sub>
 
 ## 功能概要
 
