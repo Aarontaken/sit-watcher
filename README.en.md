@@ -88,7 +88,7 @@ Installs whatever the latest Release packages into Applications and launches Sit
 curl -fsSL https://cdn.jsdelivr.net/gh/Aarontaken/sit-watcher@master/install.sh | bash
 ```
 
-Raw GitHub (note the branch `**master**` here):
+Raw GitHub (note the branch **`master`** here):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Aarontaken/sit-watcher/master/install.sh | bash
@@ -103,7 +103,7 @@ brew install --cask sit-watcher
 
 ### 3) Manual
 
-Grab `SitWatcher.dmg` under [Releases](https://github.com/Aarontaken/sit-watcher/releases); mount → run `**Install.app**`.
+Grab `SitWatcher.dmg` under [Releases](https://github.com/Aarontaken/sit-watcher/releases); mount → run **`Install.app`**.
 
 Maintainers can sanity‑check downloader logic without spraying `/Applications` via `bash scripts/verify-install.sh` after editing `install.sh`.
 

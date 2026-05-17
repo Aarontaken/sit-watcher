@@ -82,7 +82,7 @@
 curl -fsSL https://cdn.jsdelivr.net/gh/Aarontaken/sit-watcher@master/install.sh | bash
 ```
 
-也可用 GitHub raw（分支名为 `**master**`，不要用 `main`）：
+也可用 GitHub raw（分支名为 **`master`**，不要用 `main`）：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Aarontaken/sit-watcher/master/install.sh | bash
@@ -95,7 +95,7 @@ brew tap Aarontaken/tap
 brew install --cask sit-watcher
 ```
 
-**3. 手动** — [Releases](https://github.com/Aarontaken/sit-watcher/releases) 下载 `SitWatcher.dmg`，双击挂载后用 `**Install.app`** 安装。
+**3. 手动** — [Releases](https://github.com/Aarontaken/sit-watcher/releases) 下载 `SitWatcher.dmg`，双击挂载后用 **`Install.app`** 安装。
 
 ---
 
