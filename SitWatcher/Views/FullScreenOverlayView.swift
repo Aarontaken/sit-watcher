@@ -6,6 +6,7 @@ struct FullScreenOverlayView: View {
 
     @StateObject private var figureTicker = StretchFigureTicker()
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     @ObservedObject private var localizationSettings = Settings.shared
 
@@ -16,12 +17,12 @@ struct FullScreenOverlayView: View {
     var body: some View {
         let _ = localizationSettings.uiLanguage
         ZStack {
-            Color.black.opacity(0.88)
+            Color.black.opacity(appearance.fullscreenScrimOpacity)
 
             RadialGradient(
                 colors: [
-                    accentMint.opacity(0.16),
-                    accentCyan.opacity(0.06),
+                    accentMint.opacity(appearance == .dark ? 0.16 : 0.12),
+                    accentCyan.opacity(appearance == .dark ? 0.06 : 0.05),
                     Color.clear
                 ],
                 center: .center,
@@ -30,7 +31,7 @@ struct FullScreenOverlayView: View {
             )
 
             RadialGradient(
-                colors: [accentPeach.opacity(0.08), Color.clear],
+                colors: [accentPeach.opacity(appearance == .dark ? 0.08 : 0.06), Color.clear],
                 center: UnitPoint(x: 0.15, y: 0.85),
                 startRadius: 20,
                 endRadius: 300
@@ -41,17 +42,11 @@ struct FullScreenOverlayView: View {
 
                 Text(L10n.text("fullscreen.title"))
                     .font(.system(size: 30, weight: .heavy, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.white, accentMint.opacity(0.95)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .foregroundStyle(appearance.fullscreenTitleGradient)
 
                 Text(L10n.fmt("fullscreen.body_fmt", sittingMinutes))
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.72))
+                    .foregroundStyle(appearance.fullscreenSubtitle)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
 
@@ -59,6 +54,7 @@ struct FullScreenOverlayView: View {
                     Text(L10n.text("fullscreen.dismiss_button"))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.black.opacity(0.88))
+                        .frame(minWidth: 220, minHeight: 46)
                         .padding(.horizontal, 34)
                         .padding(.vertical, 13)
                         .background(
@@ -74,6 +70,7 @@ struct FullScreenOverlayView: View {
                         )
                         .shadow(color: accentMint.opacity(0.45), radius: 16, y: 5)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .contentShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 8)

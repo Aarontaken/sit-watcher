@@ -33,6 +33,31 @@ struct ContentPanel: View {
     private var coordinator: AppCoordinator { AppCoordinator.shared }
 
     var body: some View {
+        SitWatcherAppearanceScope(stored: settings.uiPanelAppearance) {
+            AppearanceKeyedContent(
+                updater: updater,
+                settings: settings,
+                appState: appState,
+                coordinator: coordinator
+            )
+        }
+    }
+}
+
+private struct AppearanceKeyedContent: View {
+    let updater: SPUStandardUpdaterController
+    @ObservedObject var settings: Settings
+    @ObservedObject var appState: AppState
+    let coordinator: AppCoordinator
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// Omit language from `.id` so changing UI language doesn't replace this subtree (keeps ScrollView offset).
+    private var routingId: String {
+        "\(settings.uiPanelAppearance.rawValue)-\(settings.uiPanelAppearance.resolvedPalette(for: colorScheme).rawValue)"
+    }
+
+    var body: some View {
         Group {
             if appState.showSettings {
                 SettingsView(
@@ -53,7 +78,7 @@ struct ContentPanel: View {
             }
         }
         .environment(\.locale, settings.localizationLocale)
-        .id(settings.uiLanguage.rawValue)
+        .id(routingId)
     }
 }
 

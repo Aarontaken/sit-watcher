@@ -6,6 +6,7 @@ struct StatsView: View {
     let focusSeconds: TimeInterval
 
     @ObservedObject private var localizationSettings = Settings.shared
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     private let mint = Color(red: 0.22, green: 0.98, blue: 0.62)
     private let peach = Color(red: 1.0, green: 0.55, blue: 0.45)
@@ -35,7 +36,7 @@ struct StatsView: View {
                     )
                 Text(L10n.text("stats.today"))
                     .font(.system(size: 12, weight: .heavy, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.88))
+                    .foregroundStyle(appearance.primaryLabel.opacity(appearance == .dark ? 1.0 : 0.94))
                 Spacer(minLength: 0)
             }
 
@@ -69,35 +70,30 @@ struct StatsView: View {
                 .foregroundStyle(accent.opacity(0.9))
             Text(value)
                 .font(.system(size: 18, weight: .heavy, design: .rounded))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.white, accent.opacity(0.9)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
+                .foregroundStyle(appearance.statValueGradient(accent: accent))
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(Color.white.opacity(0.48))
+                .foregroundStyle(appearance.statLabelMuted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(0.07))
+                .fill(appearance.statCardBackdrop)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(
                             LinearGradient(
-                                colors: [accent.opacity(0.42), Color.white.opacity(0.08)],
+                                colors: [accent.opacity(appearance == .dark ? 0.42 : 0.35), appearance.statStrokeTerminal],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
                             lineWidth: 1
                         )
                 )
+                .shadow(color: appearance == .light ? Color.black.opacity(0.04) : Color.clear, radius: 4, y: 1)
         )
     }
 }

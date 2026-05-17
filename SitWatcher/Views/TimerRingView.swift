@@ -6,6 +6,7 @@ struct TimerRingView: View {
     let ringSize: CGFloat
 
     @ObservedObject private var localizationSettings = Settings.shared
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     private let lineWidth: CGFloat = 8
 
@@ -17,7 +18,7 @@ struct TimerRingView: View {
         let _ = localizationSettings.uiLanguage
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.1), lineWidth: lineWidth)
+                .stroke(appearance.timerTrack, lineWidth: lineWidth)
 
             Circle()
                 .trim(from: 0, to: CGFloat(min(progress, 1.0)))
@@ -31,13 +32,13 @@ struct TimerRingView: View {
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.linear(duration: 1), value: progress)
-                .shadow(color: accentMint.opacity(0.42), radius: 8, x: 0, y: 0)
-                .shadow(color: accentCyan.opacity(0.28), radius: 4, x: 0, y: 2)
+                .shadow(color: accentMint.opacity(appearance == .dark ? 0.42 : 0.22), radius: 8, x: 0, y: 0)
+                .shadow(color: accentCyan.opacity(appearance == .dark ? 0.28 : 0.14), radius: 4, x: 0, y: 2)
 
             RadialGradient(
                 colors: [
-                    accentMint.opacity(0.12),
-                    accentCyan.opacity(0.06),
+                    accentMint.opacity(appearance == .dark ? 0.12 : 0.08),
+                    accentCyan.opacity(appearance == .dark ? 0.06 : 0.04),
                     Color.clear
                 ],
                 center: .center,
@@ -50,7 +51,7 @@ struct TimerRingView: View {
                     .font(.system(size: ringSize * 0.24, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.white, accentMint.opacity(0.92)],
+                            colors: appearance.timerDigitsGradientColors,
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -59,7 +60,7 @@ struct TimerRingView: View {
 
                 Text(L10n.text("timer.remaining"))
                     .font(.system(size: ringSize * 0.08, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.45))
+                    .foregroundStyle(appearance.timerSubtitle)
             }
         }
         .frame(width: ringSize, height: ringSize)

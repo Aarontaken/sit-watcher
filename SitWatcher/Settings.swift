@@ -51,6 +51,13 @@ final class Settings: ObservableObject {
         }
     }
 
+    /// Menu bar panel & settings styling. Default follows macOS appearance.
+    @Published var uiPanelAppearance: SitWatcherPanelAppearance {
+        didSet {
+            defaults.set(uiPanelAppearance.rawValue, forKey: "uiPanelAppearance")
+        }
+    }
+
     /// Used for SwiftUI `\\.locale` + `String(localized:bundle:locale:)` — always concrete (never `nil`).
     var localizationLocale: Locale {
         switch uiLanguage {
@@ -75,6 +82,7 @@ final class Settings: ObservableObject {
             "soundEnabled": true,
             "launchAtLogin": false,
             "uiLanguage": UIAppLanguage.system.rawValue,
+            "uiPanelAppearance": SitWatcherPanelAppearance.system.rawValue,
         ])
 
         let interval = defaults.double(forKey: "reminderInterval")
@@ -98,6 +106,9 @@ final class Settings: ObservableObject {
         let langRaw = defaults.string(forKey: "uiLanguage") ?? UIAppLanguage.system.rawValue
         self.uiLanguage = UIAppLanguage(rawValue: langRaw) ?? .system
 
+        let panelRaw = defaults.string(forKey: "uiPanelAppearance") ?? SitWatcherPanelAppearance.system.rawValue
+        self.uiPanelAppearance = SitWatcherPanelAppearance(rawValue: panelRaw) ?? .system
+
         defaults.set(reminderInterval, forKey: "reminderInterval")
         defaults.set(l2Delay, forKey: "l2Delay")
         defaults.set(l3Delay, forKey: "l3Delay")
@@ -105,6 +116,7 @@ final class Settings: ObservableObject {
         defaults.set(mouseMovementThreshold, forKey: "mouseMovementThreshold")
         defaults.set(soundEnabled, forKey: "soundEnabled")
         defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
+        defaults.set(uiPanelAppearance.rawValue, forKey: "uiPanelAppearance")
     }
 
     private func updateLaunchAtLogin() {

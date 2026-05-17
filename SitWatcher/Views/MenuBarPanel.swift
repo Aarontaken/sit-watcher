@@ -3,6 +3,8 @@ import SwiftUI
 struct MenuBarPanel: View {
     @ObservedObject var state: AppState
     @ObservedObject private var localizationSettings = Settings.shared
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
+
     var onPauseToggle: () -> Void
     var onSkip: () -> Void
     var onReset: () -> Void
@@ -24,8 +26,7 @@ struct MenuBarPanel: View {
         .frame(width: 318)
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(SitWatcherPanelChrome.panelBackground)
-        .preferredColorScheme(.dark)
+        .background(SitWatcherPanelChrome.panelBackground(for: appearance))
     }
 
     private var header: some View {
@@ -33,10 +34,10 @@ struct MenuBarPanel: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("SitWatcher")
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
-                    .foregroundStyle(SitWatcherPanelChrome.titleGradient)
+                    .foregroundStyle(SitWatcherPanelChrome.titleGradient(for: appearance))
                 Text(L10n.text("menu.tagline"))
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.52))
+                    .foregroundStyle(appearance.secondaryLabel)
             }
 
             Spacer()
@@ -49,12 +50,12 @@ struct MenuBarPanel: View {
 
                 Text(state.statusLabel)
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.92))
+                    .foregroundStyle(appearance.primaryLabel)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(
                         Capsule(style: .continuous)
-                            .fill(Color.white.opacity(0.09))
+                            .fill(appearance == .dark ? Color.white.opacity(0.09) : Color.black.opacity(0.045))
                             .overlay(
                                 Capsule(style: .continuous)
                                     .stroke(statusColor.opacity(0.45), lineWidth: 1)
@@ -69,7 +70,7 @@ struct MenuBarPanel: View {
 
     private var sectionDivider: some View {
         Rectangle()
-            .fill(SitWatcherPanelChrome.accentHairlineDivider)
+            .fill(SitWatcherPanelChrome.accentHairlineDivider(for: appearance))
             .frame(height: 1)
             .padding(.horizontal, 22)
             .opacity(0.9)
@@ -118,7 +119,7 @@ struct MenuBarPanel: View {
         .padding(.vertical, 10)
         .background(
             Rectangle()
-                .fill(Color.white.opacity(0.06))
+                .fill(appearance.footerBarFill)
         )
         .padding(.top, 4)
         .padding(.bottom, 8)
@@ -131,20 +132,22 @@ struct MenuBarPanel: View {
                 .imageScale(.small)
                 .symbolRenderingMode(.monochrome)
                 .labelStyle(.titleAndIcon)
-                .foregroundStyle(Color.white.opacity(0.72))
+                .foregroundStyle(appearance.footerItemLabel)
                 .lineLimit(1)
                 .minimumScaleFactor(0.82)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
+                .frame(maxWidth: .infinity, minHeight: 32)
+                .padding(.vertical, 8)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
     }
 
     private var statusColor: Color {
         switch (state.timerPhase, state.reminderLevel) {
         case (.paused, _), (.idle, _):
-            return Color.white.opacity(0.45)
+            return appearance.statusMuted
         case (_, .none):
             return SitWatcherPanelChrome.mint
         case (_, .l1):
@@ -155,5 +158,4 @@ struct MenuBarPanel: View {
             return Color(red: 1.0, green: 0.38, blue: 0.42)
         }
     }
-
 }

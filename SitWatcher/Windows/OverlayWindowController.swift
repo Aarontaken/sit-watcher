@@ -31,15 +31,13 @@ final class OverlayWindowController {
         sittingMinutes: Int,
         onDismiss: @escaping () -> Void
     ) -> NSPanel {
-        let view = FullScreenOverlayView(
+        let view = SitWatcherHostedFullScreenOverlay(
             sittingMinutes: sittingMinutes,
             onDismiss: { [weak self] in
                 self?.close()
                 onDismiss()
             }
         )
-        .environment(\.locale, Settings.shared.localizationLocale)
-        .id(Settings.shared.uiLanguage.rawValue)
 
         let panel = ClickablePanel(
             contentRect: screen.frame,
@@ -61,5 +59,24 @@ final class OverlayWindowController {
         panel.orderFrontRegardless()
 
         return panel
+    }
+}
+
+private struct SitWatcherHostedFullScreenOverlay: View {
+    let sittingMinutes: Int
+    var onDismiss: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var routingId: String {
+        "\(Settings.shared.uiPanelAppearance.rawValue)-\(Settings.shared.uiPanelAppearance.resolvedPalette(for: colorScheme).rawValue)"
+    }
+
+    var body: some View {
+        SitWatcherAppearanceScope(stored: Settings.shared.uiPanelAppearance) {
+            FullScreenOverlayView(sittingMinutes: sittingMinutes, onDismiss: onDismiss)
+        }
+        .environment(\.locale, Settings.shared.localizationLocale)
+        .id(routingId)
     }
 }

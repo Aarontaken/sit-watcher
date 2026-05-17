@@ -15,6 +15,7 @@ struct FloatingReminderView: View {
 
     @StateObject private var figureTicker = StretchFigureTicker()
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     @ObservedObject private var localizationSettings = Settings.shared
 
@@ -31,17 +32,11 @@ struct FloatingReminderView: View {
             VStack(spacing: 8) {
                 Text(L10n.text("floating.title"))
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.white, accentMint.opacity(0.95)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .foregroundStyle(appearance.floatingTitleGradient)
 
                 Text(L10n.fmt("floating.body_fmt", sittingMinutes))
                     .font(.system(size: 13))
-                    .foregroundStyle(Color.white.opacity(0.68))
+                    .foregroundStyle(appearance.floatingBody)
                     .multilineTextAlignment(.center)
             }
 
@@ -52,7 +47,8 @@ struct FloatingReminderView: View {
                         .foregroundColor(.black.opacity(0.88))
                         .lineLimit(1)
                         .minimumScaleFactor(0.82)
-                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, minHeight: 42)
+                        .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
@@ -63,28 +59,31 @@ struct FloatingReminderView: View {
                         )
                         .shadow(color: accentMint.opacity(0.42), radius: 8, y: 3)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
+                .frame(maxWidth: .infinity)
 
                 if canSnooze {
                     Button(action: onSnooze) {
                         Text(L10n.text("floating.snooze_fixed"))
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color.white.opacity(0.82))
+                            .foregroundStyle(appearance.floatingSnoozeForeground)
                             .lineLimit(1)
                             .minimumScaleFactor(0.82)
-                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, minHeight: 42)
+                            .padding(.horizontal, 12)
                             .padding(.vertical, 10)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white.opacity(0.12))
+                                    .fill(appearance.floatingSnoozeFill)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
                                             .stroke(
                                                 LinearGradient(
                                                     colors: [
-                                                        accentCyan.opacity(0.45),
-                                                        accentPeach.opacity(0.35)
+                                                        accentCyan.opacity(appearance == .dark ? 0.45 : 0.32),
+                                                        accentPeach.opacity(appearance == .dark ? 0.35 : 0.24)
                                                     ],
                                                     startPoint: .topLeading,
                                                     endPoint: .bottomTrailing
@@ -93,8 +92,10 @@ struct FloatingReminderView: View {
                                             )
                                     )
                             )
+                            .contentShape(RoundedRectangle(cornerRadius: 8))
                     }
                     .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
@@ -106,48 +107,28 @@ struct FloatingReminderView: View {
         )
         .background {
             ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.07, green: 0.05, blue: 0.20),
-                        Color(red: 0.04, green: 0.09, blue: 0.16)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-
-                RadialGradient(
-                    colors: [
-                        accentMint.opacity(0.24),
-                        accentCyan.opacity(0.10),
-                        accentPeach.opacity(0.04),
-                        Color.clear
-                    ],
-                    center: .topLeading,
-                    startRadius: 8,
-                    endRadius: 240
-                )
-
-                RadialGradient(
-                    colors: [accentPeach.opacity(0.08), Color.clear],
-                    center: .bottomTrailing,
-                    startRadius: 4,
-                    endRadius: 160
-                )
+                SitWatcherPanelChrome.panelBackground(for: appearance)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 18)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .strokeBorder(
                         LinearGradient(
-                            colors: [
-                                accentMint.opacity(0.75),
-                                accentCyan.opacity(0.5),
-                                accentPeach.opacity(0.65)
-                            ],
+                            colors: appearance == .dark
+                                ? [
+                                    accentMint.opacity(0.75),
+                                    accentCyan.opacity(0.5),
+                                    accentPeach.opacity(0.65)
+                                ]
+                                : [
+                                    SitWatcherPanelChrome.mint.opacity(0.42),
+                                    SitWatcherPanelChrome.cyan.opacity(0.3),
+                                    SitWatcherPanelChrome.peach.opacity(0.34)
+                                ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: 1.5
+                        lineWidth: appearance == .dark ? 1.5 : 1
                     )
             )
         }

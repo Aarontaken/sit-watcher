@@ -3,6 +3,7 @@ import SwiftUI
 struct ControlButtonsView: View {
     let isPaused: Bool
     @ObservedObject private var localizationSettings = Settings.shared
+    @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     var onPauseToggle: () -> Void
     var onSkip: () -> Void
@@ -65,6 +66,8 @@ struct ControlButtonsView: View {
             .foregroundStyle(foreground(for: style))
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, minHeight: 52)
+        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     @ViewBuilder
@@ -78,30 +81,53 @@ struct ControlButtonsView: View {
             )
         case .softCyan:
             ZStack {
-                Color.white.opacity(0.08)
-                LinearGradient(colors: [cyan.opacity(0.12), Color.clear], startPoint: .top, endPoint: .bottom)
+                if appearance == .dark {
+                    Color.white.opacity(0.08)
+                } else {
+                    Color(red: 0.97, green: 0.985, blue: 1.0)
+                }
+                LinearGradient(
+                    colors: appearance == .dark
+                        ? [cyan.opacity(0.12), Color.clear]
+                        : [cyan.opacity(0.1), Color.white.opacity(0.88)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
         case .softPeach:
             ZStack {
-                Color.white.opacity(0.07)
-                LinearGradient(colors: [peach.opacity(0.14), Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing)
+                if appearance == .dark {
+                    Color.white.opacity(0.07)
+                } else {
+                    Color(red: 1.0, green: 0.98, blue: 0.96)
+                }
+                LinearGradient(
+                    colors: appearance == .dark
+                        ? [peach.opacity(0.14), Color.clear]
+                        : [peach.opacity(0.12), Color.white.opacity(0.85)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             }
         }
     }
 
     private func border(for style: ControlStyle) -> Color {
         switch style {
-        case .accent: return Color.white.opacity(0.18)
-        case .softCyan: return cyan.opacity(0.28)
-        case .softPeach: return peach.opacity(0.35)
+        case .accent:
+            appearance == .dark ? Color.white.opacity(0.18) : Color.black.opacity(0.08)
+        case .softCyan:
+            cyan.opacity(appearance == .dark ? 0.28 : 0.22)
+        case .softPeach:
+            peach.opacity(appearance == .dark ? 0.35 : 0.28)
         }
     }
 
     private func shadowColor(for style: ControlStyle) -> Color {
         switch style {
-        case .accent: return mint.opacity(0.38)
-        case .softCyan: return cyan.opacity(0.22)
-        case .softPeach: return peach.opacity(0.26)
+        case .accent: return mint.opacity(appearance == .dark ? 0.38 : 0.25)
+        case .softCyan: return cyan.opacity(appearance == .dark ? 0.22 : 0.14)
+        case .softPeach: return peach.opacity(appearance == .dark ? 0.26 : 0.18)
         }
     }
 
@@ -110,7 +136,7 @@ struct ControlButtonsView: View {
         case .accent:
             return Color.black.opacity(0.88)
         case .softCyan, .softPeach:
-            return Color.white.opacity(0.92)
+            return appearance.controlMutedForeground
         }
     }
 }

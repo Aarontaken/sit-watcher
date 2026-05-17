@@ -16,7 +16,7 @@ final class FloatingWindowController {
     ) {
         close()
 
-        let view = FloatingReminderView(
+        let view = SitWatcherHostedFloatingReminder(
             sittingMinutes: sittingMinutes,
             canSnooze: canSnooze,
             onConfirm: { [weak self] in
@@ -28,8 +28,6 @@ final class FloatingWindowController {
                 onSnooze()
             }
         )
-        .environment(\.locale, Settings.shared.localizationLocale)
-        .id(Settings.shared.uiLanguage.rawValue)
 
         let hostingView = NSHostingView(rootView: view)
         let panelSize = NSSize(
@@ -75,5 +73,31 @@ final class FloatingWindowController {
         let x = screenFrame.maxX - panel.frame.width - 20
         let y = screenFrame.maxY - panel.frame.height - 20
         panel.setFrameOrigin(NSPoint(x: x, y: y))
+    }
+}
+
+private struct SitWatcherHostedFloatingReminder: View {
+    let sittingMinutes: Int
+    let canSnooze: Bool
+    var onConfirm: () -> Void
+    var onSnooze: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var routingId: String {
+        "\(Settings.shared.uiPanelAppearance.rawValue)-\(Settings.shared.uiPanelAppearance.resolvedPalette(for: colorScheme).rawValue)"
+    }
+
+    var body: some View {
+        SitWatcherAppearanceScope(stored: Settings.shared.uiPanelAppearance) {
+            FloatingReminderView(
+                sittingMinutes: sittingMinutes,
+                canSnooze: canSnooze,
+                onConfirm: onConfirm,
+                onSnooze: onSnooze
+            )
+        }
+        .environment(\.locale, Settings.shared.localizationLocale)
+        .id(routingId)
     }
 }
