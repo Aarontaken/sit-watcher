@@ -113,12 +113,20 @@ private struct StretchReminderGlyph: View {
 struct MenuBarLabel: View {
     @ObservedObject private var appState = AppCoordinator.shared.appState
 
+    /// `figure.seated.side.right` only exists from macOS 15; Sonoma 14.x yields an empty menu-bar icon.
+    private var menuBarSeatedFigureSymbol: String {
+        if #available(macOS 15.0, *) {
+            return "figure.seated.side.right"
+        }
+        return "figure.seated.side"
+    }
+
     var body: some View {
         Group {
             if shouldAnimateStretch {
                 StretchReminderGlyph(tint: menuBarTint)
             } else {
-                Image(systemName: "figure.seated.side.right")
+                Image(systemName: menuBarSeatedFigureSymbol)
                     .symbolRenderingMode(.monochrome)
                     .foregroundStyle(menuBarTint)
             }
