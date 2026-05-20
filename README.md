@@ -29,43 +29,59 @@
 
 ### 浅色界面（应用内设为浅色或与系统浅色一致）
 
-
-|                   |             |
-| ----------------- | ----------- |
-| 菜单栏面板 · 久坐统计 · 浅色 | 浮窗久坐提醒 · 浅色 |
-| 全屏久坐提醒 · 浅色       | 设置 · 浅色     |
-
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light.png" width="220" /><br />菜单栏面板 · 久坐统计 · 浅色</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light.gif" width="360" alt="浅色 · 浮窗久坐提醒动图演示" /><br />浮窗久坐提醒 · 浅色 · ≈1s</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light.gif" width="400" alt="浅色 · 全屏久坐提醒动图演示" /><br />全屏久坐提醒 · 浅色 · ≈1s</td>
+    <td align="center"><img src="screenshots/settings-light.png" width="220" /><br />设置 · 浅色</td>
+  </tr>
+</table>
 
 ### 深色界面
 
-
-|               |               |
-| ------------- | ------------- |
-| 菜单栏面板 · 久坐统计  | 浮窗久坐提醒 · 动图演示 |
-| 全屏久坐提醒 · 动图演示 | 设置 · 间隔与延迟    |
-
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel.png" width="220" /><br />菜单栏面板 · 久坐统计</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo.gif" width="360" alt="浮窗久坐提醒动图演示" /><br />浮窗久坐提醒 · 动图演示</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo.gif" width="400" alt="全屏久坐提醒动图演示" /><br />全屏久坐提醒 · 动图演示</td>
+    <td align="center"><img src="screenshots/settings.png" width="220" /><br />设置 · 间隔与延迟</td>
+  </tr>
+</table>
 
 ## Preview · English UI
 
 ### Light appearance
 
-
-|                        |                   |
-| ---------------------- | ----------------- |
-| Menu bar panel · light | Floating reminder |
-| Full-screen reminder   | Settings · light  |
-
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-light-en.png" width="220" /><br />Menu bar panel · light</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-light-en.gif" width="360" alt="Floating reminder · light demo" /><br />Floating reminder · ≈1s</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-light-en.gif" width="400" alt="Full-screen reminder · light demo" /><br />Full-screen reminder · ≈1s</td>
+    <td align="center"><img src="screenshots/settings-light-en.png" width="220" /><br />Settings · light</td>
+  </tr>
+</table>
 
 ### Dark appearance
 
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/panel-en.png" width="220" /><br />Menu bar panel · stats</td>
+    <td align="center"><img src="screenshots/floating-reminder-demo-en.gif" width="360" alt="Floating reminder demo" /><br />Floating reminder</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/fullscreen-overlay-demo-en.gif" width="400" alt="Full-screen reminder demo" /><br />Full-screen reminder</td>
+    <td align="center"><img src="screenshots/settings-en.png" width="220" /><br />Settings · intervals</td>
+  </tr>
+</table>
 
-|                        |                      |
-| ---------------------- | -------------------- |
-| Menu bar panel · stats | Floating reminder    |
-| Full-screen reminder   | Settings · intervals |
-
-
-**浅色动图：**`-light`/`-light-en` 截取前 ≈1s，源录像 `录屏弹窗-浅色模式.mov`、`录屏全屏-浅色模式.mov`（英文 UI 后缀 `-en`），执行 `bash scripts/regenerate_light_mode_demo_gifs.sh`。**深色：**`floating-reminder-demo.gif`（≈1s，源 `弹窗视频.mov`）、`fullscreen-overlay-demo.gif`（≈2s，源 `全屏打断视频.mov`），对应 `bash scripts/regenerate_floating_demo_gif.sh` · `bash scripts/regenerate_fullscreen_demo_gif.sh`；英文深色动图：`regenerate_*_gif_en.sh`。`screenshots/*.mov` 仅本地留存，由 `.gitignore` 忽略。需安装 ffmpeg。
+<sub><strong>浅色动图：</strong><code>-light</code>/<code>-light-en</code> 截取前 ≈1s，源录像 <code>录屏弹窗-浅色模式.mov</code>、<code>录屏全屏-浅色模式.mov</code>（英文 UI 后缀 <code>-en</code>），执行 <code>bash scripts/regenerate_light_mode_demo_gifs.sh</code>。<strong>深色：</strong><code>floating-reminder-demo.gif</code>（≈1s，源 <code>弹窗视频.mov</code>）、<code>fullscreen-overlay-demo.gif</code>（≈2s，源 <code>全屏打断视频.mov</code>），对应 <code>bash scripts/regenerate_floating_demo_gif.sh</code> · <code>bash scripts/regenerate_fullscreen_demo_gif.sh</code>；英文深色动图：<code>regenerate_*_gif_en.sh</code>。<code>screenshots/*.mov</code> 仅本地留存，由 <code>.gitignore</code> 忽略。需安装 ffmpeg。</sub>
 
 ## 功能概要
 
