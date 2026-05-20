@@ -25,6 +25,20 @@ final class StretchFigureTicker: ObservableObject {
     }
 }
 
+enum StretchReminderHeroGlyphSwapStyle {
+    /// Single `Image`; fine for floating panel (one hosting root).
+    case replaceSymbol
+    /// Layered symbols with opaque toggles — harmless belt-and-suspenders when swapping glyphs frequently.
+    case dualOpacityLayers
+}
+
+enum StretchReminderHeroShadowProfile {
+    /// Floating panel: stronger depth cues.
+    case panel
+    /// Fullscreen hero: skip SwiftUI shadow stacks (depth comes from gradients only).
+    case fullscreenFlat
+}
+
 enum StretchReminderHeroLayout {
     /// Stable square slot for swapping SF Symbols (`flexibility` / `cooldown` have different glyph bounds).
     static func slotSide(symbolFontPoints: CGFloat) -> CGFloat {
@@ -32,11 +46,14 @@ enum StretchReminderHeroLayout {
     }
 }
 
-/// Large playful animated stretch figure for reminder surfaces (not menu bar template).
 struct StretchReminderHeroFigure: View {
     @ObservedObject var ticker: StretchFigureTicker
     let size: CGFloat
     var reduceMotionAware: Bool = true
+    /// Fullscreen renders across multiple independent `NSHostingView` roots; keep SwiftUI shadow stacks minimal here.
+    var shadowProfile: StretchReminderHeroShadowProfile = .panel
+    /// Prefer `.dualOpacityLayers` when swapping glyphs frequently on fullscreen surfaces.
+    var glyphSwapStyle: StretchReminderHeroGlyphSwapStyle = .replaceSymbol
 
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
 
@@ -48,26 +65,60 @@ struct StretchReminderHeroFigure: View {
         StretchReminderHeroLayout.slotSide(symbolFontPoints: size)
     }
 
-    var body: some View {
-        let symbol = accessibilityReduceMotion && reduceMotionAware
-            ? "figure.flexibility"
-            : (ticker.useFlexibility ? "figure.flexibility" : "figure.cooldown")
+    private var symbol: String {
+        if accessibilityReduceMotion && reduceMotionAware { return "figure.flexibility" }
+        return ticker.useFlexibility ? "figure.flexibility" : "figure.cooldown"
+    }
 
-        ZStack {
-            Image(systemName: symbol)
-                .font(.system(size: size, weight: .bold))
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [mint, cyan, peach],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+    private func gradientSymbol(named systemName: String) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: size, weight: .bold))
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [mint, cyan, peach],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .shadow(color: mint.opacity(0.45), radius: size * 0.16, y: size * 0.04)
-                .shadow(color: cyan.opacity(0.28), radius: size * 0.26)
+            )
+    }
+
+    @ViewBuilder
+    private var scaledGlyph: some View {
+        if accessibilityReduceMotion && reduceMotionAware {
+            gradientSymbol(named: "figure.flexibility")
+        } else if glyphSwapStyle == .dualOpacityLayers {
+            ZStack {
+                gradientSymbol(named: "figure.flexibility")
+                    .opacity(ticker.useFlexibility ? 1 : 0)
+                    .animation(nil, value: ticker.useFlexibility)
+                gradientSymbol(named: "figure.cooldown")
+                    .opacity(ticker.useFlexibility ? 0 : 1)
+                    .animation(nil, value: ticker.useFlexibility)
+            }
+            .scaleEffect(scaleAmount)
+            .animation(motionAnimation, value: scaleAmount)
+        } else {
+            gradientSymbol(named: symbol)
+                .id(symbol)
                 .scaleEffect(scaleAmount)
-                .animation(motionAnimation, value: ticker.useFlexibility)
+                .animation(motionAnimation, value: scaleAmount)
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            Group {
+                switch shadowProfile {
+                case .panel:
+                    scaledGlyph
+                        .compositingGroup()
+                        .shadow(color: mint.opacity(0.45), radius: size * 0.16, y: size * 0.04)
+                        .shadow(color: cyan.opacity(0.28), radius: size * 0.26)
+                case .fullscreenFlat:
+                    scaledGlyph
+                }
+            }
         }
         .frame(width: slot, height: slot)
     }

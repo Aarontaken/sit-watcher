@@ -3,9 +3,8 @@ import SwiftUI
 struct FullScreenOverlayView: View {
     let sittingMinutes: Int
     var onDismiss: () -> Void
-
-    @StateObject private var figureTicker = StretchFigureTicker()
-    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+    /// Observed only inside `StretchReminderHeroFigure`, not here — avoids invalidating the whole hosting tree each tick.
+    let figureTicker: StretchFigureTicker
     @Environment(\.sitWatcherPanelAppearance) private var appearance
 
     @ObservedObject private var localizationSettings = Settings.shared
@@ -38,8 +37,12 @@ struct FullScreenOverlayView: View {
             )
 
             VStack(spacing: 24) {
-                StretchReminderHeroFigure(ticker: figureTicker, size: 112)
-
+                StretchReminderHeroFigure(
+                    ticker: figureTicker,
+                    size: 112,
+                    shadowProfile: .fullscreenFlat,
+                    glyphSwapStyle: .dualOpacityLayers
+                )
                 Text(L10n.text("fullscreen.title"))
                     .font(.system(size: 30, weight: .heavy, design: .rounded))
                     .foregroundStyle(appearance.fullscreenTitleGradient)
@@ -77,13 +80,5 @@ struct FullScreenOverlayView: View {
             }
         }
         .ignoresSafeArea()
-        .onAppear {
-            if accessibilityReduceMotion == false {
-                figureTicker.start()
-            }
-        }
-        .onDisappear {
-            figureTicker.stop()
-        }
     }
 }
