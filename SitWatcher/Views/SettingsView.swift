@@ -61,13 +61,22 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity, minHeight: 40)
                     .padding(.vertical, 11)
                     .background(
-                        LinearGradient(
-                            colors: [mint, cyan.opacity(0.92)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                        ZStack {
+                            SitWatcherPanelChrome.liquidSurface(
+                                for: appearance,
+                                cornerRadius: 12,
+                                accent: mint,
+                                isProminent: true
+                            )
+                            LinearGradient(
+                                colors: [mint.opacity(0.72), cyan.opacity(0.62)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            .blendMode(appearance == .dark ? .screen : .multiply)
+                        }
                     )
-                    .shadow(color: mint.opacity(0.35), radius: 8, y: 3)
+                    .shadow(color: mint.opacity(appearance == .dark ? 0.22 : 0.18), radius: 9, y: 4)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
@@ -82,7 +91,7 @@ struct SettingsView: View {
         .frame(width: 318)
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxHeight: SettingsViewMetrics.panelTwoThirdsMaxHeight(), alignment: .top)
-        .background(SitWatcherPanelChrome.panelBackground(for: appearance))
+        .background(SitWatcherPanelChrome.quietLiquidPanelBackground(for: appearance))
     }
 
     private var settingsPanelChromeExcludingScroll: CGFloat {
@@ -217,31 +226,13 @@ struct SettingsView: View {
         }
         .padding(12)
         .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(appearance.switchesCardFill)
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: appearance == .dark
-                                ? [
-                                    mint.opacity(0.52),
-                                    cyan.opacity(0.32),
-                                    SitWatcherPanelChrome.peach.opacity(0.35)
-                                ]
-                                : [
-                                    mint.opacity(0.35),
-                                    cyan.opacity(0.22),
-                                    Color.black.opacity(0.06)
-                                ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.25
-                    )
-            }
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 12,
+                accent: mint,
+                isQuiet: true
+            )
         }
-        .shadow(color: appearance == .light ? Color.black.opacity(0.04) : Color.clear, radius: 6, y: 1)
     }
 
     private var languageCard: some View {
@@ -266,7 +257,12 @@ struct SettingsView: View {
         }
         .padding(14)
         .background {
-            SitWatcherPanelChrome.embossedCard(for: appearance, cornerRadius: 12)
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 12,
+                accent: cyan,
+                isQuiet: true
+            )
         }
     }
 
@@ -295,7 +291,12 @@ struct SettingsView: View {
         }
         .padding(14)
         .background {
-            SitWatcherPanelChrome.embossedCard(for: appearance, cornerRadius: 12)
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 12,
+                accent: mint,
+                isQuiet: true
+            )
         }
     }
 
@@ -479,7 +480,12 @@ struct SettingsView: View {
         }
         .padding(14)
         .background {
-            SitWatcherPanelChrome.embossedCard(for: appearance, cornerRadius: 12)
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 12,
+                accent: mint,
+                isQuiet: true
+            )
         }
     }
 }

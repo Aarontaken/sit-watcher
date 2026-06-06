@@ -5,6 +5,7 @@ enum SitWatcherPanelChrome {
     static let mint = Color(red: 0.22, green: 0.98, blue: 0.62)
     static let cyan = Color(red: 0.12, green: 0.78, blue: 1.0)
     static let peach = Color(red: 1.0, green: 0.55, blue: 0.45)
+    static let violet = Color(red: 0.68, green: 0.55, blue: 1.0)
 
     static let deepIndigoTop = Color(red: 0.07, green: 0.05, blue: 0.20)
     static let deepIndigoBottom = Color(red: 0.04, green: 0.09, blue: 0.16)
@@ -78,6 +79,190 @@ enum SitWatcherPanelChrome {
             Rectangle()
                 .strokeBorder(borderGradient(for: appearance), lineWidth: 1)
         )
+    }
+
+    @ViewBuilder
+    static func liquidPanelBackground(for appearance: SitWatcherPanelAppearance) -> some View {
+        liquidPanelBackground(for: appearance, edgeHighlights: true)
+    }
+
+    @ViewBuilder
+    static func quietLiquidPanelBackground(for appearance: SitWatcherPanelAppearance) -> some View {
+        liquidPanelBackground(for: appearance, edgeHighlights: false)
+            .opacity(0.92)
+    }
+
+    @ViewBuilder
+    private static func liquidPanelBackground(
+        for appearance: SitWatcherPanelAppearance,
+        edgeHighlights: Bool
+    ) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: appearance == .dark
+                            ? [
+                                Color(red: 0.045, green: 0.055, blue: 0.075).opacity(edgeHighlights ? 0.24 : 0.18),
+                                Color(red: 0.055, green: 0.075, blue: 0.09).opacity(edgeHighlights ? 0.14 : 0.1),
+                                Color(red: 0.025, green: 0.03, blue: 0.045).opacity(edgeHighlights ? 0.22 : 0.16)
+                            ]
+                            : [
+                                Color.white.opacity(edgeHighlights ? 0.14 : 0.09),
+                                Color(red: 0.93, green: 0.975, blue: 0.965).opacity(edgeHighlights ? 0.07 : 0.04),
+                                Color(red: 0.965, green: 0.955, blue: 0.985).opacity(edgeHighlights ? 0.1 : 0.06)
+                            ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(
+                                appearance == .dark
+                                    ? (edgeHighlights ? 0.09 : 0.055)
+                                    : (edgeHighlights ? 0.18 : 0.1)
+                            ),
+                            Color.white.opacity(0.02),
+                            cyan.opacity(appearance == .dark ? (edgeHighlights ? 0.035 : 0.025) : (edgeHighlights ? 0.04 : 0.026)),
+                            peach.opacity(appearance == .dark ? (edgeHighlights ? 0.025 : 0.018) : (edgeHighlights ? 0.032 : 0.022))
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .blendMode(appearance == .dark ? .screen : .softLight)
+
+            if edgeHighlights {
+                VStack(spacing: 0) {
+                    Capsule(style: .continuous)
+                        .fill(Color.white.opacity(appearance == .dark ? 0.05 : 0.14))
+                        .frame(height: 1)
+                        .padding(.horizontal, 28)
+                        .padding(.top, 1)
+                    Spacer()
+                    Capsule(style: .continuous)
+                        .fill(Color.black.opacity(appearance == .dark ? 0.03 : 0.01))
+                        .frame(height: 1)
+                        .padding(.horizontal, 32)
+                        .padding(.bottom, 1)
+                }
+            }
+        }
+    }
+
+    static func liquidSurface(
+        for appearance: SitWatcherPanelAppearance,
+        cornerRadius: CGFloat = 12,
+        accent: Color? = nil,
+        isProminent: Bool = false,
+        isQuiet: Bool = false
+    ) -> some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(.regularMaterial)
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: liquidSurfaceFillColors(
+                                for: appearance,
+                                accent: accent,
+                                isProminent: isProminent,
+                                isQuiet: isQuiet
+                            ),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: liquidSurfaceStrokeColors(for: appearance, accent: accent, isQuiet: isQuiet),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: isQuiet ? 0.55 : (isProminent ? 1.25 : 1)
+                    )
+            }
+            .overlay(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(
+                        Color.white.opacity(
+                            appearance == .dark
+                                ? (isQuiet ? 0.08 : 0.16)
+                                : (isQuiet ? 0.28 : 0.62)
+                        ),
+                        lineWidth: isQuiet ? 0.45 : 0.7
+                    )
+                    .blur(radius: 0.2)
+                    .padding(1)
+            }
+            .shadow(
+                color: (accent ?? Color.black).opacity(
+                    isQuiet
+                        ? (appearance == .dark ? 0.055 : 0.035)
+                        : (
+                            isProminent
+                                ? (appearance == .dark ? 0.24 : 0.16)
+                                : (appearance == .dark ? 0.12 : 0.08)
+                        )
+                ),
+                radius: isQuiet ? 5 : (isProminent ? 12 : 7),
+                y: isQuiet ? 2 : (isProminent ? 5 : 3)
+            )
+    }
+
+    private static func liquidSurfaceFillColors(
+        for appearance: SitWatcherPanelAppearance,
+        accent: Color?,
+        isProminent: Bool,
+        isQuiet: Bool
+    ) -> [Color] {
+        let accent = accent ?? cyan
+        switch appearance {
+        case .dark:
+            return [
+                Color.white.opacity(isQuiet ? 0.055 : (isProminent ? 0.16 : 0.1)),
+                accent.opacity(isQuiet ? 0.045 : (isProminent ? 0.2 : 0.08)),
+                Color.white.opacity(isQuiet ? 0.025 : (isProminent ? 0.08 : 0.045))
+            ]
+        case .light, .system:
+            return [
+                Color.white.opacity(isQuiet ? 0.42 : (isProminent ? 0.78 : 0.62)),
+                accent.opacity(isQuiet ? 0.04 : (isProminent ? 0.18 : 0.08)),
+                Color.white.opacity(isQuiet ? 0.32 : (isProminent ? 0.42 : 0.5))
+            ]
+        }
+    }
+
+    private static func liquidSurfaceStrokeColors(
+        for appearance: SitWatcherPanelAppearance,
+        accent: Color?,
+        isQuiet: Bool
+    ) -> [Color] {
+        let accent = accent ?? cyan
+        switch appearance {
+        case .dark:
+            return [
+                Color.white.opacity(isQuiet ? 0.12 : 0.3),
+                accent.opacity(isQuiet ? 0.14 : 0.32),
+                Color.white.opacity(isQuiet ? 0.035 : 0.08)
+            ]
+        case .light, .system:
+            return [
+                Color.white.opacity(isQuiet ? 0.46 : 0.92),
+                accent.opacity(isQuiet ? 0.12 : 0.28),
+                Color.black.opacity(isQuiet ? 0.025 : 0.07)
+            ]
+        }
     }
 
     static func titleGradient(for appearance: SitWatcherPanelAppearance) -> LinearGradient {

@@ -80,20 +80,11 @@ struct StatsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(appearance.statCardBackdrop)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [accent.opacity(appearance == .dark ? 0.42 : 0.35), appearance.statStrokeTerminal],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
-                .shadow(color: appearance == .light ? Color.black.opacity(0.04) : Color.clear, radius: 4, y: 1)
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 12,
+                accent: accent
+            )
         )
     }
 }

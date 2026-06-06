@@ -26,7 +26,7 @@ struct MenuBarPanel: View {
         .frame(width: 318)
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(SitWatcherPanelChrome.panelBackground(for: appearance))
+        .background(SitWatcherPanelChrome.liquidPanelBackground(for: appearance))
     }
 
     private var header: some View {
@@ -55,10 +55,25 @@ struct MenuBarPanel: View {
                     .padding(.vertical, 6)
                     .background(
                         Capsule(style: .continuous)
-                            .fill(appearance == .dark ? Color.white.opacity(0.09) : Color.black.opacity(0.045))
+                            .fill(.regularMaterial)
                             .overlay(
                                 Capsule(style: .continuous)
-                                    .stroke(statusColor.opacity(0.45), lineWidth: 1)
+                                    .fill(statusColor.opacity(appearance == .dark ? 0.09 : 0.12))
+                            )
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            colors: [
+                                                Color.white.opacity(appearance == .dark ? 0.28 : 0.78),
+                                                statusColor.opacity(0.42),
+                                                Color.white.opacity(appearance == .dark ? 0.08 : 0.28)
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1
+                                    )
                             )
                     )
             }
@@ -118,8 +133,11 @@ struct MenuBarPanel: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
         .background(
-            Rectangle()
-                .fill(appearance.footerBarFill)
+            SitWatcherPanelChrome.liquidSurface(
+                for: appearance,
+                cornerRadius: 10,
+                accent: SitWatcherPanelChrome.cyan
+            )
         )
         .padding(.top, 4)
         .padding(.bottom, 8)

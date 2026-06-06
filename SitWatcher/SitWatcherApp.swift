@@ -76,6 +76,7 @@ private struct AppearanceKeyedContent: View {
             MenuBarWindowProbe { window in
                 menuWindow = window
                 menuWindowFrame = window?.frame
+                configureMenuWindow(window)
                 if window?.isVisible == true {
                     coordinator.menuPanelDidAppear()
                 }
@@ -83,6 +84,19 @@ private struct AppearanceKeyedContent: View {
         )
         .environment(\.locale, settings.localizationLocale)
         .id(routingId)
+    }
+
+    private func configureMenuWindow(_ window: NSWindow?) {
+        guard let window else { return }
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.hasShadow = false
+        window.contentView?.wantsLayer = true
+        window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
+        window.contentView?.subviews.forEach { subview in
+            subview.wantsLayer = true
+            subview.layer?.backgroundColor = NSColor.clear.cgColor
+        }
     }
 }
 

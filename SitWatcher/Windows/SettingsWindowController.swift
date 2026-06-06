@@ -26,6 +26,7 @@ final class SettingsWindowController {
         let hostingView = NSHostingView(rootView: view)
         let panelSize = NSSize(width: 350, height: SettingsViewMetrics.panelTwoThirdsMaxHeight())
         hostingView.setFrameSize(panelSize)
+        configureGlassHost(hostingView)
 
         let panel = SettingsPanel(
             contentRect: NSRect(origin: .zero, size: panelSize),
@@ -44,6 +45,7 @@ final class SettingsWindowController {
         panel.hasShadow = true
         panel.isMovableByWindowBackground = true
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        configureGlassPanel(panel)
 
         position(panel, anchorFrame: anchorFrame)
         panel.makeKeyAndOrderFront(nil)
@@ -71,6 +73,24 @@ final class SettingsWindowController {
         let y = min(max(yFromAnchor, screenFrame.minY + 8), screenFrame.maxY - size.height)
 
         panel.setFrameOrigin(NSPoint(x: x, y: y))
+    }
+
+    private func configureGlassPanel(_ panel: NSPanel) {
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.contentView?.wantsLayer = true
+        panel.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
+        panel.contentView?.layer?.cornerRadius = 18
+        panel.contentView?.layer?.cornerCurve = .continuous
+        panel.contentView?.layer?.masksToBounds = true
+    }
+
+    private func configureGlassHost(_ hostingView: NSHostingView<SitWatcherHostedSettingsView>) {
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = NSColor.clear.cgColor
+        hostingView.layer?.cornerRadius = 18
+        hostingView.layer?.cornerCurve = .continuous
+        hostingView.layer?.masksToBounds = true
     }
 }
 
