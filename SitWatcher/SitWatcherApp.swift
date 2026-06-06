@@ -51,6 +51,8 @@ private struct AppearanceKeyedContent: View {
     let coordinator: AppCoordinator
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var menuWindowFrame: NSRect?
+    @State private var menuWindow: NSWindow?
 
     /// Omit language from `.id` so changing UI language doesn't replace this subtree (keeps ScrollView offset).
     private var routingId: String {
@@ -58,27 +60,43 @@ private struct AppearanceKeyedContent: View {
     }
 
     var body: some View {
-        Group {
-            if appState.showSettings {
-                SettingsView(
-                    settings: settings,
-                    onBack: { appState.showSettings = false }
-                )
-            } else {
-                MenuBarPanel(
-                    state: appState,
-                    onPauseToggle: { coordinator.togglePause() },
-                    onSkip: { coordinator.skip() },
-                    onReset: { coordinator.reset() },
-                    onTestReminder: { coordinator.testReminder() },
-                    onOpenSettings: { appState.showSettings = true },
-                    onCheckForUpdates: { updater.checkForUpdates(nil) },
-                    onQuit: { NSApplication.shared.terminate(nil) }
-                )
+        MenuBarPanel(
+            state: appState,
+            onPauseToggle: { coordinator.togglePause() },
+            onSkip: { coordinator.skip() },
+            onReset: { coordinator.reset() },
+            onTestReminder: { coordinator.testReminder() },
+            onOpenSettings: {
+                coordinator.openSettings(anchorFrame: menuWindowFrame, menuWindow: menuWindow)
+            },
+            onCheckForUpdates: { updater.checkForUpdates(nil) },
+            onQuit: { NSApplication.shared.terminate(nil) }
+        )
+        .background(
+            MenuBarWindowProbe { window in
+                menuWindow = window
+                menuWindowFrame = window?.frame
+                if window?.isVisible == true {
+                    coordinator.menuPanelDidAppear()
+                }
             }
-        }
+        )
         .environment(\.locale, settings.localizationLocale)
         .id(routingId)
+    }
+}
+
+private struct MenuBarWindowProbe: NSViewRepresentable {
+    var onWindowChange: (NSWindow?) -> Void
+
+    func makeNSView(context: Context) -> NSView {
+        NSView(frame: .zero)
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        DispatchQueue.main.async {
+            onWindowChange(view.window)
+        }
     }
 }
 

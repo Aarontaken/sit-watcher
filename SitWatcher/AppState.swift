@@ -28,7 +28,6 @@ final class AppState: ObservableObject {
     @Published var restCount: Int = 0
     @Published var interruptCount: Int = 0
     @Published var focusSeconds: TimeInterval = 0
-    @Published var showSettings: Bool = false
 
     private var lastResetDate: Date = .now
 

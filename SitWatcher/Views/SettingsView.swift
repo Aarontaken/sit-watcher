@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-private enum SettingsViewMetrics {
+enum SettingsViewMetrics {
     /// Header row (`header`): back/title/icon row plus its bottom inset.
     static let headerBlockHeight: CGFloat = 78
     /// Done pill plus `padding(.top, 8)` on it.
@@ -37,6 +37,7 @@ struct SettingsView: View {
     @ObservedObject var settings: Settings
     @Environment(\.sitWatcherPanelAppearance) private var appearance
     var onBack: () -> Void
+    var showsBackButton: Bool = true
 
     private var mint: Color { SitWatcherPanelChrome.mint }
     private var cyan: Color { SitWatcherPanelChrome.cyan }
@@ -398,17 +399,19 @@ struct SettingsView: View {
 
     private var header: some View {
         HStack(alignment: .center, spacing: 12) {
-            Button(action: onBack) {
-                Label(L10n.text("settings.back"), systemImage: "chevron.backward")
-                    .font(.system(size: 12, weight: .semibold))
-                    .labelStyle(.titleAndIcon)
-                    .foregroundStyle(appearance == .dark ? Color.white.opacity(0.78) : appearance.segmentInactiveLabel)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 10)
-                    .frame(minWidth: 44, minHeight: 44, alignment: .leading)
-                    .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            if showsBackButton {
+                Button(action: onBack) {
+                    Label(L10n.text("settings.back"), systemImage: "chevron.backward")
+                        .font(.system(size: 12, weight: .semibold))
+                        .labelStyle(.titleAndIcon)
+                        .foregroundStyle(appearance == .dark ? Color.white.opacity(0.78) : appearance.segmentInactiveLabel)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 10)
+                        .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+                        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(L10n.text("settings.window.title"))
