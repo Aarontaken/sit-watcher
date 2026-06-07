@@ -31,8 +31,8 @@ final class FloatingWindowController {
 
         let hostingView = NSHostingView(rootView: view)
         let panelSize = NSSize(
-            width: FloatingReminderPanelMetrics.width,
-            height: FloatingReminderPanelMetrics.height
+            width: RestReminderPanelMetrics.width,
+            height: RestReminderPanelMetrics.height
         )
         hostingView.setFrameSize(panelSize)
 
@@ -90,7 +90,7 @@ private struct SitWatcherHostedFloatingReminder: View {
 
     var body: some View {
         SitWatcherAppearanceScope(stored: Settings.shared.uiPanelAppearance) {
-            FloatingReminderView(
+            RestReminderFloatingView(
                 sittingMinutes: sittingMinutes,
                 canSnooze: canSnooze,
                 onConfirm: onConfirm,

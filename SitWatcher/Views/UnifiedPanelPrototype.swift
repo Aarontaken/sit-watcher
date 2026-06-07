@@ -357,6 +357,10 @@ struct UnifiedPanelPrototype: View {
                     themePicker
                 }
 
+                settingsGroup("figure.walk", title: localized(chinese: "提醒角色", english: "Reminder Character")) {
+                    reminderFigureStylePicker
+                }
+
                 settingsGroup("globe", title: localized(chinese: "语言", english: "Language")) {
                     languagePicker
                 }
@@ -502,6 +506,63 @@ struct UnifiedPanelPrototype: View {
                 .strokeBorder(isSelected ? palette.accent.opacity(0.24) : palette.subtleStroke, lineWidth: 1)
         }
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    private var reminderFigureStylePicker: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
+            ForEach(RestReminderFigureStyle.allCases) { style in
+                figureStyleChoice(style)
+            }
+        }
+    }
+
+    private func figureStyleChoice(_ style: RestReminderFigureStyle) -> some View {
+        let isSelected = settings.restReminderFigureStyle == style
+
+        return Button {
+            settings.restReminderFigureStyle = style
+        } label: {
+            HStack(spacing: 9) {
+                figurePreview(style, isSelected: isSelected)
+
+                Text(style.caption(language: settings.uiLanguage))
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .foregroundStyle(isSelected ? palette.selectedText : palette.secondaryText)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 9)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(isSelected ? palette.selectedFill : palette.recessedFill)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(isSelected ? palette.accent.opacity(0.24) : palette.subtleStroke, lineWidth: 1)
+        }
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    @ViewBuilder
+    private func figurePreview(_ style: RestReminderFigureStyle, isSelected: Bool) -> some View {
+        if style == .line {
+            Image(systemName: style.iconName)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(isSelected ? palette.accent : palette.secondaryText)
+                .frame(width: 34, height: 34)
+        } else {
+            Image(style.assetName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .padding(2)
+        }
     }
 
     private var languagePicker: some View {

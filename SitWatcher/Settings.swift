@@ -64,6 +64,12 @@ final class Settings: ObservableObject {
         }
     }
 
+    @Published var restReminderFigureStyle: RestReminderFigureStyle {
+        didSet {
+            defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
+        }
+    }
+
     /// Used for SwiftUI `\\.locale` + `String(localized:bundle:locale:)` — always concrete (never `nil`).
     var localizationLocale: Locale {
         switch uiLanguage {
@@ -90,6 +96,7 @@ final class Settings: ObservableObject {
             "uiLanguage": UIAppLanguage.system.rawValue,
             "uiPanelAppearance": SitWatcherPanelAppearance.system.rawValue,
             "unifiedPanelTheme": UnifiedPanelTheme.paper.rawValue,
+            "restReminderFigureStyle": RestReminderFigureStyle.line.rawValue,
         ])
 
         let interval = defaults.double(forKey: "reminderInterval")
@@ -119,6 +126,9 @@ final class Settings: ObservableObject {
         let themeRaw = defaults.string(forKey: "unifiedPanelTheme") ?? UnifiedPanelTheme.paper.rawValue
         self.unifiedPanelTheme = UnifiedPanelTheme(rawValue: themeRaw) ?? .paper
 
+        let figureStyleRaw = defaults.string(forKey: "restReminderFigureStyle") ?? RestReminderFigureStyle.line.rawValue
+        self.restReminderFigureStyle = RestReminderFigureStyle(rawValue: figureStyleRaw) ?? .line
+
         defaults.set(reminderInterval, forKey: "reminderInterval")
         defaults.set(l2Delay, forKey: "l2Delay")
         defaults.set(l3Delay, forKey: "l3Delay")
@@ -128,6 +138,7 @@ final class Settings: ObservableObject {
         defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
         defaults.set(uiPanelAppearance.rawValue, forKey: "uiPanelAppearance")
         defaults.set(unifiedPanelTheme.rawValue, forKey: "unifiedPanelTheme")
+        defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
     }
 
     private func updateLaunchAtLogin() {

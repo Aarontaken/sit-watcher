@@ -7,7 +7,7 @@ private class ClickablePanel: NSPanel {
 
 final class OverlayWindowController {
     private var panels: [NSPanel] = []
-    /// Shared ticker across panels so every display shows the same pose; pair with `panel.hasShadow = false` above.
+    /// Kept for legacy overlay compatibility; new overlay UI does not animate a shared glyph.
     private var sharedFullscreenFigureTicker: StretchFigureTicker?
 
     func show(sittingMinutes: Int, onDismiss: @escaping () -> Void) {
@@ -95,10 +95,9 @@ private struct SitWatcherHostedFullScreenOverlay: View {
 
     var body: some View {
         SitWatcherAppearanceScope(stored: Settings.shared.uiPanelAppearance) {
-            FullScreenOverlayView(
+            RestReminderFullScreenView(
                 sittingMinutes: sittingMinutes,
-                onDismiss: onDismiss,
-                figureTicker: figureTicker
+                onDismiss: onDismiss
             )
         }
         .environment(\.locale, Settings.shared.localizationLocale)
