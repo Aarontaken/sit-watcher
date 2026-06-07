@@ -90,7 +90,10 @@ struct UnifiedPanelPrototype: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(capsuleFill)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(palette.recessedFill)
+            }
             .overlay {
                 Capsule(style: .continuous)
                     .strokeBorder(palette.subtleStroke, lineWidth: 1)
@@ -548,15 +551,26 @@ struct UnifiedPanelPrototype: View {
             .frame(height: 1)
     }
 
-    private var capsuleFill: some ShapeStyle {
-        palette.recessedFill
-    }
-
     private var statusCaption: String {
         if selectedTab == .timer {
-            return progressCaption
+            return warmStatusCaption
         }
         return localized(chinese: "专注节奏，一眼掌握", english: "Focus rhythm at a glance")
+    }
+
+    private var warmStatusCaption: String {
+        switch (state.timerPhase, state.reminderLevel) {
+        case (.paused, _):
+            return localized(chinese: "暂停一下，也是在照顾自己", english: "Paused, with room to breathe")
+        case (.idle, _):
+            return localized(chinese: "你离开座位了，稍后再继续", english: "Away for now, resume when you return")
+        case (_, .none):
+            return localized(chinese: "保持节奏，记得给身体留点空隙", english: "Keep the rhythm, leave space to stretch")
+        case (_, .l1), (_, .l2):
+            return localized(chinese: "可以起身舒展一下了", english: "A gentle stretch would be good now")
+        case (_, .l3):
+            return localized(chinese: "先照顾身体，再继续专注", english: "Take care of your body before continuing")
+        }
     }
 
     private var progressCaption: String {
