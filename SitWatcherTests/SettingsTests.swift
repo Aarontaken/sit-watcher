@@ -25,6 +25,7 @@ final class SettingsTests: XCTestCase {
         XCTAssertFalse(s.launchAtLogin)
         XCTAssertEqual(s.uiLanguage, .system)
         XCTAssertEqual(s.uiPanelAppearance, .system)
+        XCTAssertEqual(s.unifiedPanelTheme, .paper)
     }
 
     func testPersistence() {
@@ -38,11 +39,13 @@ final class SettingsTests: XCTestCase {
         s.soundEnabled = false
         s.uiLanguage = .english
         s.uiPanelAppearance = .light
+        s.unifiedPanelTheme = .dusk
 
         let s2 = Settings(defaults: defaults)
         XCTAssertEqual(s2.reminderInterval, 45 * 60)
         XCTAssertFalse(s2.soundEnabled)
         XCTAssertEqual(s2.uiLanguage, .english)
         XCTAssertEqual(s2.uiPanelAppearance, .light)
+        XCTAssertEqual(s2.unifiedPanelTheme, .dusk)
     }
 }

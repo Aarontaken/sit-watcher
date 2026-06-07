@@ -10,8 +10,6 @@ final class AppCoordinator {
     let escalator: ReminderEscalator
     let floatingWindow = FloatingWindowController()
     let overlayWindow = OverlayWindowController()
-    let settingsWindow = SettingsWindowController()
-    private var settingsOpenedAt: Date?
 
     private init() {
         timerEngine = TimerEngine(state: appState, settings: settings)
@@ -118,16 +116,4 @@ final class AppCoordinator {
         NotificationManager.shared.clearAll()
     }
 
-    func openSettings(anchorFrame: NSRect?, menuWindow: NSWindow?) {
-        settingsOpenedAt = .now
-        settingsWindow.show(anchorFrame: anchorFrame)
-        menuWindow?.orderOut(nil)
-    }
-
-    func menuPanelDidAppear() {
-        if let settingsOpenedAt, Date().timeIntervalSince(settingsOpenedAt) < 0.15 {
-            return
-        }
-        settingsWindow.close()
-    }
 }

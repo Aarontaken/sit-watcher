@@ -33,64 +33,29 @@ struct ContentPanel: View {
     private var coordinator: AppCoordinator { AppCoordinator.shared }
 
     var body: some View {
-        SitWatcherAppearanceScope(stored: settings.uiPanelAppearance) {
-            AppearanceKeyedContent(
-                updater: updater,
-                settings: settings,
-                appState: appState,
-                coordinator: coordinator
-            )
-        }
-    }
-}
-
-private struct AppearanceKeyedContent: View {
-    let updater: SPUStandardUpdaterController
-    @ObservedObject var settings: Settings
-    @ObservedObject var appState: AppState
-    let coordinator: AppCoordinator
-
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var menuWindowFrame: NSRect?
-    @State private var menuWindow: NSWindow?
-
-    /// Omit language from `.id` so changing UI language doesn't replace this subtree (keeps ScrollView offset).
-    private var routingId: String {
-        "\(settings.uiPanelAppearance.rawValue)-\(settings.uiPanelAppearance.resolvedPalette(for: colorScheme).rawValue)"
-    }
-
-    var body: some View {
-        MenuBarPanel(
+        UnifiedPanelPrototype(
             state: appState,
+            settings: settings,
             onPauseToggle: { coordinator.togglePause() },
             onSkip: { coordinator.skip() },
             onReset: { coordinator.reset() },
             onTestReminder: { coordinator.testReminder() },
-            onOpenSettings: {
-                coordinator.openSettings(anchorFrame: menuWindowFrame, menuWindow: menuWindow)
-            },
             onCheckForUpdates: { updater.checkForUpdates(nil) },
             onQuit: { NSApplication.shared.terminate(nil) }
         )
         .background(
             MenuBarWindowProbe { window in
-                menuWindow = window
-                menuWindowFrame = window?.frame
                 configureMenuWindow(window)
-                if window?.isVisible == true {
-                    coordinator.menuPanelDidAppear()
-                }
             }
         )
         .environment(\.locale, settings.localizationLocale)
-        .id(routingId)
     }
 
     private func configureMenuWindow(_ window: NSWindow?) {
         guard let window else { return }
         window.isOpaque = false
         window.backgroundColor = .clear
-        window.hasShadow = false
+        window.hasShadow = true
         window.contentView?.wantsLayer = true
         window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
         window.contentView?.subviews.forEach { subview in

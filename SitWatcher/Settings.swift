@@ -58,6 +58,12 @@ final class Settings: ObservableObject {
         }
     }
 
+    @Published var unifiedPanelTheme: UnifiedPanelTheme {
+        didSet {
+            defaults.set(unifiedPanelTheme.rawValue, forKey: "unifiedPanelTheme")
+        }
+    }
+
     /// Used for SwiftUI `\\.locale` + `String(localized:bundle:locale:)` — always concrete (never `nil`).
     var localizationLocale: Locale {
         switch uiLanguage {
@@ -83,6 +89,7 @@ final class Settings: ObservableObject {
             "launchAtLogin": false,
             "uiLanguage": UIAppLanguage.system.rawValue,
             "uiPanelAppearance": SitWatcherPanelAppearance.system.rawValue,
+            "unifiedPanelTheme": UnifiedPanelTheme.paper.rawValue,
         ])
 
         let interval = defaults.double(forKey: "reminderInterval")
@@ -109,6 +116,9 @@ final class Settings: ObservableObject {
         let panelRaw = defaults.string(forKey: "uiPanelAppearance") ?? SitWatcherPanelAppearance.system.rawValue
         self.uiPanelAppearance = SitWatcherPanelAppearance(rawValue: panelRaw) ?? .system
 
+        let themeRaw = defaults.string(forKey: "unifiedPanelTheme") ?? UnifiedPanelTheme.paper.rawValue
+        self.unifiedPanelTheme = UnifiedPanelTheme(rawValue: themeRaw) ?? .paper
+
         defaults.set(reminderInterval, forKey: "reminderInterval")
         defaults.set(l2Delay, forKey: "l2Delay")
         defaults.set(l3Delay, forKey: "l3Delay")
@@ -117,6 +127,7 @@ final class Settings: ObservableObject {
         defaults.set(soundEnabled, forKey: "soundEnabled")
         defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
         defaults.set(uiPanelAppearance.rawValue, forKey: "uiPanelAppearance")
+        defaults.set(unifiedPanelTheme.rawValue, forKey: "unifiedPanelTheme")
     }
 
     private func updateLaunchAtLogin() {
