@@ -79,14 +79,11 @@ struct UnifiedPanelPrototype: View {
             Spacer(minLength: 12)
 
             HStack(spacing: 8) {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
-                    .shadow(color: statusColor.opacity(0.42), radius: 8)
+                statusDot
 
                 Text(state.statusLabel)
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(palette.primaryText)
+                    .foregroundColor(palette.primaryText)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -126,19 +123,55 @@ struct UnifiedPanelPrototype: View {
             Label(title, systemImage: icon)
                 .font(.system(size: 12, weight: isSelected ? .semibold : .medium))
                 .imageScale(.small)
-                .foregroundStyle(isSelected ? palette.selectedText : palette.secondaryText)
+                .foregroundColor(isSelected ? palette.selectedText : palette.secondaryText)
                 .frame(maxWidth: .infinity, minHeight: 34)
                 .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
         .buttonStyle(.plain)
         .background {
             if isSelected {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(palette.selectedFill)
-                    .shadow(color: palette.softShadow, radius: 10, y: 4)
+                selectedTabBackground
             }
         }
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    private var statusDot: some View {
+        ZStack {
+            Circle()
+                .fill(statusColor.opacity(palette.statusHaloOpacity))
+                .frame(width: 14, height: 14)
+
+            Circle()
+                .strokeBorder(statusColor.opacity(0.62), lineWidth: 0.8)
+                .frame(width: 10, height: 10)
+
+            Circle()
+                .fill(statusColor)
+                .frame(width: 6, height: 6)
+        }
+        .frame(width: 18, height: 18)
+    }
+
+    private var selectedTabBackground: some View {
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(palette.selectedFill)
+            .overlay(alignment: .top) {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(Color.white.opacity(palette.selectedHighlightOpacity), lineWidth: 1)
+                    .padding(1)
+            }
+            .overlay(alignment: .bottom) {
+                Capsule(style: .continuous)
+                    .fill(palette.selectedIndicatorFill)
+                    .frame(width: 24, height: 2)
+                    .padding(.bottom, 3)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(palette.selectedStroke, lineWidth: 1)
+            }
+            .shadow(color: palette.softShadow, radius: 10, y: 4)
     }
 
     private var timerPane: some View {
@@ -934,11 +967,11 @@ private struct UnifiedPanelPalette {
     }
 
     var secondaryText: Color {
-        usesDarkSurface ? Color.white.opacity(0.48) : Color(red: 0.28, green: 0.25, blue: 0.2).opacity(0.68)
+        usesDarkSurface ? Color.white.opacity(0.58) : Color(red: 0.28, green: 0.25, blue: 0.2).opacity(0.74)
     }
 
     var selectedText: Color {
-        usesDarkSurface ? Color(red: 0.98, green: 0.965, blue: 0.91) : Color(red: 0.11, green: 0.1, blue: 0.08)
+        usesDarkSurface ? Color.white : Color(red: 0.09, green: 0.085, blue: 0.065)
     }
 
     var primaryButtonText: Color {
@@ -962,39 +995,55 @@ private struct UnifiedPanelPalette {
     }
 
     var mutedStatus: Color {
-        usesDarkSurface ? Color.white.opacity(0.36) : Color.black.opacity(0.26)
+        usesDarkSurface ? Color.white.opacity(0.54) : Color.black.opacity(0.38)
     }
 
     var subtleStroke: Color {
-        usesDarkSurface ? Color.white.opacity(0.08) : Color.black.opacity(0.065)
+        usesDarkSurface ? Color.white.opacity(0.12) : Color.black.opacity(0.095)
     }
 
     var softShadow: Color {
-        usesDarkSurface ? Color.black.opacity(0.18) : Color.black.opacity(0.07)
+        usesDarkSurface ? Color.black.opacity(0.2) : Color.black.opacity(0.08)
     }
 
     var recessedFill: Color {
-        usesDarkSurface ? Color.black.opacity(0.18) : Color.white.opacity(0.38)
+        usesDarkSurface ? Color.black.opacity(0.24) : Color.white.opacity(0.52)
     }
 
     var selectedFill: Color {
-        usesDarkSurface ? Color.white.opacity(0.105) : Color.white.opacity(0.76)
+        usesDarkSurface ? Color.white.opacity(0.155) : Color.white.opacity(0.82)
+    }
+
+    var selectedStroke: Color {
+        usesDarkSurface ? Color.white.opacity(0.2) : Color.black.opacity(0.075)
+    }
+
+    var selectedIndicatorFill: Color {
+        accent.opacity(usesDarkSurface ? 0.72 : 0.58)
+    }
+
+    var selectedHighlightOpacity: Double {
+        usesDarkSurface ? 0.1 : 0.48
+    }
+
+    var statusHaloOpacity: Double {
+        usesDarkSurface ? 0.14 : 0.12
     }
 
     var cardFill: Color {
-        usesDarkSurface ? Color.white.opacity(0.055) : Color.white.opacity(0.46)
+        usesDarkSurface ? Color.white.opacity(0.07) : Color.white.opacity(0.54)
     }
 
     var controlFill: Color {
-        usesDarkSurface ? Color.white.opacity(0.075) : Color.white.opacity(0.5)
+        usesDarkSurface ? Color.white.opacity(0.085) : Color.white.opacity(0.58)
     }
 
     var timerTrack: Color {
-        usesDarkSurface ? Color.white.opacity(0.07) : Color.black.opacity(0.07)
+        usesDarkSurface ? Color.white.opacity(0.11) : Color.black.opacity(0.095)
     }
 
     var sliderTrackFill: Color {
-        usesDarkSurface ? Color.white.opacity(0.09) : Color.black.opacity(0.075)
+        usesDarkSurface ? Color.white.opacity(0.11) : Color.black.opacity(0.09)
     }
 
     var sliderKnobFill: Color {

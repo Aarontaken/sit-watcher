@@ -6,6 +6,10 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
     case stretch
     case sway
     case breathe
+    case pixelWalk
+    case pixelStretch
+    case pixelJump
+    case pixelHydrate
 
     var id: String { rawValue }
 
@@ -15,13 +19,21 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
         case .line:
             return usesEnglish ? "Line Figure" : "线条小人"
         case .walk:
-            return usesEnglish ? "Commuter" : "散步通勤"
+            return usesEnglish ? "Lazy Stretch" : "伸个懒腰"
         case .stretch:
             return usesEnglish ? "Stretch" : "伸展放松"
         case .sway:
             return usesEnglish ? "Sway" : "轻轻摇摆"
         case .breathe:
             return usesEnglish ? "Breathe" : "安静呼吸"
+        case .pixelWalk:
+            return usesEnglish ? "Pixel Walk" : "像素散步"
+        case .pixelStretch:
+            return usesEnglish ? "Pixel Stretch" : "像素伸展"
+        case .pixelJump:
+            return usesEnglish ? "Pixel Hop" : "像素轻跳"
+        case .pixelHydrate:
+            return usesEnglish ? "Pixel Sip" : "像素喝水"
         }
     }
 
@@ -37,6 +49,14 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
             return "ReminderFigureSway"
         case .breathe:
             return "ReminderFigureBreathe"
+        case .pixelWalk:
+            return "ReminderFigurePixelWalk"
+        case .pixelStretch:
+            return "ReminderFigurePixelStretch"
+        case .pixelJump:
+            return "ReminderFigurePixelJump"
+        case .pixelHydrate:
+            return "ReminderFigurePixelHydrate"
         }
     }
 
@@ -52,6 +72,14 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
             return (1...4).map { "ReminderFigureSwayFrame\($0)" }
         case .breathe:
             return (1...4).map { "ReminderFigureBreatheFrame\($0)" }
+        case .pixelWalk:
+            return (1...4).map { "ReminderFigurePixelWalkFrame\($0)" }
+        case .pixelStretch:
+            return (1...4).map { "ReminderFigurePixelStretchFrame\($0)" }
+        case .pixelJump:
+            return (1...4).map { "ReminderFigurePixelJumpFrame\($0)" }
+        case .pixelHydrate:
+            return (1...4).map { "ReminderFigurePixelHydrateFrame\($0)" }
         }
     }
 
@@ -60,13 +88,21 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
         case .line:
             return 0.52
         case .walk:
-            return 0.26
+            return 0.42
         case .stretch:
             return 0.34
         case .sway:
             return 0.25
         case .breathe:
             return 0.62
+        case .pixelWalk:
+            return 0.18
+        case .pixelStretch:
+            return 0.22
+        case .pixelJump:
+            return 0.16
+        case .pixelHydrate:
+            return 0.24
         }
     }
 
@@ -75,20 +111,28 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
         case .line:
             return "figure.walk.motion"
         case .walk:
-            return "figure.walk"
+            return "figure.flexibility"
         case .stretch:
             return "figure.flexibility"
         case .sway:
             return "figure.dance"
         case .breathe:
             return "figure.mind.and.body"
+        case .pixelWalk:
+            return "figure.walk.motion"
+        case .pixelStretch:
+            return "figure.flexibility"
+        case .pixelJump:
+            return "figure.jumprope"
+        case .pixelHydrate:
+            return "waterbottle"
         }
     }
 }
 
 enum RestReminderPanelMetrics {
     static let width: CGFloat = 336
-    static let height: CGFloat = 286
+    static let height: CGFloat = 316
 }
 
 struct RestReminderFloatingView: View {
@@ -107,23 +151,23 @@ struct RestReminderFloatingView: View {
     }
 
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             RestReminderCharacterFigure(
                 palette: palette,
-                size: 96,
+                size: 126,
                 style: settings.restReminderFigureStyle,
                 isActive: !reduceMotion
             )
 
             VStack(spacing: 6) {
-                Text(localized(chinese: "起来走走吧", english: "Take a short walk"))
+                Text(localized(chinese: "活动一下吧", english: "Time for a tiny reset"))
                     .font(.system(size: 20, weight: .semibold, design: .serif))
                     .foregroundStyle(palette.title)
                     .lineLimit(1)
 
                 Text(localized(
-                    chinese: "已经坐了 \(sittingMinutes) 分钟，走两步就好。",
-                    english: "\(sittingMinutes) minutes seated. Just take a short walk."
+                    chinese: "已经坐了 \(sittingMinutes) 分钟，伸展一下，喝口水也好。",
+                    english: "\(sittingMinutes) minutes seated. Stretch, sip water, or move a little."
                 ))
                 .font(.system(size: 12.5, weight: .medium))
                 .foregroundStyle(palette.secondaryText)
@@ -147,7 +191,9 @@ struct RestReminderFloatingView: View {
                 }
             }
         }
-        .padding(22)
+        .padding(.top, 18)
+        .padding(.horizontal, 22)
+        .padding(.bottom, 20)
         .frame(width: RestReminderPanelMetrics.width, height: RestReminderPanelMetrics.height, alignment: .center)
         .background {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -245,21 +291,21 @@ struct RestReminderFullScreenView: View {
                     VStack(spacing: 24) {
                         RestReminderCharacterFigure(
                             palette: palette,
-                            size: 172,
+                            size: 206,
                             style: settings.restReminderFigureStyle,
                             isActive: !reduceMotion
                         )
 
                         VStack(spacing: 12) {
-                            Text(localized(chinese: "先起来走走", english: "Stand up for a moment"))
+                            Text(localized(chinese: "先活动一下", english: "Take a real reset"))
                                 .font(.system(size: min(proxy.size.width * 0.052, 56), weight: .semibold, design: .serif))
                                 .foregroundStyle(palette.fullscreenTitle)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.68)
 
                             Text(localized(
-                                chinese: "你已经坐了 \(sittingMinutes) 分钟，走两步再回来。",
-                                english: "\(sittingMinutes) minutes seated. Take a short walk, then come back."
+                                chinese: "你已经坐了 \(sittingMinutes) 分钟，站起来伸展、喝水，给身体换个节奏。",
+                                english: "\(sittingMinutes) minutes seated. Stand, stretch, hydrate, and change the rhythm."
                             ))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(palette.fullscreenBody)
@@ -383,6 +429,8 @@ private struct RestReminderCharacterFigure: View {
             CGSize(width: 90 * scale, height: 90 * scale)
         case .breathe:
             CGSize(width: 92 * scale, height: 92 * scale)
+        case .pixelWalk, .pixelStretch, .pixelJump, .pixelHydrate:
+            CGSize(width: 86 * scale, height: 86 * scale)
         }
     }
 
@@ -399,6 +447,14 @@ private struct RestReminderCharacterFigure: View {
             return CGSize(width: -3 * scale, height: -1 * scale)
         case .breathe:
             return CGSize(width: 0, height: -2 * scale)
+        case .pixelWalk:
+            return CGSize(width: 2 * scale, height: -1 * scale)
+        case .pixelStretch:
+            return CGSize(width: 0, height: -3 * scale)
+        case .pixelJump:
+            return CGSize(width: 0, height: -5 * scale)
+        case .pixelHydrate:
+            return CGSize(width: 1 * scale, height: -1 * scale)
         }
     }
 
@@ -415,6 +471,14 @@ private struct RestReminderCharacterFigure: View {
             return -3
         case .breathe:
             return 0
+        case .pixelWalk:
+            return 0
+        case .pixelStretch:
+            return 0
+        case .pixelJump:
+            return 0
+        case .pixelHydrate:
+            return -1
         }
     }
 
@@ -431,6 +495,14 @@ private struct RestReminderCharacterFigure: View {
             return 1.015
         case .breathe:
             return 1.055
+        case .pixelWalk:
+            return 1
+        case .pixelStretch:
+            return 1.02
+        case .pixelJump:
+            return 1.025
+        case .pixelHydrate:
+            return 1.01
         }
     }
 
@@ -457,6 +529,14 @@ private struct RestReminderCharacterFigure: View {
             return 0.58
         case .breathe:
             return 1.05
+        case .pixelWalk:
+            return 0.36
+        case .pixelStretch:
+            return 0.48
+        case .pixelJump:
+            return 0.34
+        case .pixelHydrate:
+            return 0.58
         }
     }
 

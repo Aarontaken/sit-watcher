@@ -102,8 +102,8 @@
     "fullscreen.title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Take a short walk" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "起来走走吧" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Take a real reset" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "先活动一下" } }
       }
     },
     "menu.tagline" : {
