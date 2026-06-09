@@ -129,9 +129,12 @@ struct UnifiedPanelPrototype: View {
         }
         .buttonStyle(.plain)
         .background {
-            if isSelected {
-                selectedTabBackground
-            }
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(isSelected ? palette.selectedFill : Color.clear)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(isSelected ? palette.selectedStroke : Color.clear, lineWidth: 1)
+                }
         }
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
@@ -140,38 +143,14 @@ struct UnifiedPanelPrototype: View {
         ZStack {
             Circle()
                 .fill(statusColor.opacity(palette.statusHaloOpacity))
-                .frame(width: 14, height: 14)
-
-            Circle()
-                .strokeBorder(statusColor.opacity(0.62), lineWidth: 0.8)
-                .frame(width: 10, height: 10)
+                .frame(width: 13, height: 13)
 
             Circle()
                 .fill(statusColor)
-                .frame(width: 6, height: 6)
+                .frame(width: 7, height: 7)
+                .shadow(color: statusColor.opacity(0.36), radius: 3)
         }
-        .frame(width: 18, height: 18)
-    }
-
-    private var selectedTabBackground: some View {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(palette.selectedFill)
-            .overlay(alignment: .top) {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(Color.white.opacity(palette.selectedHighlightOpacity), lineWidth: 1)
-                    .padding(1)
-            }
-            .overlay(alignment: .bottom) {
-                Capsule(style: .continuous)
-                    .fill(palette.selectedIndicatorFill)
-                    .frame(width: 24, height: 2)
-                    .padding(.bottom, 3)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(palette.selectedStroke, lineWidth: 1)
-            }
-            .shadow(color: palette.softShadow, radius: 10, y: 4)
+        .frame(width: 16, height: 16)
     }
 
     private var timerPane: some View {
@@ -1011,23 +990,15 @@ private struct UnifiedPanelPalette {
     }
 
     var selectedFill: Color {
-        usesDarkSurface ? Color.white.opacity(0.155) : Color.white.opacity(0.82)
+        accent.opacity(usesDarkSurface ? 0.18 : 0.16)
     }
 
     var selectedStroke: Color {
-        usesDarkSurface ? Color.white.opacity(0.2) : Color.black.opacity(0.075)
-    }
-
-    var selectedIndicatorFill: Color {
-        accent.opacity(usesDarkSurface ? 0.72 : 0.58)
-    }
-
-    var selectedHighlightOpacity: Double {
-        usesDarkSurface ? 0.1 : 0.48
+        accent.opacity(usesDarkSurface ? 0.26 : 0.22)
     }
 
     var statusHaloOpacity: Double {
-        usesDarkSurface ? 0.14 : 0.12
+        usesDarkSurface ? 0.16 : 0.13
     }
 
     var cardFill: Color {
