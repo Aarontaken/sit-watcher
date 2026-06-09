@@ -3,12 +3,12 @@
     <channel>
         <title>SitWatcher</title>
         <item>
-            <title>1.0.13</title>
-            <pubDate>Sun, 07 Jun 2026 16:17:01 +0000</pubDate>
-            <sparkle:version>13</sparkle:version>
-            <sparkle:shortVersionString>1.0.13</sparkle:shortVersionString>
+            <title>1.0.14</title>
+            <pubDate>Tue, 09 Jun 2026 11:51:26 +0000</pubDate>
+            <sparkle:version>14</sparkle:version>
+            <sparkle:shortVersionString>1.0.14</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://Aarontaken.github.io/sit-watcher/SitWatcher-1.0.13.zip" length="3866316" type="application/octet-stream" sparkle:edSignature="90bjx/5gb/GUwEwXZ9tZ9JdBvat19fC3MbJaAyXCYDa1A1OHV5Jky9jNNDQO36Wnzhh6OSawlDqIUMjdm6X5DQ=="/>
+            <enclosure url="https://Aarontaken.github.io/sit-watcher/SitWatcher-1.0.14.zip" length="3719089" type="application/octet-stream" sparkle:edSignature="sHCYtW79BcyS1pxhtUy6SiMON9+DtyVZCs5WVnplyif22JrO2xuYKDA7ILXUmL2h0NveNhC54czZO6jy225GDA=="/>
         </item>
     </channel>
 </rss>
