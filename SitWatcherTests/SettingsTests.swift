@@ -27,6 +27,7 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(s.uiPanelAppearance, .system)
         XCTAssertEqual(s.unifiedPanelTheme, .paper)
         XCTAssertEqual(s.restReminderFigureStyle, .line)
+        XCTAssertEqual(s.reminderCharacterSelection, .builtIn(.line))
     }
 
     func testPersistence() {
@@ -42,6 +43,7 @@ final class SettingsTests: XCTestCase {
         s.uiPanelAppearance = .light
         s.unifiedPanelTheme = .dusk
         s.restReminderFigureStyle = .stretch
+        s.reminderCharacterSelection = .builtIn(.stretch)
 
         let s2 = Settings(defaults: defaults)
         XCTAssertEqual(s2.reminderInterval, 45 * 60)
@@ -50,5 +52,35 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(s2.uiPanelAppearance, .light)
         XCTAssertEqual(s2.unifiedPanelTheme, .dusk)
         XCTAssertEqual(s2.restReminderFigureStyle, .stretch)
+        XCTAssertEqual(s2.reminderCharacterSelection, .builtIn(.stretch))
+    }
+
+    func testReminderCharacterSelectionMigratesLegacyFigureStyle() {
+        let defaultsName = "test-character-selection-migration"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        defaults.removePersistentDomain(forName: defaultsName)
+        defer { defaults.removePersistentDomain(forName: defaultsName) }
+
+        defaults.set(RestReminderFigureStyle.pixelHydrate.rawValue, forKey: "restReminderFigureStyle")
+
+        let settings = Settings(defaults: defaults)
+        XCTAssertEqual(settings.reminderCharacterSelection, .builtIn(.pixelHydrate))
+    }
+
+    func testCustomReminderCharacterSelectionPersistsWithoutRewritingBuiltInStyle() {
+        let defaultsName = "test-custom-character-selection-persistence"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        defaults.removePersistentDomain(forName: defaultsName)
+        defer { defaults.removePersistentDomain(forName: defaultsName) }
+
+        let id = UUID(uuidString: "11111111-2222-3333-4444-555555555555")!
+        let settings = Settings(defaults: defaults)
+        settings.restReminderFigureStyle = .pixelJump
+        settings.reminderCharacterSelection = .custom(id)
+
+        let reloaded = Settings(defaults: defaults)
+        XCTAssertEqual(reloaded.reminderCharacterSelection, .custom(id))
+        XCTAssertEqual(reloaded.restReminderFigureStyle, .pixelJump)
+        XCTAssertEqual(defaults.string(forKey: "reminderCharacterSelection"), "custom:\(id.uuidString)")
     }
 }

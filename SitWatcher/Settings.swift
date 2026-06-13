@@ -64,9 +64,21 @@ final class Settings: ObservableObject {
         }
     }
 
+    @Published var reminderCharacterSelection: ReminderCharacterSelection = .builtIn(.line) {
+        didSet {
+            defaults.set(reminderCharacterSelection.storedString, forKey: "reminderCharacterSelection")
+            if case .builtIn(let style) = reminderCharacterSelection, restReminderFigureStyle != style {
+                restReminderFigureStyle = style
+            }
+        }
+    }
+
     @Published var restReminderFigureStyle: RestReminderFigureStyle {
         didSet {
             defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
+            if reminderCharacterSelection != .builtIn(restReminderFigureStyle) {
+                reminderCharacterSelection = .builtIn(restReminderFigureStyle)
+            }
         }
     }
 
@@ -129,6 +141,14 @@ final class Settings: ObservableObject {
         let figureStyleRaw = defaults.string(forKey: "restReminderFigureStyle") ?? RestReminderFigureStyle.line.rawValue
         self.restReminderFigureStyle = RestReminderFigureStyle(rawValue: figureStyleRaw) ?? .line
 
+        let hasStoredSelection = defaults.object(forKey: "reminderCharacterSelection") != nil
+        let storedSelection = hasStoredSelection ? defaults.string(forKey: "reminderCharacterSelection") : nil
+        if hasStoredSelection {
+            self.reminderCharacterSelection = ReminderCharacterSelection.fromStoredString(storedSelection)
+        } else {
+            self.reminderCharacterSelection = .builtIn(self.restReminderFigureStyle)
+        }
+
         defaults.set(reminderInterval, forKey: "reminderInterval")
         defaults.set(l2Delay, forKey: "l2Delay")
         defaults.set(l3Delay, forKey: "l3Delay")
@@ -138,6 +158,7 @@ final class Settings: ObservableObject {
         defaults.set(uiLanguage.rawValue, forKey: "uiLanguage")
         defaults.set(uiPanelAppearance.rawValue, forKey: "uiPanelAppearance")
         defaults.set(unifiedPanelTheme.rawValue, forKey: "unifiedPanelTheme")
+        defaults.set(reminderCharacterSelection.storedString, forKey: "reminderCharacterSelection")
         defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
     }
 
