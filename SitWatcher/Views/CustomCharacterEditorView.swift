@@ -22,7 +22,7 @@ struct CustomCharacterEditorView: View {
     ) {
         self.existingCharacter = existingCharacter
         self.onComplete = onComplete
-        _name = State(initialValue: existingCharacter?.name ?? "")
+        _name = State(initialValue: existingCharacter?.name ?? "Custom Character")
         _crop = State(
             initialValue: existingCharacter?.crop ?? CharacterCrop(
                 scale: 1,
@@ -127,7 +127,7 @@ struct CustomCharacterEditorView: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(.quaternary, lineWidth: 1)
         }
-        .frame(width: 316, height: 220)
+        .frame(width: 220, height: 220)
         .contentShape(Rectangle())
         .gesture(
             DragGesture()
