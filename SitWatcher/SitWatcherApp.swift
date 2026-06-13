@@ -4,19 +4,28 @@ import Sparkle
 
 @main
 struct SitWatcherApp: App {
+    private let updateAvailability: UpdateAvailabilityObserver
     private let updaterController: SPUStandardUpdaterController
 
     init() {
-        updaterController = SPUStandardUpdaterController(
+        let updateAvailability = UpdateAvailabilityObserver()
+        self.updateAvailability = updateAvailability
+        let updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
-            updaterDelegate: nil,
+            updaterDelegate: updateAvailability,
             userDriverDelegate: nil
         )
+        self.updaterController = updaterController
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            updateAvailability.refreshIfNeeded(using: updaterController.updater, minimumInterval: 0)
+        }
     }
 
     var body: some Scene {
         MenuBarExtra {
-            ContentPanel(updater: updaterController)
+            ContentPanel(updater: updaterController, updateAvailability: updateAvailability)
         } label: {
             MenuBarLabel()
         }
@@ -26,6 +35,7 @@ struct SitWatcherApp: App {
 
 struct ContentPanel: View {
     let updater: SPUStandardUpdaterController
+    @ObservedObject var updateAvailability: UpdateAvailabilityObserver
 
     @ObservedObject private var appState = AppCoordinator.shared.appState
     @ObservedObject private var settings = AppCoordinator.shared.settings
@@ -41,6 +51,7 @@ struct ContentPanel: View {
             onReset: { coordinator.reset() },
             onTestReminder: { coordinator.testReminder() },
             onCheckForUpdates: { updater.checkForUpdates(nil) },
+            hasAvailableUpdate: updateAvailability.hasAvailableUpdate,
             onQuit: { NSApplication.shared.terminate(nil) }
         )
         .background(
@@ -48,6 +59,9 @@ struct ContentPanel: View {
                 configureMenuWindow(window)
             }
         )
+        .onAppear {
+            updateAvailability.refreshIfNeeded(using: updater.updater)
+        }
         .environment(\.locale, settings.localizationLocale)
     }
 
@@ -62,6 +76,36 @@ struct ContentPanel: View {
             subview.wantsLayer = true
             subview.layer?.backgroundColor = NSColor.clear.cgColor
         }
+    }
+}
+
+@MainActor
+final class UpdateAvailabilityObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
+    @Published private(set) var hasAvailableUpdate = false
+    private var lastInformationCheckDate: Date?
+
+    func refreshIfNeeded(using updater: SPUUpdater, minimumInterval: TimeInterval = 30 * 60) {
+        guard updater.sessionInProgress == false else { return }
+
+        let now = Date()
+        if let lastInformationCheckDate, now.timeIntervalSince(lastInformationCheckDate) < minimumInterval {
+            return
+        }
+
+        lastInformationCheckDate = now
+        updater.checkForUpdateInformation()
+    }
+
+    func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
+        hasAvailableUpdate = true
+    }
+
+    func updaterDidNotFindUpdate(_ updater: SPUUpdater, error: Error) {
+        hasAvailableUpdate = false
+    }
+
+    func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
+        hasAvailableUpdate = false
     }
 }
 

@@ -9,6 +9,7 @@ struct UnifiedPanelPrototype: View {
     var onReset: () -> Void
     var onTestReminder: () -> Void
     var onCheckForUpdates: () -> Void
+    var hasAvailableUpdate: Bool = false
     var onQuit: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
@@ -284,26 +285,58 @@ struct UnifiedPanelPrototype: View {
     private var footerActions: some View {
         HStack(spacing: 6) {
             smallFooterButton(icon: "bell.badge.waveform", title: L10n.text("footer.test"), action: onTestReminder)
-            smallFooterButton(icon: "arrow.triangle.2.circlepath", title: L10n.text("footer.updates"), action: onCheckForUpdates)
+            smallFooterButton(
+                icon: "arrow.triangle.2.circlepath",
+                title: L10n.text("footer.updates"),
+                showsBadge: hasAvailableUpdate,
+                action: onCheckForUpdates
+            )
             smallFooterButton(icon: "rectangle.portrait.and.arrow.right", title: L10n.text("footer.quit"), action: onQuit)
         }
         .padding(.top, 2)
     }
 
-    private func smallFooterButton(icon: String, title: String, action: @escaping () -> Void) -> some View {
+    private func smallFooterButton(
+        icon: String,
+        title: String,
+        showsBadge: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(palette.secondaryText)
-                .frame(maxWidth: .infinity, minHeight: 36)
-                .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            ZStack(alignment: .topTrailing) {
+                Image(systemName: icon)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(palette.secondaryText)
+                    .frame(maxWidth: .infinity, minHeight: 36)
+
+                if showsBadge {
+                    updateBadge
+                        .offset(x: -18, y: 8)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 36)
+            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
         .buttonStyle(.plain)
         .help(title)
+        .animation(.spring(response: 0.22, dampingFraction: 0.78), value: showsBadge)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(palette.recessedFill)
         }
+    }
+
+    private var updateBadge: some View {
+        Circle()
+            .fill(palette.warning)
+            .frame(width: 8, height: 8)
+            .overlay {
+                Circle()
+                    .strokeBorder(Color.white.opacity(colorScheme == .dark ? 0.72 : 0.95), lineWidth: 1.5)
+            }
+            .shadow(color: palette.warning.opacity(0.34), radius: 4, y: 1)
+            .accessibilityLabel(localized(chinese: "有新版本", english: "Update available"))
     }
 
     private var settingsPane: some View {
