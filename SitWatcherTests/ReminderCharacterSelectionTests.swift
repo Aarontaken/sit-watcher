@@ -29,6 +29,14 @@ final class ReminderCharacterSelectionTests: XCTestCase {
         XCTAssertEqual(ReminderCharacterSelection.fromStoredString("not-useful"), .builtIn(.line))
     }
 
+    func testAvailableBuiltInStylesExcludeSway() {
+        XCTAssertFalse(RestReminderFigureStyle.availableBuiltInCases.contains(.sway))
+    }
+
+    func testStoredSwaySelectionDefaultsToLine() {
+        XCTAssertEqual(ReminderCharacterSelection.fromStoredString("builtIn:sway"), .builtIn(.line))
+    }
+
     func testInvalidCustomCodableValueDefaultsToLine() throws {
         let data = #"{"kind":"custom","value":"not-a-uuid"}"#.data(using: .utf8)!
         let decoded = try JSONDecoder().decode(ReminderCharacterSelection.self, from: data)

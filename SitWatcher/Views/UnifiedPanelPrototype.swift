@@ -357,6 +357,14 @@ struct UnifiedPanelPrototype: View {
     private var settingsPane: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 12) {
+                settingsGroup("swatchpalette", title: localized(chinese: "主题", english: "Theme")) {
+                    themePicker
+                }
+
+                settingsGroup("figure.walk", title: localized(chinese: "提醒角色", english: "Reminder Character")) {
+                    reminderFigureStylePicker
+                }
+
                 settingsGroup("timer", title: localized(chinese: "节奏", english: "Rhythm")) {
                     sliderRow(
                         title: L10n.text("settings.reminder_interval.title"),
@@ -411,14 +419,6 @@ struct UnifiedPanelPrototype: View {
                         subtitle: L10n.text("settings.launch_at_login.subtitle"),
                         isOn: Binding(get: { settings.launchAtLogin }, set: { settings.launchAtLogin = $0 })
                     )
-                }
-
-                settingsGroup("swatchpalette", title: localized(chinese: "主题", english: "Theme")) {
-                    themePicker
-                }
-
-                settingsGroup("figure.walk", title: localized(chinese: "提醒角色", english: "Reminder Character")) {
-                    reminderFigureStylePicker
                 }
 
                 settingsGroup("globe", title: localized(chinese: "语言", english: "Language")) {
@@ -571,7 +571,7 @@ struct UnifiedPanelPrototype: View {
     private var reminderFigureStylePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
-                ForEach(RestReminderFigureStyle.allCases) { style in
+                ForEach(RestReminderFigureStyle.availableBuiltInCases) { style in
                     figureStyleChoice(style)
                 }
 

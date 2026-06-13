@@ -13,6 +13,12 @@ enum RestReminderFigureStyle: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    static let availableBuiltInCases: [RestReminderFigureStyle] = allCases.filter { $0 != .sway }
+
+    var isAvailableBuiltIn: Bool {
+        Self.availableBuiltInCases.contains(self)
+    }
+
     func caption(language: UIAppLanguage) -> String {
         let usesEnglish = language == .english
         switch self {

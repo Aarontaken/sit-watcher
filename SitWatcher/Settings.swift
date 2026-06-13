@@ -141,7 +141,11 @@ final class Settings: ObservableObject {
         self.unifiedPanelTheme = UnifiedPanelTheme(rawValue: themeRaw) ?? .paper
 
         let figureStyleRaw = defaults.string(forKey: "restReminderFigureStyle") ?? RestReminderFigureStyle.line.rawValue
-        self.restReminderFigureStyle = RestReminderFigureStyle(rawValue: figureStyleRaw) ?? .line
+        if let storedFigureStyle = RestReminderFigureStyle(rawValue: figureStyleRaw), storedFigureStyle.isAvailableBuiltIn {
+            self.restReminderFigureStyle = storedFigureStyle
+        } else {
+            self.restReminderFigureStyle = .line
+        }
 
         let hasStoredSelection = defaults.object(forKey: "reminderCharacterSelection") != nil
         let storedSelection = hasStoredSelection ? defaults.string(forKey: "reminderCharacterSelection") : nil

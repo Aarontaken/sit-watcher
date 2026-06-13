@@ -20,7 +20,11 @@ enum ReminderCharacterSelection: Equatable, Codable {
         let value = try container.decode(String.self, forKey: .value)
         switch kind {
         case .builtIn:
-            self = .builtIn(RestReminderFigureStyle(rawValue: value) ?? .line)
+            if let style = RestReminderFigureStyle(rawValue: value), style.isAvailableBuiltIn {
+                self = .builtIn(style)
+            } else {
+                self = .builtIn(.line)
+            }
         case .custom:
             if let id = UUID(uuidString: value) {
                 self = .custom(id)
@@ -55,7 +59,10 @@ enum ReminderCharacterSelection: Equatable, Codable {
         guard let stored else { return .builtIn(.line) }
         if stored.hasPrefix("builtIn:") {
             let raw = String(stored.dropFirst("builtIn:".count))
-            return .builtIn(RestReminderFigureStyle(rawValue: raw) ?? .line)
+            if let style = RestReminderFigureStyle(rawValue: raw), style.isAvailableBuiltIn {
+                return .builtIn(style)
+            }
+            return .builtIn(.line)
         }
         if stored.hasPrefix("custom:") {
             let raw = String(stored.dropFirst("custom:".count))
