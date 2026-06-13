@@ -15,6 +15,7 @@ struct CustomCharacterEditorView: View {
     @State private var isImporting = false
     @State private var isImporterPresented = false
     @State private var dragStartOffset: CGSize?
+    @State private var previewImage: NSImage?
 
     init(
         existingCharacter: CustomReminderCharacter?,
@@ -37,6 +38,11 @@ struct CustomCharacterEditorView: View {
             }
         )
         _videoStartTime = State(initialValue: existingCharacter?.videoStartTime ?? 0)
+        _previewImage = State(
+            initialValue: existingCharacter.flatMap {
+                NSImage(contentsOf: CustomCharacterStore().sourceURL(for: $0))
+            }
+        )
     }
 
     var body: some View {
@@ -93,6 +99,7 @@ struct CustomCharacterEditorView: View {
                 Button("Cancel", role: .cancel) {
                     dismiss()
                 }
+                .disabled(isImporting)
 
                 Button("Save") {
                     save()
@@ -109,8 +116,10 @@ struct CustomCharacterEditorView: View {
         ) { result in
             if case .success(let url) = result {
                 selectedURL = url
+                loadPreviewImage(from: url)
             }
         }
+        .interactiveDismissDisabled(isImporting)
     }
 
     private var previewStage: some View {
@@ -147,7 +156,7 @@ struct CustomCharacterEditorView: View {
 
     @ViewBuilder
     private var previewContent: some View {
-        if let selectedURL, let image = NSImage(contentsOf: selectedURL) {
+        if let image = previewImage {
             Image(nsImage: image)
                 .resizable()
                 .scaledToFill()
@@ -193,6 +202,10 @@ struct CustomCharacterEditorView: View {
                 }
             }
         }
+    }
+
+    private func loadPreviewImage(from url: URL) {
+        previewImage = NSImage(contentsOf: url)
     }
 
     private func clamp(_ value: CGFloat) -> CGFloat {
