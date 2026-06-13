@@ -1,4 +1,5 @@
 import AppKit
+import ImageIO
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -130,7 +131,7 @@ struct CustomCharacterEditorView: View {
         ) { result in
             if case .success(let url) = result {
                 selectedURL = url
-                loadPreviewImage(from: url)
+                loadPreviewImage(from: url, updateDefaultCrop: existingCharacter == nil)
             }
         }
         .interactiveDismissDisabled(isImporting)
@@ -229,8 +230,20 @@ struct CustomCharacterEditorView: View {
         }
     }
 
-    private func loadPreviewImage(from url: URL) {
+    private func loadPreviewImage(from url: URL, updateDefaultCrop: Bool) {
         previewImage = NSImage(contentsOf: url)
+        if updateDefaultCrop {
+            crop.shape = imageHasTransparency(at: url) ? .square : .circle
+        }
+    }
+
+    private func imageHasTransparency(at url: URL) -> Bool {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let hasAlpha = properties[kCGImagePropertyHasAlpha] as? Bool else {
+            return false
+        }
+        return hasAlpha
     }
 
     private func clamp(_ value: CGFloat) -> CGFloat {

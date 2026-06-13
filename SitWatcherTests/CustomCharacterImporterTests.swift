@@ -98,6 +98,30 @@ final class CustomCharacterImporterTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: store.framesURL(for: result.id).appendingPathComponent("frame-014.png").path))
     }
 
+    func testImportAPNGWithPNGExtensionUsesAnimatedFrames() async throws {
+        let apngURL = rootURL.appendingPathComponent("source.png")
+        try Self.writeAnimatedPNG(
+            colors: [.systemPurple, .systemOrange],
+            delay: 0.5,
+            size: CGSize(width: 64, height: 64),
+            to: apngURL
+        )
+
+        let store = CustomCharacterStore(rootURL: rootURL.appendingPathComponent("characters", isDirectory: true))
+        let importer = CustomCharacterImporter(store: store)
+        let result = try await importer.importCharacter(
+            sourceURL: apngURL,
+            name: "APNG",
+            crop: CharacterCrop(scale: 1, offsetX: 0, offsetY: 0, shape: .circle),
+            videoStartTime: nil
+        )
+
+        XCTAssertEqual(result.sourceKind, .animatedImage)
+        XCTAssertEqual(result.sourceFilename, "source.png")
+        XCTAssertGreaterThan(result.frameCount, 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: store.framesURL(for: result.id).appendingPathComponent("frame-001.png").path))
+    }
+
     func testEditExistingCharacterPreservesIdentityAndCreatedAt() async throws {
         let firstURL = rootURL.appendingPathComponent("first.png")
         let secondURL = rootURL.appendingPathComponent("second.png")
@@ -189,6 +213,40 @@ final class CustomCharacterImporterTests: XCTestCase {
             var rect = NSRect(origin: .zero, size: size)
             guard let cgImage = image.cgImage(forProposedRect: &rect, context: nil, hints: nil) else {
                 XCTFail("Failed to create GIF frame")
+                return
+            }
+            CGImageDestinationAddImage(destination, cgImage, frameProperties)
+        }
+
+        XCTAssertTrue(CGImageDestinationFinalize(destination))
+    }
+
+    private static func writeAnimatedPNG(colors: [NSColor], delay: TimeInterval, size: CGSize, to url: URL) throws {
+        guard let destination = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            UTType.png.identifier as CFString,
+            colors.count,
+            nil
+        ) else {
+            XCTFail("Failed to create APNG destination")
+            return
+        }
+
+        let frameProperties = [
+            kCGImagePropertyPNGDictionary: [
+                kCGImagePropertyAPNGDelayTime: delay
+            ]
+        ] as CFDictionary
+
+        for color in colors {
+            let image = NSImage(size: size)
+            image.lockFocus()
+            color.setFill()
+            NSRect(origin: .zero, size: size).fill()
+            image.unlockFocus()
+            var rect = NSRect(origin: .zero, size: size)
+            guard let cgImage = image.cgImage(forProposedRect: &rect, context: nil, hints: nil) else {
+                XCTFail("Failed to create APNG frame")
                 return
             }
             CGImageDestinationAddImage(destination, cgImage, frameProperties)

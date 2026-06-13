@@ -74,6 +74,9 @@ struct CustomCharacterImporter {
         case "gif", "apng", "webp":
             return .animatedImage
         case "png", "jpg", "jpeg", "heic":
+            if Self.imageSourceIsAnimated(sourceURL) {
+                return .animatedImage
+            }
             return .stillImage
         default:
             throw CocoaError(.fileReadUnsupportedScheme)
@@ -232,6 +235,32 @@ struct CustomCharacterImporter {
     private static func animatedImageDuration(_ source: CGImageSource) -> TimeInterval {
         let timeline = animatedImageTimeline(source)
         return timeline.last?.end ?? CustomReminderCharacter.maxDuration
+    }
+
+    private static func imageSourceIsAnimated(_ sourceURL: URL) -> Bool {
+        guard let source = CGImageSourceCreateWithURL(sourceURL as CFURL, nil),
+              CGImageSourceGetCount(source) > 1 else {
+            return false
+        }
+
+        return (0..<CGImageSourceGetCount(source)).contains { index in
+            guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any] else {
+                return false
+            }
+            return delay(
+                in: properties[kCGImagePropertyGIFDictionary] as? [CFString: Any],
+                unclampedKey: kCGImagePropertyGIFUnclampedDelayTime,
+                clampedKey: kCGImagePropertyGIFDelayTime
+            ) != nil || delay(
+                in: properties[kCGImagePropertyPNGDictionary] as? [CFString: Any],
+                unclampedKey: kCGImagePropertyAPNGUnclampedDelayTime,
+                clampedKey: kCGImagePropertyAPNGDelayTime
+            ) != nil || delay(
+                in: properties[kCGImagePropertyWebPDictionary] as? [CFString: Any],
+                unclampedKey: kCGImagePropertyWebPUnclampedDelayTime,
+                clampedKey: kCGImagePropertyWebPDelayTime
+            ) != nil
+        }
     }
 
     private static func animatedImageTimeline(_ source: CGImageSource) -> [(end: TimeInterval, index: Int)] {
