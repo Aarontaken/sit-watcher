@@ -136,8 +136,7 @@ struct CustomCharacterImporter {
 
     private func videoFrames(sourceURL: URL, plan: CharacterFramePlan, crop: CharacterCrop) async throws -> [NSImage] {
         let asset = AVURLAsset(url: sourceURL)
-        let generator = AVAssetImageGenerator(asset: asset)
-        generator.appliesPreferredTrackTransform = true
+        let generator = CustomCharacterVideoFrameGenerator.makeGenerator(asset: asset)
 
         return try plan.sampleTimes.map { time in
             let cgImage = try generator.copyCGImage(at: CMTime(seconds: time, preferredTimescale: 600), actualTime: nil)
@@ -161,16 +160,16 @@ struct CustomCharacterImporter {
             y: (size.height - drawSize.height) / 2 - clamped.offsetY * size.height / 2
         )
 
-        let path: NSBezierPath
         switch clamped.shape {
+        case .none:
+            break
         case .circle:
-            path = NSBezierPath(ovalIn: NSRect(origin: .zero, size: size))
+            NSBezierPath(ovalIn: NSRect(origin: .zero, size: size)).addClip()
         case .roundedRectangle:
-            path = NSBezierPath(roundedRect: NSRect(origin: .zero, size: size), xRadius: 72, yRadius: 72)
+            NSBezierPath(roundedRect: NSRect(origin: .zero, size: size), xRadius: 72, yRadius: 72).addClip()
         case .square:
-            path = NSBezierPath(rect: NSRect(origin: .zero, size: size))
+            NSBezierPath(rect: NSRect(origin: .zero, size: size)).addClip()
         }
-        path.addClip()
         image.draw(in: NSRect(origin: origin, size: drawSize), from: .zero, operation: .sourceOver, fraction: 1)
         output.unlockFocus()
         return output

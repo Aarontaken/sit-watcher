@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct UnifiedPanelPrototype: View {
@@ -15,8 +16,8 @@ struct UnifiedPanelPrototype: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: UnifiedPanelTab = .timer
     @State private var customCharacters: [CustomReminderCharacter] = []
-    @State private var isShowingCharacterImporter = false
-    @State private var editingCharacter: CustomReminderCharacter?
+    @StateObject private var characterEditorPresenter = CustomCharacterEditorPresenter()
+    @StateObject private var deleteConfirmationPresenter = CustomCharacterDeleteConfirmationPresenter()
     @State private var pendingDeleteCharacter: CustomReminderCharacter?
     @State private var characterErrorMessage: String?
     private let customCharacterStore = CustomCharacterStore()
@@ -54,37 +55,12 @@ struct UnifiedPanelPrototype: View {
         .background(panelBackground)
         .environment(\.locale, settings.localizationLocale)
         .onAppear(perform: reloadCustomCharacters)
-        .sheet(isPresented: $isShowingCharacterImporter) {
-            CustomCharacterEditorView(existingCharacter: nil) { result in
-                handleCharacterEditorResult(result)
-            }
-        }
-        .sheet(item: $editingCharacter) { character in
-            CustomCharacterEditorView(existingCharacter: character) { result in
-                handleCharacterEditorResult(result)
-            }
-        }
         .alert(characterErrorTitle, isPresented: characterErrorBinding) {
             Button("OK", role: .cancel) {
                 characterErrorMessage = nil
             }
         } message: {
             Text(characterErrorMessage ?? "")
-        }
-        .confirmationDialog(
-            localized(chinese: "删除这个提醒形象？", english: "Delete this reminder character?"),
-            isPresented: pendingDeleteConfirmationBinding
-        ) {
-            Button(localized(chinese: "删除", english: "Delete"), role: .destructive) {
-                if let pendingDeleteCharacter {
-                    deleteCustomCharacter(pendingDeleteCharacter)
-                }
-                pendingDeleteCharacter = nil
-            }
-
-            Button(localized(chinese: "取消", english: "Cancel"), role: .cancel) {
-                pendingDeleteCharacter = nil
-            }
         }
     }
 
@@ -661,13 +637,13 @@ struct UnifiedPanelPrototype: View {
 
                 Menu {
                     Button {
-                        editingCharacter = character
+                        showCharacterEditor(existingCharacter: character)
                     } label: {
                         Label(localized(chinese: "编辑", english: "Edit"), systemImage: "pencil")
                     }
 
                     Button(role: .destructive) {
-                        pendingDeleteCharacter = character
+                        showDeleteConfirmation(for: character)
                     } label: {
                         Label(localized(chinese: "删除", english: "Delete"), systemImage: "trash")
                     }
@@ -700,7 +676,7 @@ struct UnifiedPanelPrototype: View {
 
     private var addCustomFigureButton: some View {
         Button {
-            isShowingCharacterImporter = true
+            showCharacterEditor(existingCharacter: nil)
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "plus.circle.fill")
@@ -869,23 +845,36 @@ struct UnifiedPanelPrototype: View {
         )
     }
 
-    private var pendingDeleteConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { pendingDeleteCharacter != nil },
-            set: { isPresented in
-                if isPresented == false {
-                    pendingDeleteCharacter = nil
-                }
-            }
-        )
-    }
-
     private func reloadCustomCharacters() {
         do {
             customCharacters = try customCharacterStore.listCharacters()
         } catch {
             characterErrorMessage = error.localizedDescription
         }
+    }
+
+    private func showCharacterEditor(existingCharacter: CustomReminderCharacter?) {
+        characterEditorPresenter.show(
+            existingCharacter: existingCharacter,
+            language: settings.uiLanguage
+        ) { result in
+            handleCharacterEditorResult(result)
+        }
+    }
+
+    private func showDeleteConfirmation(for character: CustomReminderCharacter) {
+        pendingDeleteCharacter = character
+        deleteConfirmationPresenter.show(
+            characterName: character.name,
+            language: settings.uiLanguage,
+            onConfirm: {
+                deleteCustomCharacter(character)
+                pendingDeleteCharacter = nil
+            },
+            onCancel: {
+                pendingDeleteCharacter = nil
+            }
+        )
     }
 
     private func deleteCustomCharacter(_ character: CustomReminderCharacter) {
@@ -903,8 +892,8 @@ struct UnifiedPanelPrototype: View {
 
     private func handleCharacterEditorResult(_ result: Result<CustomReminderCharacter, Error>) {
         switch result {
-        case .success(let character):
-            settings.reminderCharacterSelection = .custom(character.id)
+        case .success:
+            settings.notifyCustomCharacterResourcesChanged()
             reloadCustomCharacters()
         case .failure(let error):
             characterErrorMessage = error.localizedDescription
@@ -924,6 +913,42 @@ struct UnifiedPanelPrototype: View {
         case (_, .l3):
             return palette.danger
         }
+    }
+}
+
+@MainActor
+private final class CustomCharacterEditorPresenter: ObservableObject {
+    private let controller = CustomCharacterEditorWindowController()
+
+    func show(
+        existingCharacter: CustomReminderCharacter?,
+        language: UIAppLanguage,
+        onComplete: @escaping (Result<CustomReminderCharacter, Error>) -> Void
+    ) {
+        controller.show(
+            existingCharacter: existingCharacter,
+            language: language,
+            onComplete: onComplete
+        )
+    }
+}
+
+@MainActor
+private final class CustomCharacterDeleteConfirmationPresenter: ObservableObject {
+    private let controller = CustomCharacterDeleteConfirmationWindowController()
+
+    func show(
+        characterName: String,
+        language: UIAppLanguage,
+        onConfirm: @escaping () -> Void,
+        onCancel: @escaping () -> Void
+    ) {
+        controller.show(
+            characterName: characterName,
+            language: language,
+            onConfirm: onConfirm,
+            onCancel: onCancel
+        )
     }
 }
 

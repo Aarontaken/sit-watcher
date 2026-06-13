@@ -31,7 +31,7 @@ struct CharacterFramePlan: Equatable {
     }
 
     static func clampedCrop(_ crop: CharacterCrop) -> CharacterCrop {
-        let scale = max(1, min(crop.scale, 4))
+        let scale = max(0.5, min(crop.scale, 4))
         let maxOffset = max(0, scale - 1)
         return CharacterCrop(
             scale: scale,

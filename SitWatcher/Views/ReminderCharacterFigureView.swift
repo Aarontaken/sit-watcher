@@ -7,6 +7,7 @@ struct ReminderCharacterFigureView: View {
     let selection: ReminderCharacterSelection
     let isActive: Bool
 
+    @ObservedObject private var settings = Settings.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -23,7 +24,8 @@ struct ReminderCharacterFigureView: View {
                 id: id,
                 palette: palette,
                 size: size,
-                isActive: isActive && !reduceMotion
+                isActive: isActive && !reduceMotion,
+                resourceVersion: settings.customCharacterResourceVersion
             )
         }
     }
@@ -34,6 +36,7 @@ private struct CustomReminderCharacterFigure: View {
     let palette: RestReminderPalette
     let size: CGFloat
     let isActive: Bool
+    let resourceVersion: UUID
 
     @State private var frameIndex = 0
     @State private var package: FramePackage?
@@ -69,6 +72,7 @@ private struct CustomReminderCharacterFigure: View {
         .task(id: id) {
             loadPackage()
         }
+        .onChange(of: resourceVersion) { _, _ in loadPackage() }
         .onChange(of: isActive) { _, _ in restartAnimation() }
         .task(id: frameTaskID) {
             await runFrameAnimation()

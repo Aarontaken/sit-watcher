@@ -83,4 +83,21 @@ final class SettingsTests: XCTestCase {
         XCTAssertEqual(reloaded.restReminderFigureStyle, .pixelJump)
         XCTAssertEqual(defaults.string(forKey: "reminderCharacterSelection"), "custom:\(id.uuidString)")
     }
+
+    func testCustomCharacterResourceRefreshCanBeSignalledWithoutChangingSelection() {
+        let defaultsName = "test-custom-character-resource-refresh"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        defaults.removePersistentDomain(forName: defaultsName)
+        defer { defaults.removePersistentDomain(forName: defaultsName) }
+
+        let id = UUID(uuidString: "11111111-2222-3333-4444-555555555555")!
+        let settings = Settings(defaults: defaults)
+        settings.reminderCharacterSelection = .custom(id)
+        let oldVersion = settings.customCharacterResourceVersion
+
+        settings.notifyCustomCharacterResourcesChanged()
+
+        XCTAssertEqual(settings.reminderCharacterSelection, .custom(id))
+        XCTAssertNotEqual(settings.customCharacterResourceVersion, oldVersion)
+    }
 }

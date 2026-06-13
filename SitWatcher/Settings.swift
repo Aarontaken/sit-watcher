@@ -73,6 +73,8 @@ final class Settings: ObservableObject {
         }
     }
 
+    @Published private(set) var customCharacterResourceVersion = UUID()
+
     @Published var restReminderFigureStyle: RestReminderFigureStyle {
         didSet {
             defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
@@ -160,6 +162,10 @@ final class Settings: ObservableObject {
         defaults.set(unifiedPanelTheme.rawValue, forKey: "unifiedPanelTheme")
         defaults.set(reminderCharacterSelection.storedString, forKey: "reminderCharacterSelection")
         defaults.set(restReminderFigureStyle.rawValue, forKey: "restReminderFigureStyle")
+    }
+
+    func notifyCustomCharacterResourcesChanged() {
+        customCharacterResourceVersion = UUID()
     }
 
     private func updateLaunchAtLogin() {

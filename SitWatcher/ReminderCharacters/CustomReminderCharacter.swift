@@ -7,6 +7,7 @@ enum CustomCharacterSourceKind: String, Codable, Equatable {
 }
 
 enum CustomCharacterCropShape: String, Codable, Equatable, CaseIterable, Identifiable {
+    case none
     case circle
     case roundedRectangle
     case square

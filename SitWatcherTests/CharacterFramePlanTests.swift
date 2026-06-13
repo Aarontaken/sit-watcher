@@ -57,11 +57,20 @@ final class CharacterFramePlanTests: XCTestCase {
     func testCropClampsScaleBounds() {
         XCTAssertEqual(
             CharacterFramePlan.clampedCrop(CharacterCrop(scale: 0.25, offsetX: 0, offsetY: 0, shape: .square)).scale,
-            1
+            0.5
         )
         XCTAssertEqual(
             CharacterFramePlan.clampedCrop(CharacterCrop(scale: 12, offsetX: 0, offsetY: 0, shape: .square)).scale,
             4
         )
+    }
+
+    func testCropAllowsZoomingOutForFullBodyCharacters() {
+        let crop = CharacterCrop(scale: 0.7, offsetX: 0.4, offsetY: -0.4, shape: .circle)
+        let clamped = CharacterFramePlan.clampedCrop(crop)
+
+        XCTAssertEqual(clamped.scale, 0.7, accuracy: 0.001)
+        XCTAssertEqual(clamped.offsetX, 0, accuracy: 0.001)
+        XCTAssertEqual(clamped.offsetY, 0, accuracy: 0.001)
     }
 }
