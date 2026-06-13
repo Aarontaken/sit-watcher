@@ -14,6 +14,11 @@ struct UnifiedPanelPrototype: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: UnifiedPanelTab = .timer
+    @State private var customCharacters: [CustomReminderCharacter] = []
+    @State private var isShowingCharacterImporter = false
+    @State private var editingCharacter: CustomReminderCharacter?
+    @State private var characterErrorMessage: String?
+    private let customCharacterStore = CustomCharacterStore()
 
     private var palette: UnifiedPanelPalette {
         UnifiedPanelPalette(theme: settings.unifiedPanelTheme, scheme: colorScheme)
@@ -47,6 +52,24 @@ struct UnifiedPanelPrototype: View {
         .frame(width: 382, height: 620)
         .background(panelBackground)
         .environment(\.locale, settings.localizationLocale)
+        .onAppear(perform: reloadCustomCharacters)
+        .sheet(isPresented: $isShowingCharacterImporter) {
+            CustomCharacterEditorView(existingCharacter: nil) { result in
+                handleCharacterEditorResult(result)
+            }
+        }
+        .sheet(item: $editingCharacter) { character in
+            CustomCharacterEditorView(existingCharacter: character) { result in
+                handleCharacterEditorResult(result)
+            }
+        }
+        .alert(characterErrorTitle, isPresented: characterErrorBinding) {
+            Button("OK", role: .cancel) {
+                characterErrorMessage = nil
+            }
+        } message: {
+            Text(characterErrorMessage ?? "")
+        }
     }
 
     private var panelBackground: some View {
@@ -554,17 +577,26 @@ struct UnifiedPanelPrototype: View {
     }
 
     private var reminderFigureStylePicker: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
-            ForEach(RestReminderFigureStyle.allCases) { style in
-                figureStyleChoice(style)
+        VStack(alignment: .leading, spacing: 8) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
+                ForEach(RestReminderFigureStyle.allCases) { style in
+                    figureStyleChoice(style)
+                }
+
+                ForEach(customCharacters) { character in
+                    customFigureChoice(character)
+                }
+
+                addCustomFigureButton
             }
         }
     }
 
     private func figureStyleChoice(_ style: RestReminderFigureStyle) -> some View {
-        let isSelected = settings.restReminderFigureStyle == style
+        let isSelected = settings.reminderCharacterSelection == .builtIn(style)
 
         return Button {
+            settings.reminderCharacterSelection = .builtIn(style)
             settings.restReminderFigureStyle = style
         } label: {
             HStack(spacing: 9) {
@@ -594,6 +626,95 @@ struct UnifiedPanelPrototype: View {
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 
+    private func customFigureChoice(_ character: CustomReminderCharacter) -> some View {
+        let isSelected = settings.reminderCharacterSelection == .custom(character.id)
+
+        return Button {
+            settings.reminderCharacterSelection = .custom(character.id)
+        } label: {
+            HStack(spacing: 8) {
+                customFigurePreview(character)
+
+                Text(character.name)
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.76)
+                    .foregroundStyle(isSelected ? palette.selectedText : palette.secondaryText)
+
+                Spacer(minLength: 0)
+
+                Menu {
+                    Button {
+                        editingCharacter = character
+                    } label: {
+                        Label(localized(chinese: "编辑", english: "Edit"), systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        deleteCustomCharacter(character)
+                    } label: {
+                        Label(localized(chinese: "删除", english: "Delete"), systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(isSelected ? palette.accent : palette.secondaryText)
+                        .frame(width: 22, height: 28)
+                        .contentShape(Rectangle())
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+            }
+            .padding(.leading, 8)
+            .padding(.trailing, 6)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(isSelected ? palette.selectedFill : palette.recessedFill)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(isSelected ? palette.accent.opacity(0.24) : palette.subtleStroke, lineWidth: 1)
+        }
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    private var addCustomFigureButton: some View {
+        Button {
+            isShowingCharacterImporter = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(palette.accent)
+                    .frame(width: 34, height: 34)
+
+                Text(localized(chinese: "添加角色", english: "Add Character"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+                    .foregroundStyle(palette.secondaryText)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 9)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(palette.recessedFill.opacity(0.74))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(palette.subtleStroke, style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+        }
+    }
+
     @ViewBuilder
     private func figurePreview(_ style: RestReminderFigureStyle, isSelected: Bool) -> some View {
         if style == .line {
@@ -607,6 +728,30 @@ struct UnifiedPanelPrototype: View {
                 .scaledToFit()
                 .frame(width: 30, height: 30)
                 .padding(2)
+        }
+    }
+
+    @ViewBuilder
+    private func customFigurePreview(_ character: CustomReminderCharacter) -> some View {
+        if let image = NSImage(contentsOf: customCharacterStore.previewURL(for: character.id)) {
+            Image(nsImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 30, height: 30)
+                .clipShape(Circle())
+                .overlay {
+                    Circle()
+                        .strokeBorder(palette.subtleStroke, lineWidth: 1)
+                }
+        } else {
+            Image(systemName: "photo")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(palette.secondaryText)
+                .frame(width: 30, height: 30)
+                .background {
+                    Circle()
+                        .fill(palette.controlFill)
+                }
         }
     }
 
@@ -691,6 +836,52 @@ struct UnifiedPanelPrototype: View {
 
     private func localized(chinese: String, english: String) -> String {
         settings.uiLanguage == .english ? english : chinese
+    }
+
+    private var characterErrorTitle: String {
+        localized(chinese: "无法更新提醒角色", english: "Could not update reminder character")
+    }
+
+    private var characterErrorBinding: Binding<Bool> {
+        Binding(
+            get: { characterErrorMessage != nil },
+            set: { isPresented in
+                if isPresented == false {
+                    characterErrorMessage = nil
+                }
+            }
+        )
+    }
+
+    private func reloadCustomCharacters() {
+        do {
+            customCharacters = try customCharacterStore.listCharacters()
+        } catch {
+            characterErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func deleteCustomCharacter(_ character: CustomReminderCharacter) {
+        do {
+            try customCharacterStore.deleteCharacter(id: character.id)
+            settings.reminderCharacterSelection = CustomCharacterStore.selectionAfterDeleting(
+                id: character.id,
+                current: settings.reminderCharacterSelection
+            )
+            reloadCustomCharacters()
+        } catch {
+            characterErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func handleCharacterEditorResult(_ result: Result<CustomReminderCharacter, Error>) {
+        switch result {
+        case .success(let character):
+            settings.reminderCharacterSelection = .custom(character.id)
+            reloadCustomCharacters()
+        case .failure(let error):
+            characterErrorMessage = error.localizedDescription
+        }
     }
 
     private var statusColor: Color {
