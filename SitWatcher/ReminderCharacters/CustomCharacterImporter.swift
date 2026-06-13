@@ -194,11 +194,29 @@ struct CustomCharacterImporter {
 
     private func moveCompletedPackage(from tempRoot: URL, id: UUID) throws {
         let finalURL = store.packageURL(for: id)
+        let backupURL = finalURL.deletingLastPathComponent()
+            .appendingPathComponent(".\(id.uuidString)-backup-\(UUID().uuidString)", isDirectory: true)
+        var hasBackup = false
+
         try fileManager.createDirectory(at: finalURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-        if fileManager.fileExists(atPath: finalURL.path) {
-            try fileManager.removeItem(at: finalURL)
+
+        do {
+            if fileManager.fileExists(atPath: finalURL.path) {
+                try fileManager.moveItem(at: finalURL, to: backupURL)
+                hasBackup = true
+            }
+            try fileManager.moveItem(at: tempRoot, to: finalURL)
+            if hasBackup {
+                try? fileManager.removeItem(at: backupURL)
+            }
+        } catch {
+            if hasBackup,
+               fileManager.fileExists(atPath: finalURL.path) == false,
+               fileManager.fileExists(atPath: backupURL.path) {
+                try? fileManager.moveItem(at: backupURL, to: finalURL)
+            }
+            throw error
         }
-        try fileManager.moveItem(at: tempRoot, to: finalURL)
     }
 
     private func normalizedName(_ name: String) -> String {

@@ -8,7 +8,9 @@ struct CustomCharacterEditorView: View {
     private let allowedTypes: [UTType] = [
         .png,
         .jpeg,
+        .heic,
         .gif,
+        UTType(filenameExtension: "apng") ?? .png,
         .webP,
         .quickTimeMovie,
         .mpeg4Movie,
