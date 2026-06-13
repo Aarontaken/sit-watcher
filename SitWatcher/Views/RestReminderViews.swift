@@ -152,10 +152,10 @@ struct RestReminderFloatingView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            RestReminderCharacterFigure(
+            ReminderCharacterFigureView(
                 palette: palette,
                 size: 126,
-                style: settings.restReminderFigureStyle,
+                selection: settings.reminderCharacterSelection,
                 isActive: !reduceMotion
             )
 
@@ -289,10 +289,10 @@ struct RestReminderFullScreenView: View {
                     Spacer(minLength: max(42, proxy.safeAreaInsets.top + 28))
 
                     VStack(spacing: 24) {
-                        RestReminderCharacterFigure(
+                        ReminderCharacterFigureView(
                             palette: palette,
                             size: 206,
-                            style: settings.restReminderFigureStyle,
+                            selection: settings.reminderCharacterSelection,
                             isActive: !reduceMotion
                         )
 
@@ -352,7 +352,7 @@ struct RestReminderFullScreenView: View {
     }
 }
 
-private struct RestReminderCharacterFigure: View {
+struct BuiltInReminderCharacterFigure: View {
     let palette: RestReminderPalette
     let size: CGFloat
     let style: RestReminderFigureStyle
@@ -625,7 +625,7 @@ private struct RestReminderLineFigure: View {
     }
 }
 
-private struct RestReminderPalette {
+struct RestReminderPalette {
     let theme: UnifiedPanelTheme
     let scheme: ColorScheme
 
