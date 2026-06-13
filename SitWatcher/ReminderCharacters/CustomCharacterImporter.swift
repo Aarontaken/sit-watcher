@@ -196,15 +196,9 @@ struct CustomCharacterImporter {
         let finalURL = store.packageURL(for: id)
         try fileManager.createDirectory(at: finalURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         if fileManager.fileExists(atPath: finalURL.path) {
-            _ = try fileManager.replaceItemAt(
-                finalURL,
-                withItemAt: tempRoot,
-                backupItemName: nil,
-                options: []
-            )
-        } else {
-            try fileManager.moveItem(at: tempRoot, to: finalURL)
+            try fileManager.removeItem(at: finalURL)
         }
+        try fileManager.moveItem(at: tempRoot, to: finalURL)
     }
 
     private func normalizedName(_ name: String) -> String {

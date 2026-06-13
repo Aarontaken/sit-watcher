@@ -17,6 +17,7 @@ struct UnifiedPanelPrototype: View {
     @State private var customCharacters: [CustomReminderCharacter] = []
     @State private var isShowingCharacterImporter = false
     @State private var editingCharacter: CustomReminderCharacter?
+    @State private var pendingDeleteCharacter: CustomReminderCharacter?
     @State private var characterErrorMessage: String?
     private let customCharacterStore = CustomCharacterStore()
 
@@ -69,6 +70,21 @@ struct UnifiedPanelPrototype: View {
             }
         } message: {
             Text(characterErrorMessage ?? "")
+        }
+        .confirmationDialog(
+            localized(chinese: "删除这个提醒形象？", english: "Delete this reminder character?"),
+            isPresented: pendingDeleteConfirmationBinding
+        ) {
+            Button(localized(chinese: "删除", english: "Delete"), role: .destructive) {
+                if let pendingDeleteCharacter {
+                    deleteCustomCharacter(pendingDeleteCharacter)
+                }
+                pendingDeleteCharacter = nil
+            }
+
+            Button(localized(chinese: "取消", english: "Cancel"), role: .cancel) {
+                pendingDeleteCharacter = nil
+            }
         }
     }
 
@@ -651,7 +667,7 @@ struct UnifiedPanelPrototype: View {
                     }
 
                     Button(role: .destructive) {
-                        deleteCustomCharacter(character)
+                        pendingDeleteCharacter = character
                     } label: {
                         Label(localized(chinese: "删除", english: "Delete"), systemImage: "trash")
                     }
@@ -848,6 +864,17 @@ struct UnifiedPanelPrototype: View {
             set: { isPresented in
                 if isPresented == false {
                     characterErrorMessage = nil
+                }
+            }
+        )
+    }
+
+    private var pendingDeleteConfirmationBinding: Binding<Bool> {
+        Binding(
+            get: { pendingDeleteCharacter != nil },
+            set: { isPresented in
+                if isPresented == false {
+                    pendingDeleteCharacter = nil
                 }
             }
         )

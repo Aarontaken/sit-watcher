@@ -5,6 +5,16 @@ import UniformTypeIdentifiers
 struct CustomCharacterEditorView: View {
     @Environment(\.dismiss) private var dismiss
 
+    private let allowedTypes: [UTType] = [
+        .png,
+        .jpeg,
+        .gif,
+        .webP,
+        .quickTimeMovie,
+        .mpeg4Movie,
+        UTType(filenameExtension: "m4v") ?? .movie
+    ]
+
     let existingCharacter: CustomReminderCharacter?
     var onComplete: (Result<CustomReminderCharacter, Error>) -> Void
 
@@ -79,11 +89,13 @@ struct CustomCharacterEditorView: View {
                     Slider(value: $crop.scale, in: 1...4)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Video Start")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
-                    Slider(value: $videoStartTime, in: 0...60)
+                if showsVideoStart {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Video Start")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.secondary)
+                        Slider(value: $videoStartTime, in: 0...60)
+                    }
                 }
             }
 
@@ -112,7 +124,7 @@ struct CustomCharacterEditorView: View {
         .frame(width: 360)
         .fileImporter(
             isPresented: $isImporterPresented,
-            allowedContentTypes: [.image, .movie, .gif]
+            allowedContentTypes: allowedTypes
         ) { result in
             if case .success(let url) = result {
                 selectedURL = url
@@ -120,6 +132,11 @@ struct CustomCharacterEditorView: View {
             }
         }
         .interactiveDismissDisabled(isImporting)
+    }
+
+    private var showsVideoStart: Bool {
+        guard let selectedURL else { return false }
+        return ["mov", "mp4", "m4v"].contains(selectedURL.pathExtension.lowercased())
     }
 
     private var previewStage: some View {
@@ -184,6 +201,12 @@ struct CustomCharacterEditorView: View {
 
         Task {
             do {
+                let didAccessSecurityScopedResource = selectedURL.startAccessingSecurityScopedResource()
+                defer {
+                    if didAccessSecurityScopedResource {
+                        selectedURL.stopAccessingSecurityScopedResource()
+                    }
+                }
                 let character = try await CustomCharacterImporter().importCharacter(
                     existingCharacter: existingCharacter,
                     sourceURL: selectedURL,
