@@ -112,14 +112,24 @@ final class UpdateAvailabilityObserver: NSObject, ObservableObject, SPUUpdaterDe
 private struct MenuBarWindowProbe: NSViewRepresentable {
     var onWindowChange: (NSWindow?) -> Void
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeNSView(context: Context) -> NSView {
         NSView(frame: .zero)
     }
 
     func updateNSView(_ view: NSView, context: Context) {
         DispatchQueue.main.async {
+            guard context.coordinator.window !== view.window else { return }
+            context.coordinator.window = view.window
             onWindowChange(view.window)
         }
+    }
+
+    final class Coordinator {
+        weak var window: NSWindow?
     }
 }
 

@@ -14,16 +14,24 @@ struct UnifiedPanelPrototype: View {
     var onQuit: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @State private var selectedTab: UnifiedPanelTab = .timer
+    @State private var selectedTab: UnifiedPanelTab?
     @State private var customCharacters: [CustomReminderCharacter] = []
     @StateObject private var characterEditorPresenter = CustomCharacterEditorPresenter()
     @StateObject private var deleteConfirmationPresenter = CustomCharacterDeleteConfirmationPresenter()
     @State private var pendingDeleteCharacter: CustomReminderCharacter?
     @State private var characterErrorMessage: String?
+    // macOS 14.x MenuBarExtra windows can drop first-frame Shape/Button fills.
+    // Flip these on the next run loop to force a stable redraw without changing layout.
+    @State private var isStatusDotReady = false
+    @State private var areFooterButtonsReady = false
     private let customCharacterStore = CustomCharacterStore()
 
     private var palette: UnifiedPanelPalette {
         UnifiedPanelPalette(theme: settings.unifiedPanelTheme, scheme: colorScheme)
+    }
+
+    private var activeTab: UnifiedPanelTab {
+        selectedTab ?? .timer
     }
 
     var body: some View {
@@ -35,16 +43,16 @@ struct UnifiedPanelPrototype: View {
 
             ZStack(alignment: .top) {
                 timerPane
-                    .opacity(selectedTab == .timer ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .timer)
-                    .accessibilityHidden(selectedTab != .timer)
+                    .opacity(activeTab == .timer ? 1 : 0)
+                    .allowsHitTesting(activeTab == .timer)
+                    .accessibilityHidden(activeTab != .timer)
 
                 settingsPane
-                    .opacity(selectedTab == .settings ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .settings)
-                    .accessibilityHidden(selectedTab != .settings)
+                    .opacity(activeTab == .settings ? 1 : 0)
+                    .allowsHitTesting(activeTab == .settings)
+                    .accessibilityHidden(activeTab != .settings)
             }
-            .animation(.easeOut(duration: 0.16), value: selectedTab)
+            .animation(.easeOut(duration: 0.16), value: activeTab)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding(.top, 22)
         }
@@ -54,7 +62,12 @@ struct UnifiedPanelPrototype: View {
         .frame(width: 382, height: 620)
         .background(panelBackground)
         .environment(\.locale, settings.localizationLocale)
-        .onAppear(perform: reloadCustomCharacters)
+        .onAppear {
+            reloadCustomCharacters()
+            initializeTabSelectionIfNeeded()
+            initializeStatusDotIfNeeded()
+            initializeFooterButtonsIfNeeded()
+        }
         .alert(characterErrorTitle, isPresented: characterErrorBinding) {
             Button("OK", role: .cancel) {
                 characterErrorMessage = nil
@@ -142,29 +155,31 @@ struct UnifiedPanelPrototype: View {
                 .foregroundColor(isSelected ? palette.selectedText : palette.secondaryText)
                 .frame(maxWidth: .infinity, minHeight: 34)
                 .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .background {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(isSelected ? palette.selectedFill : Color.clear)
-                .overlay {
+                .background {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .strokeBorder(isSelected ? palette.selectedStroke : Color.clear, lineWidth: 1)
+                        .fill(isSelected ? palette.selectedFill : Color.clear)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .strokeBorder(isSelected ? palette.selectedStroke : Color.clear, lineWidth: 1)
+                        }
                 }
         }
+        .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 
     private var statusDot: some View {
-        ZStack {
+        let dotColor = isStatusDotReady ? statusColor : Color.clear
+
+        return ZStack {
             Circle()
-                .fill(statusColor.opacity(palette.statusHaloOpacity))
+                .fill(dotColor.opacity(palette.statusHaloOpacity))
                 .frame(width: 13, height: 13)
 
             Circle()
-                .fill(statusColor)
+                .fill(dotColor)
                 .frame(width: 7, height: 7)
-                .shadow(color: statusColor.opacity(0.36), radius: 3)
+                .shadow(color: dotColor.opacity(0.36), radius: 3)
         }
         .frame(width: 16, height: 16)
     }
@@ -317,7 +332,9 @@ struct UnifiedPanelPrototype: View {
         showsBadge: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
+        let buttonFill = areFooterButtonsReady ? palette.recessedFill : Color.clear
+
+        return Button(action: action) {
             ZStack(alignment: .topTrailing) {
                 Image(systemName: icon)
                     .font(.system(size: 13, weight: .medium))
@@ -332,14 +349,14 @@ struct UnifiedPanelPrototype: View {
             }
             .frame(maxWidth: .infinity, minHeight: 36)
             .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(buttonFill)
+            }
         }
         .buttonStyle(.plain)
         .help(title)
         .animation(.spring(response: 0.22, dampingFraction: 0.78), value: showsBadge)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(palette.recessedFill)
-        }
     }
 
     private var updateBadge: some View {
@@ -795,7 +812,7 @@ struct UnifiedPanelPrototype: View {
     }
 
     private var statusCaption: String {
-        if selectedTab == .timer {
+        if activeTab == .timer {
             return warmStatusCaption
         }
         return localized(chinese: "专注节奏，一眼掌握", english: "Focus rhythm at a glance")
@@ -850,6 +867,28 @@ struct UnifiedPanelPrototype: View {
             customCharacters = try customCharacterStore.listCharacters()
         } catch {
             characterErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func initializeTabSelectionIfNeeded() {
+        guard selectedTab == nil else { return }
+        DispatchQueue.main.async {
+            guard selectedTab == nil else { return }
+            selectedTab = .timer
+        }
+    }
+
+    private func initializeStatusDotIfNeeded() {
+        guard isStatusDotReady == false else { return }
+        DispatchQueue.main.async {
+            isStatusDotReady = true
+        }
+    }
+
+    private func initializeFooterButtonsIfNeeded() {
+        guard areFooterButtonsReady == false else { return }
+        DispatchQueue.main.async {
+            areFooterButtonsReady = true
         }
     }
 
