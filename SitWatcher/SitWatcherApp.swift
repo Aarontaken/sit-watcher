@@ -4,6 +4,7 @@ import Sparkle
 
 @main
 struct SitWatcherApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     private let updateAvailability: UpdateAvailabilityObserver
     private let updaterController: SPUStandardUpdaterController
 
@@ -30,6 +31,12 @@ struct SitWatcherApp: App {
             MenuBarLabel()
         }
         .menuBarExtraStyle(.window)
+    }
+}
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationWillTerminate(_ notification: Notification) {
+        AppCoordinator.shared.persistTimerStateForShutdown()
     }
 }
 

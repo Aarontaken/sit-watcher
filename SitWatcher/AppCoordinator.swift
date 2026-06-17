@@ -116,4 +116,8 @@ final class AppCoordinator {
         NotificationManager.shared.clearAll()
     }
 
+    func persistTimerStateForShutdown() {
+        timerEngine.persistForShutdown()
+    }
+
 }
