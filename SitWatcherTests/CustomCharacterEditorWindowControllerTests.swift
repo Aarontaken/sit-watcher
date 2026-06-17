@@ -31,7 +31,11 @@ final class CustomCharacterEditorWindowControllerTests: XCTestCase {
         XCTAssertTrue(panel.canBecomeKey)
         XCTAssertFalse(panel.hidesOnDeactivate)
         XCTAssertEqual(panel.level, .modalPanel)
-        XCTAssertTrue(panel.isMovableByWindowBackground)
+        if #available(macOS 15.0, *) {
+            XCTAssertTrue(panel.isMovableByWindowBackground)
+        } else {
+            XCTAssertFalse(panel.isMovableByWindowBackground)
+        }
         XCTAssertEqual(panel.contentMinSize, NSSize(width: 680, height: 540))
         XCTAssertEqual(panel.contentMaxSize, NSSize(width: 680, height: 540))
     }

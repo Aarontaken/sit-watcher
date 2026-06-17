@@ -80,7 +80,12 @@ final class CustomCharacterEditorWindowController {
         panel.hidesOnDeactivate = false
         panel.level = .modalPanel
         panel.hasShadow = true
-        panel.isMovableByWindowBackground = true
+        // Sonoma 14.x lets borderless background-dragging steal the preview crop DragGesture.
+        if #available(macOS 15.0, *) {
+            panel.isMovableByWindowBackground = true
+        } else {
+            panel.isMovableByWindowBackground = false
+        }
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         return panel
