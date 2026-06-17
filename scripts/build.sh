@@ -7,6 +7,8 @@ ARCHIVE_PATH="$BUILD_DIR/SitWatcher.xcarchive"
 APP_NAME="SitWatcher"
 DMG_NAME="SitWatcher"
 VERSION="${VERSION:-1.0.0}"
+VERSION_NUM="${VERSION#v}"
+BUILD_NUM="${VERSION_NUM##*.}"
 
 echo "==> Generating Xcode project..."
 cd "$PROJECT_DIR"
@@ -22,6 +24,8 @@ xcodebuild archive \
   -scheme "$APP_NAME" \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
+  MARKETING_VERSION="$VERSION_NUM" \
+  CURRENT_PROJECT_VERSION="$BUILD_NUM" \
   CODE_SIGN_IDENTITY="-" \
   CODE_SIGN_STYLE="Manual" \
   | xcpretty || xcodebuild archive \
@@ -29,6 +33,8 @@ xcodebuild archive \
     -scheme "$APP_NAME" \
     -configuration Release \
     -archivePath "$ARCHIVE_PATH" \
+    MARKETING_VERSION="$VERSION_NUM" \
+    CURRENT_PROJECT_VERSION="$BUILD_NUM" \
     CODE_SIGN_IDENTITY="-" \
     CODE_SIGN_STYLE="Manual"
 

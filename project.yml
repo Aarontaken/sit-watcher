@@ -37,6 +37,8 @@ targets:
         INFOPLIST_FILE: SitWatcher/Info.plist
         CODE_SIGN_ENTITLEMENTS: SitWatcher/SitWatcher.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: com.sitwatcher.app
+        MARKETING_VERSION: "1.0.20"
+        CURRENT_PROJECT_VERSION: "20"
         GENERATE_INFOPLIST_FILE: false
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       configs:
