@@ -81,8 +81,8 @@
     "footer.updates" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Updates" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "更新" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "App Store" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "商店" } }
       }
     },
     "fullscreen.body_fmt" : {
