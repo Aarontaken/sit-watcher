@@ -38,43 +38,7 @@ jobs:
           chmod +x scripts/build.sh
           VERSION="${{ steps.version.outputs.version }}" ./scripts/build.sh
 
-      - name: Download Sparkle tools
-        run: |
-          SPARKLE_VERSION="2.6.0"
-          curl -sL -o sparkle.tar.xz \
-            "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
-          tar xf sparkle.tar.xz
-          chmod +x bin/generate_appcast
-
-      - name: Prepare appcast archive
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          VERSION_NUM="${VERSION#v}"
-          mkdir -p appcast
-          # Sparkle needs a single .app in the archive, so zip just the app
-          APP_PATH="build/SitWatcher.xcarchive/Products/Applications/SitWatcher.app"
-          ditto -c -k --keepParent "$APP_PATH" "appcast/SitWatcher-${VERSION_NUM}.zip"
-
-      - name: Generate appcast
-        env:
-          SPARKLE_ED25519_PRIVATE_KEY: ${{ secrets.SPARKLE_ED25519_PRIVATE_KEY }}
-        run: |
-          printf '%s' "$SPARKLE_ED25519_PRIVATE_KEY" > /tmp/ed25519_private_key
-          ./bin/generate_appcast \
-            --ed-key-file /tmp/ed25519_private_key \
-            --download-url-prefix "https://Aarontaken.github.io/sit-watcher/" \
-            appcast/
-          rm /tmp/ed25519_private_key
-
-      - name: Deploy appcast to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./appcast
-          keep_files: true
-          publish_branch: gh-pages
-
-      - name: Create zip for install script
+      - name: Create release zip
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           VERSION_NUM="${VERSION#v}"

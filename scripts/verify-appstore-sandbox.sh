@@ -10,7 +10,7 @@ echo "==> Generating Xcode project"
 xcodegen generate -q
 
 echo "==> Checking Sparkle was removed from production configuration"
-if rg "Sparkle|XCRemoteSwiftPackageReference|SPU|SUAppcastItem|SUFeedURL|SUPublicEDKey|SUEnableAutomaticChecks" SitWatcher project.yml SitWatcher.xcodeproj >"$SPARKLE_CHECK_OUTPUT"; then
+if rg "Sparkle|XCRemoteSwiftPackageReference|SPU|SUAppcastItem|SUFeedURL|SUPublicEDKey|SUEnableAutomaticChecks|appcast|generate_appcast" SitWatcher project.yml SitWatcher.xcodeproj .github/workflows >"$SPARKLE_CHECK_OUTPUT"; then
   cat "$SPARKLE_CHECK_OUTPUT"
   echo "Sparkle/self-update references remain" >&2
   exit 1
