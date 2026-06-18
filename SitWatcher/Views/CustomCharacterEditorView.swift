@@ -84,6 +84,7 @@ struct CustomCharacterEditorView: View {
         }
         .frame(width: 680, height: 540)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(WindowDragHandleFrameView(thickness: 18))
         .fileImporter(
             isPresented: $isImporterPresented,
             allowedContentTypes: allowedTypes
@@ -486,8 +487,8 @@ struct CustomCharacterEditorView: View {
                         dragStartOffset = CGSize(width: crop.offsetX, height: crop.offsetY)
                     }
                     let start = dragStartOffset ?? .zero
-                    crop.offsetX = clampedOffset(start.width + gesture.translation.width / 180)
-                    crop.offsetY = clampedOffset(start.height + gesture.translation.height / 180)
+                    crop.offsetX = Self.clampedPreviewOffset(start.width + gesture.translation.width / 180)
+                    crop.offsetY = Self.clampedPreviewOffset(start.height + gesture.translation.height / 180)
                 }
                 .onEnded { _ in
                     dragStartOffset = nil
@@ -609,15 +610,14 @@ struct CustomCharacterEditorView: View {
         return hasAlpha
     }
 
-    private func clampedOffset(_ value: CGFloat) -> CGFloat {
-        let maxOffset = max(0, crop.scale - 1)
-        return min(max(value, -maxOffset), maxOffset)
+    static func clampedPreviewOffset(_ value: CGFloat) -> CGFloat {
+        min(max(value, -1), 1)
     }
 
     private func adjustZoom(by delta: CGFloat) {
         crop.scale = min(max(crop.scale + delta, zoomRange.lowerBound), zoomRange.upperBound)
-        crop.offsetX = clampedOffset(crop.offsetX)
-        crop.offsetY = clampedOffset(crop.offsetY)
+        crop.offsetX = Self.clampedPreviewOffset(crop.offsetX)
+        crop.offsetY = Self.clampedPreviewOffset(crop.offsetY)
     }
 
     private func adjustVideoStart(by delta: Double) {
@@ -669,5 +669,68 @@ private extension CustomCharacterCropShape {
         case .square:
             return "square"
         }
+    }
+}
+
+struct WindowDragHandleFrameView: NSViewRepresentable {
+    let thickness: CGFloat
+
+    func makeNSView(context: Context) -> NSView {
+        WindowDragHandleFrameNSView(thickness: thickness)
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        guard let nsView = nsView as? WindowDragHandleFrameNSView else { return }
+        nsView.thickness = thickness
+    }
+}
+
+final class WindowDragHandleFrameNSView: NSView {
+    var thickness: CGFloat {
+        didSet {
+            needsLayout = true
+            needsDisplay = true
+        }
+    }
+
+    override var mouseDownCanMoveWindow: Bool { false }
+
+    init(thickness: CGFloat) {
+        self.thickness = thickness
+        super.init(frame: .zero)
+        configure()
+    }
+
+    override init(frame frameRect: NSRect) {
+        thickness = 18
+        super.init(frame: frameRect)
+        configure()
+    }
+
+    required init?(coder: NSCoder) {
+        thickness = 18
+        super.init(coder: coder)
+        configure()
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        isPointInDragFrame(point) ? self : nil
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        window?.performDrag(with: event)
+    }
+
+    func isPointInDragFrame(_ point: NSPoint) -> Bool {
+        guard bounds.contains(point) else { return false }
+        let handleThickness = min(thickness, min(bounds.width, bounds.height) / 2)
+        return point.x < handleThickness
+            || point.x > bounds.width - handleThickness
+            || point.y < handleThickness
+            || point.y > bounds.height - handleThickness
+    }
+
+    private func configure() {
+        wantsLayer = false
     }
 }

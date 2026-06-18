@@ -31,21 +31,9 @@ final class CustomCharacterEditorWindowControllerTests: XCTestCase {
         XCTAssertTrue(panel.canBecomeKey)
         XCTAssertFalse(panel.hidesOnDeactivate)
         XCTAssertEqual(panel.level, .modalPanel)
-        XCTAssertEqual(panel.isMovableByWindowBackground, CustomCharacterEditorWindowController.movesByWindowBackground())
+        XCTAssertFalse(panel.isMovableByWindowBackground)
         XCTAssertEqual(panel.contentMinSize, NSSize(width: 680, height: 540))
         XCTAssertEqual(panel.contentMaxSize, NSSize(width: 680, height: 540))
-    }
-
-    func testEditorPanelKeepsBackgroundDraggingOnMacOS14() {
-        let version = OperatingSystemVersion(majorVersion: 14, minorVersion: 6, patchVersion: 0)
-
-        XCTAssertTrue(CustomCharacterEditorWindowController.movesByWindowBackground(for: version))
-    }
-
-    func testEditorPanelDisablesBackgroundDraggingOnMacOS26SoPreviewDragWins() {
-        let version = OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 0)
-
-        XCTAssertFalse(CustomCharacterEditorWindowController.movesByWindowBackground(for: version))
     }
 
     func testEditorPanelReceivesSelectedLanguage() {
@@ -54,6 +42,26 @@ final class CustomCharacterEditorWindowControllerTests: XCTestCase {
 
         let hostingView = try? XCTUnwrap(panel.contentView as? NSHostingView<CustomCharacterEditorView>)
         XCTAssertEqual(hostingView?.rootView.language, .simplifiedChinese)
+    }
+
+    func testWindowDragHandleFrameOnlyHitsOuterEdges() {
+        let view = WindowDragHandleFrameNSView(thickness: 18)
+        view.frame = NSRect(x: 0, y: 0, width: 680, height: 540)
+        view.layoutSubtreeIfNeeded()
+
+        XCTAssertFalse(view.mouseDownCanMoveWindow)
+        XCTAssertTrue(view.isPointInDragFrame(NSPoint(x: 8, y: 270)))
+        XCTAssertTrue(view.isPointInDragFrame(NSPoint(x: 672, y: 270)))
+        XCTAssertTrue(view.isPointInDragFrame(NSPoint(x: 340, y: 8)))
+        XCTAssertTrue(view.isPointInDragFrame(NSPoint(x: 340, y: 532)))
+        XCTAssertFalse(view.isPointInDragFrame(NSPoint(x: 340, y: 270)))
+    }
+
+    func testPreviewOffsetCanMoveAtDefaultZoom() {
+        XCTAssertEqual(CustomCharacterEditorView.clampedPreviewOffset(0.4), 0.4, accuracy: 0.001)
+        XCTAssertEqual(CustomCharacterEditorView.clampedPreviewOffset(-0.4), -0.4, accuracy: 0.001)
+        XCTAssertEqual(CustomCharacterEditorView.clampedPreviewOffset(2), 1, accuracy: 0.001)
+        XCTAssertEqual(CustomCharacterEditorView.clampedPreviewOffset(-2), -1, accuracy: 0.001)
     }
 
     func testExistingVideoCharacterUsesVideoFrameForInitialPreview() async throws {
