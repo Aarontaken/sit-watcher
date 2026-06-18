@@ -31,9 +31,21 @@ final class CustomCharacterEditorWindowControllerTests: XCTestCase {
         XCTAssertTrue(panel.canBecomeKey)
         XCTAssertFalse(panel.hidesOnDeactivate)
         XCTAssertEqual(panel.level, .modalPanel)
-        XCTAssertTrue(panel.isMovableByWindowBackground)
+        XCTAssertEqual(panel.isMovableByWindowBackground, CustomCharacterEditorWindowController.movesByWindowBackground())
         XCTAssertEqual(panel.contentMinSize, NSSize(width: 680, height: 540))
         XCTAssertEqual(panel.contentMaxSize, NSSize(width: 680, height: 540))
+    }
+
+    func testEditorPanelKeepsBackgroundDraggingOnMacOS14() {
+        let version = OperatingSystemVersion(majorVersion: 14, minorVersion: 6, patchVersion: 0)
+
+        XCTAssertTrue(CustomCharacterEditorWindowController.movesByWindowBackground(for: version))
+    }
+
+    func testEditorPanelDisablesBackgroundDraggingOnMacOS26SoPreviewDragWins() {
+        let version = OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 0)
+
+        XCTAssertFalse(CustomCharacterEditorWindowController.movesByWindowBackground(for: version))
     }
 
     func testEditorPanelReceivesSelectedLanguage() {

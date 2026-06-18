@@ -80,10 +80,18 @@ final class CustomCharacterEditorWindowController {
         panel.hidesOnDeactivate = false
         panel.level = .modalPanel
         panel.hasShadow = true
-        panel.isMovableByWindowBackground = true
+        panel.isMovableByWindowBackground = Self.movesByWindowBackground()
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         return panel
+    }
+
+    static func movesByWindowBackground(
+        for operatingSystemVersion: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
+    ) -> Bool {
+        // macOS 26 lets background window dragging win over the SwiftUI preview DragGesture.
+        // Older macOS versions still need this for the borderless editor panel to be draggable.
+        operatingSystemVersion.majorVersion < 26
     }
 
     private func center(_ panel: NSPanel) {
