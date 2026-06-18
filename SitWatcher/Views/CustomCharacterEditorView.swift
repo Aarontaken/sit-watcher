@@ -569,12 +569,19 @@ struct CustomCharacterEditorView: View {
     private func loadPreviewImage(from url: URL, updateDefaultCrop: Bool) {
         let expectedURL = url
         Task {
+            let didAccessSecurityScopedResource = url.startAccessingSecurityScopedResource()
+            defer {
+                if didAccessSecurityScopedResource {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
             let loadedImage = try? await CustomCharacterMediaPreviewer.previewImage(from: url, startTime: videoStartTime)
+            let hasTransparency = updateDefaultCrop ? imageHasTransparency(at: url) : false
             await MainActor.run {
                 guard selectedURL == expectedURL else { return }
                 previewImage = loadedImage
                 if updateDefaultCrop {
-                    crop.shape = imageHasTransparency(at: url) ? .none : .circle
+                    crop.shape = hasTransparency ? .none : .circle
                 }
             }
         }

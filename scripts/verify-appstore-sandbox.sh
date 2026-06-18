@@ -18,6 +18,7 @@ fi
 
 echo "==> Checking sandbox entitlement"
 /usr/libexec/PlistBuddy -c "Print :com.apple.security.app-sandbox" SitWatcher/SitWatcher.entitlements | rg "^true$" >/dev/null
+/usr/libexec/PlistBuddy -c "Print :com.apple.security.files.user-selected.read-only" SitWatcher/SitWatcher.entitlements | rg "^true$" >/dev/null
 
 echo "==> Checking App Store opener fallback is covered by tests"
 rg "testURLsUseSearchFallbackWhenAppIDIsEmpty|testOpenTriesHTTPSWhenMacAppStoreURLFails" SitWatcherTests/AppStoreUpdateOpenerTests.swift >/dev/null
