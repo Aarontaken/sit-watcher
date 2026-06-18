@@ -22,11 +22,5 @@
     <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
     <key>LSUIElement</key>
     <true/>
-    <key>SUEnableAutomaticChecks</key>
-    <true/>
-    <key>SUFeedURL</key>
-    <string>https://Aarontaken.github.io/sit-watcher/appcast.xml</string>
-    <key>SUPublicEDKey</key>
-    <string>WlDX2OYrBGjn79WHRHZmPRZt07CvRDpz2jizAIInAWM=</string>
 </dict>
 </plist>
