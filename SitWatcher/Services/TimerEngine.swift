@@ -5,6 +5,7 @@ final class TimerEngine {
     private let settings: Settings
     private let defaults: UserDefaults
     private let now: () -> Date
+    private let currentAppBuild: String
     private var timer: Timer?
     private let tickInterval: TimeInterval = 1.0
     private let maximumSavedCountdownAge: TimeInterval = 24 * 60 * 60
@@ -13,15 +14,23 @@ final class TimerEngine {
         static let remainingSeconds = "timerSnapshot.remainingSeconds"
         static let totalSeconds = "timerSnapshot.totalSeconds"
         static let savedAt = "timerSnapshot.savedAt"
+        static let appBuild = "timerSnapshot.appBuild"
     }
 
     var onTimerComplete: (() -> Void)?
 
-    init(state: AppState, settings: Settings, defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init) {
+    init(
+        state: AppState,
+        settings: Settings,
+        defaults: UserDefaults = .standard,
+        now: @escaping () -> Date = Date.init,
+        currentAppBuild: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+    ) {
         self.state = state
         self.settings = settings
         self.defaults = defaults
         self.now = now
+        self.currentAppBuild = currentAppBuild
     }
 
     func start(restoringSavedState: Bool = true) {
@@ -109,6 +118,7 @@ final class TimerEngine {
         defaults.set(state.remainingSeconds, forKey: PersistenceKey.remainingSeconds)
         defaults.set(state.totalSeconds, forKey: PersistenceKey.totalSeconds)
         defaults.set(now(), forKey: PersistenceKey.savedAt)
+        defaults.set(currentAppBuild, forKey: PersistenceKey.appBuild)
         defaults.synchronize()
     }
 
@@ -147,6 +157,11 @@ final class TimerEngine {
             return false
         }
 
+        guard defaults.string(forKey: PersistenceKey.appBuild) == currentAppBuild else {
+            clearSavedCountdown()
+            return false
+        }
+
         let savedTotal = defaults.double(forKey: PersistenceKey.totalSeconds)
         let savedRemaining = defaults.double(forKey: PersistenceKey.remainingSeconds)
         guard savedTotal > 0, savedRemaining > 0 else {
@@ -182,6 +197,7 @@ final class TimerEngine {
         defaults.removeObject(forKey: PersistenceKey.remainingSeconds)
         defaults.removeObject(forKey: PersistenceKey.totalSeconds)
         defaults.removeObject(forKey: PersistenceKey.savedAt)
+        defaults.removeObject(forKey: PersistenceKey.appBuild)
     }
 }
 

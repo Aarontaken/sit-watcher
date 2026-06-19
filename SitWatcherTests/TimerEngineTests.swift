@@ -17,7 +17,7 @@ final class TimerEngineTests: XCTestCase {
         settings.reminderInterval = 10
         state = AppState()
         now = Date(timeIntervalSinceReferenceDate: 1_000)
-        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now })
+        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now }, currentAppBuild: "22")
     }
 
     override func tearDown() {
@@ -78,7 +78,7 @@ final class TimerEngineTests: XCTestCase {
 
         now = now.addingTimeInterval(3)
         state = AppState()
-        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now })
+        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now }, currentAppBuild: "22")
         engine.start()
 
         XCTAssertEqual(state.timerPhase, .running)
@@ -94,7 +94,7 @@ final class TimerEngineTests: XCTestCase {
 
         now = now.addingTimeInterval(3)
         state = AppState()
-        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now })
+        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now }, currentAppBuild: "22")
         engine.start()
 
         XCTAssertEqual(state.timerPhase, .paused)
@@ -110,7 +110,7 @@ final class TimerEngineTests: XCTestCase {
         let expectation = expectation(description: "expired saved countdown completes")
         now = now.addingTimeInterval(3)
         state = AppState()
-        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now })
+        engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now }, currentAppBuild: "22")
         engine.onTimerComplete = { expectation.fulfill() }
         engine.start()
 
@@ -128,6 +128,43 @@ final class TimerEngineTests: XCTestCase {
         engine = TimerEngine(state: state, settings: settings, defaults: defaults, now: { self.now })
         engine.start()
 
+        XCTAssertEqual(state.timerPhase, .running)
+        XCTAssertEqual(state.remainingSeconds, 10, accuracy: 0.1)
+        XCTAssertEqual(state.totalSeconds, 10)
+    }
+
+    func testStartIgnoresSavedCountdownFromPreviousAppBuild() {
+        defaults.set("21", forKey: "timerSnapshot.appBuild")
+        defaults.set("running", forKey: "timerSnapshot.phase")
+        defaults.set(2.0, forKey: "timerSnapshot.remainingSeconds")
+        defaults.set(10.0, forKey: "timerSnapshot.totalSeconds")
+        defaults.set(now, forKey: "timerSnapshot.savedAt")
+
+        let expectation = expectation(description: "expired previous-build countdown does not complete")
+        expectation.isInverted = true
+        now = now.addingTimeInterval(3)
+        engine.onTimerComplete = { expectation.fulfill() }
+        engine.start()
+
+        wait(for: [expectation], timeout: 0.1)
+        XCTAssertEqual(state.timerPhase, .running)
+        XCTAssertEqual(state.remainingSeconds, 10, accuracy: 0.1)
+        XCTAssertEqual(state.totalSeconds, 10)
+    }
+
+    func testStartIgnoresLegacySavedCountdownWithoutAppBuild() {
+        defaults.set("running", forKey: "timerSnapshot.phase")
+        defaults.set(2.0, forKey: "timerSnapshot.remainingSeconds")
+        defaults.set(10.0, forKey: "timerSnapshot.totalSeconds")
+        defaults.set(now, forKey: "timerSnapshot.savedAt")
+
+        let expectation = expectation(description: "expired legacy countdown does not complete")
+        expectation.isInverted = true
+        now = now.addingTimeInterval(3)
+        engine.onTimerComplete = { expectation.fulfill() }
+        engine.start()
+
+        wait(for: [expectation], timeout: 0.1)
         XCTAssertEqual(state.timerPhase, .running)
         XCTAssertEqual(state.remainingSeconds, 10, accuracy: 0.1)
         XCTAssertEqual(state.totalSeconds, 10)
