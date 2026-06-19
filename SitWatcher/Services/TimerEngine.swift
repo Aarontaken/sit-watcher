@@ -4,11 +4,8 @@ final class TimerEngine {
     private let state: AppState
     private let settings: Settings
     private let defaults: UserDefaults
-    private let now: () -> Date
-    private let currentAppBuild: String
     private var timer: Timer?
     private let tickInterval: TimeInterval = 1.0
-    private let maximumSavedCountdownAge: TimeInterval = 24 * 60 * 60
     private enum PersistenceKey {
         static let phase = "timerSnapshot.phase"
         static let remainingSeconds = "timerSnapshot.remainingSeconds"
@@ -22,23 +19,15 @@ final class TimerEngine {
     init(
         state: AppState,
         settings: Settings,
-        defaults: UserDefaults = .standard,
-        now: @escaping () -> Date = Date.init,
-        currentAppBuild: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        defaults: UserDefaults = .standard
     ) {
         self.state = state
         self.settings = settings
         self.defaults = defaults
-        self.now = now
-        self.currentAppBuild = currentAppBuild
     }
 
-    func start(restoringSavedState: Bool = true) {
-        if restoringSavedState, restoreSavedCountdown() {
-            startTickingIfNeeded()
-            return
-        }
-
+    func start() {
+        clearSavedCountdown()
         startFresh()
     }
 
@@ -48,7 +37,6 @@ final class TimerEngine {
         state.timerPhase = .running
         state.reminderLevel = .none
         state.snoozedThisCycle = false
-        persistForShutdown()
         startTicking()
     }
 
@@ -61,13 +49,11 @@ final class TimerEngine {
         state.timerPhase = .paused
         timer?.invalidate()
         timer = nil
-        persistForShutdown()
     }
 
     func resume() {
         guard state.timerPhase == .paused else { return }
         state.timerPhase = .running
-        persistForShutdown()
         startTicking()
     }
 
@@ -76,7 +62,7 @@ final class TimerEngine {
         state.reminderLevel = .none
         state.snoozedThisCycle = false
         clearSavedCountdown()
-        start(restoringSavedState: false)
+        start()
     }
 
     func skip() {
@@ -84,7 +70,7 @@ final class TimerEngine {
         state.reminderLevel = .none
         state.snoozedThisCycle = false
         clearSavedCountdown()
-        start(restoringSavedState: false)
+        start()
     }
 
     func enterIdle() {
@@ -94,7 +80,7 @@ final class TimerEngine {
     }
 
     func exitIdle() {
-        start(restoringSavedState: false)
+        start()
     }
 
     func snooze(duration: TimeInterval) {
@@ -104,22 +90,7 @@ final class TimerEngine {
         state.totalSeconds = duration
         state.remainingSeconds = duration
         state.timerPhase = .running
-        persistForShutdown()
         startTicking()
-    }
-
-    func persistForShutdown() {
-        guard state.timerPhase == .running || state.timerPhase == .paused else {
-            clearSavedCountdown()
-            return
-        }
-
-        defaults.set(state.timerPhase.persistenceValue, forKey: PersistenceKey.phase)
-        defaults.set(state.remainingSeconds, forKey: PersistenceKey.remainingSeconds)
-        defaults.set(state.totalSeconds, forKey: PersistenceKey.totalSeconds)
-        defaults.set(now(), forKey: PersistenceKey.savedAt)
-        defaults.set(currentAppBuild, forKey: PersistenceKey.appBuild)
-        defaults.synchronize()
     }
 
     private func startTicking() {
@@ -127,11 +98,6 @@ final class TimerEngine {
         timer = Timer.scheduledTimer(withTimeInterval: tickInterval, repeats: true) { [weak self] _ in
             self?.tick()
         }
-    }
-
-    private func startTickingIfNeeded() {
-        guard state.timerPhase == .running else { return }
-        startTicking()
     }
 
     private func tick() {
@@ -148,81 +114,11 @@ final class TimerEngine {
         }
     }
 
-    private func restoreSavedCountdown() -> Bool {
-        guard
-            let phaseValue = defaults.string(forKey: PersistenceKey.phase),
-            let savedPhase = TimerPhase(persistenceValue: phaseValue),
-            let savedAt = defaults.object(forKey: PersistenceKey.savedAt) as? Date
-        else {
-            return false
-        }
-
-        guard defaults.string(forKey: PersistenceKey.appBuild) == currentAppBuild else {
-            clearSavedCountdown()
-            return false
-        }
-
-        let savedTotal = defaults.double(forKey: PersistenceKey.totalSeconds)
-        let savedRemaining = defaults.double(forKey: PersistenceKey.remainingSeconds)
-        guard savedTotal > 0, savedRemaining > 0 else {
-            clearSavedCountdown()
-            return false
-        }
-
-        let savedAge = now().timeIntervalSince(savedAt)
-        guard savedAge >= 0, savedAge <= maximumSavedCountdownAge else {
-            clearSavedCountdown()
-            return false
-        }
-
-        state.totalSeconds = savedTotal
-        state.remainingSeconds = savedPhase == .running
-            ? max(0, savedRemaining - savedAge)
-            : savedRemaining
-        state.timerPhase = savedPhase
-        state.reminderLevel = .none
-
-        if state.remainingSeconds <= 0 {
-            clearSavedCountdown()
-            onTimerComplete?()
-        } else {
-            persistForShutdown()
-        }
-
-        return true
-    }
-
     private func clearSavedCountdown() {
         defaults.removeObject(forKey: PersistenceKey.phase)
         defaults.removeObject(forKey: PersistenceKey.remainingSeconds)
         defaults.removeObject(forKey: PersistenceKey.totalSeconds)
         defaults.removeObject(forKey: PersistenceKey.savedAt)
         defaults.removeObject(forKey: PersistenceKey.appBuild)
-    }
-}
-
-private extension TimerPhase {
-    var persistenceValue: String {
-        switch self {
-        case .running:
-            return "running"
-        case .paused:
-            return "paused"
-        case .idle:
-            return "idle"
-        }
-    }
-
-    init?(persistenceValue: String) {
-        switch persistenceValue {
-        case "running":
-            self = .running
-        case "paused":
-            self = .paused
-        case "idle":
-            self = .idle
-        default:
-            return nil
-        }
     }
 }

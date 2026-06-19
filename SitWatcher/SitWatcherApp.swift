@@ -3,7 +3,6 @@ import SwiftUI
 
 @main
 struct SitWatcherApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     private let appStoreUpdateOpener = AppStoreUpdateOpener()
 
     var body: some Scene {
@@ -13,12 +12,6 @@ struct SitWatcherApp: App {
             MenuBarLabel()
         }
         .menuBarExtraStyle(.window)
-    }
-}
-
-final class AppDelegate: NSObject, NSApplicationDelegate {
-    func applicationWillTerminate(_ notification: Notification) {
-        AppCoordinator.shared.persistTimerStateForShutdown()
     }
 }
 
